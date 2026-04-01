@@ -3,6 +3,10 @@ package it.polimi.ingsw;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @ author Ric
+ * abstract class with override methods for each game configuration, based on the number of players
+ */
 public abstract class GameConfig {
 
     public static GameConfig create(int numPlayers) {
@@ -15,6 +19,10 @@ public abstract class GameConfig {
         };  // can it print error?
     }
 
+    /**
+     * @ param pos
+     * return the initial amount of food for each player based on the position in the turn order
+     */
     public int getInitialFood(int pos) {
         if(pos == 1) return 2;
         else if(pos == 2 || pos == 3) return 3;
@@ -25,7 +33,7 @@ public abstract class GameConfig {
     public abstract int getUpperRowSize();
     public abstract int getLowerRowSize();
     public abstract Map<EraEnum,Integer> getBuildingCardsPerEra();
-    public abstract List<OfferTile> getOfferTile();
+    public abstract List<OfferTile> getOfferTiles();
     public abstract int getNumPlayers();
 
 }

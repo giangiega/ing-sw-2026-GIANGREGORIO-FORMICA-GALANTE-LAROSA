@@ -21,7 +21,7 @@ public class GameConfig3 extends GameConfig {
     }
 
     @Override
-    public List<OfferTile> getOfferTile() {
+    public List<OfferTile> getOfferTiles() {
         return  List.of(
                 new OfferTile('B' , 0 , 1),
                 new OfferTile('C' , 1 , 0),
