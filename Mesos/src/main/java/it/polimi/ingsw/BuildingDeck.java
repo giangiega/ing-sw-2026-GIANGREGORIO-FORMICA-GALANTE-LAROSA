@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
 
@@ -16,6 +17,7 @@ public class BuildingDeck {
      * @param era
      */
     public BuildingDeck(EraEnum era){
+        this.cards = new ArrayList<>();
         this.era = era;
     }
 
