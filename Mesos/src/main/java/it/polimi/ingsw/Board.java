@@ -56,7 +56,20 @@ public class Board {
             buildingUpperRow.add(buildingDeckEra1.getFirstCard());
         }
     }
-
+    // can be useful to check if the match ends (because there are no more cards)
+    public Deck getTribeDeck() {
+        return tribeDeck;
+    }
+    public BuildingDeck getBuildingDeckEra1() {
+        return buildingDeckEra1;
+    }
+    public BuildingDeck getBuildingDeckEra2() {
+        return buildingDeckEra2;
+    }
+    public BuildingDeck getBuildingDeckEra3() {
+        return buildingDeckEra3;
+    }
+    // returns an unmodifiable structure, so who calls the method can only read and not modify.
     public List<TribeCard> getUpperRow() {
         return Collections.unmodifiableList(upperRow);
     }
@@ -88,12 +101,11 @@ public class Board {
     }
 
     // rowsEndTurn needs this method to check every card era.
-    public boolean checkEraSwitch(EraEnum newEra) {
+    public void checkEraSwitch(EraEnum newEra) {
       if (newEra != currentEra) {
           transitions.get(newEra).applyTransition(this);
           currentEra = newEra;
-          return true;
-      } else return false;
+      }
     }
 
     // Game is the event resolver, so it needs another method endRound() , Board doesn't care about
@@ -112,5 +124,19 @@ public class Board {
         }
     }
 
-    // define helper methods for letting TransitionEra know infos about the board
+    // I have to define helper methods for letting TransitionEra know infos about the board
+    // applyTransition has board as a parameter. This 3 methods are called by TransitionEra
+    //this first method is only used by TransitionEraIII
+    public void discardLowerRowBuildings() {
+        buildingLowerRow.clear();
+    }
+    public void moveBuildingsToLowerRow() {
+        buildingLowerRow.addAll(buildingUpperRow);
+        buildingUpperRow.clear();
+    }
+    public void fillBuildingUpperRow(BuildingDeck deck) {
+        while(!deck.isEmpty()) {
+            buildingUpperRow.add(deck.getFirstCard());
+        }
+    }
 }
