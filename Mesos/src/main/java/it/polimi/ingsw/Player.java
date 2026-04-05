@@ -1,7 +1,9 @@
 package it.polimi.ingsw;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Player class with usefully attribute to handle events and buildings effect
@@ -10,8 +12,7 @@ import java.util.List;
 public class Player {
     private String name;
     private ColorEnum totemColor;
-    //we can model tribe as a list of sublists one for each type of character to handle buildingFoodSet effect
-    private List<CharacterCard> tribe;
+    private Map<CharacterEnum, List<CharacterCard>> tribe;
     private List<BuildingCard> buildings;
     private int food;
     private int prestigePoints;
@@ -31,8 +32,14 @@ public class Player {
     public Player(String name, ColorEnum totemColor){
         this.name = name;
         this.totemColor = totemColor;
-        tribe = new ArrayList<>();
-        buildings = new ArrayList<>();
+        this.tribe = new HashMap<>();
+        this.tribe.put(CharacterEnum.HUNTER, new ArrayList<>());
+        this.tribe.put(CharacterEnum.GATHERER, new ArrayList<>());
+        this.tribe.put(CharacterEnum.SHAMAN, new ArrayList<>());
+        this.tribe.put(CharacterEnum.BUILDER, new ArrayList<>());
+        this.tribe.put(CharacterEnum.ARTIST, new ArrayList<>());
+        this.tribe.put(CharacterEnum.INVENTOR, new ArrayList<>());
+        this.buildings = new ArrayList<>();
     }
 
     /**
@@ -43,7 +50,6 @@ public class Player {
         /* with sublists model for tribe we should eliminate this method and handle adding of a character in
         *  each character class with an overrided method:
         card.addToPlayerTribe(player) */
-        tribe.add(card);
     }
 
     /**
@@ -78,9 +84,14 @@ public class Player {
         return prestigePoints;
     }
 
-    /* public List<CharacterCard> getCharacterByType(CharacterEnum type){
-        to do
-    } */
+    /**
+     *
+     * @param type: CharacterEnum to get a specific list of character
+     * @return: list of a specific type of character
+     */
+    public List<CharacterCard> getCharacterByType(CharacterEnum type){
+        return tribe.get(type);
+    }
 
     public List<BuildingCard> getBuildingCards(){
         return buildings;
