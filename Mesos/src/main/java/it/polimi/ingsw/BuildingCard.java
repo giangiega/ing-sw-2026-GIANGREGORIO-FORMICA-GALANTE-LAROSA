@@ -61,7 +61,7 @@ public class BuildingCard extends Card {
      *
      * This method applies the building effect when it's just been acquired by the player
      */
-    public applyEffect(Player p, Board b){
-        effect.appayOnCardAdded(p, b);
+    public void applyEffect(Player p, Board b){
+        effect.applyOnCardAdded(p, b);
     }
 }
