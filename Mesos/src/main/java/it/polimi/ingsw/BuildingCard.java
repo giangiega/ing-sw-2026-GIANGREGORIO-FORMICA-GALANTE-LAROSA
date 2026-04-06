@@ -1,4 +1,67 @@
 package it.polimi.ingsw;
 
-public class BuildingCard {
+/**
+ * @author Giuse
+ */
+
+public class BuildingCard extends Card {
+    private int baseFoodCost;
+    private int basePrestigePoints;
+    private BuildingEffect effect;
+
+
+    public BuildingCard(EraEnum era, int baseFoodCost, int basePrestigePoints, BuildingEffect effect) {
+        //Costruttore di Card per l'attributo ereditato da Card
+        super(era);
+        //this.era = era; vedere che dice Alessandro
+
+        this.baseFoodCost = baseFoodCost;
+        this.basePrestigePoints = basePrestigePoints;
+        this.effect = effect;
+    }
+
+    /**
+     *
+     * @return the base food cost to purchase the building
+     */
+    public int getBaseFC() {
+        return baseFoodCost;
+    }
+
+    /**
+     *
+     * @return the base amount of prestiege points awarded by the building at the end of the game
+     */
+    public int getBasePP() {
+        return basePrestigePoints;
+    }
+    /**
+     *
+     * @return the effect of the building
+     */
+    public BuildingEffect getEffect(){
+        return effect;
+    }
+    /**
+     *
+     * @return the real amount of food needed to actually buy the building: each hunter lowers its cost
+     *         The cost cannot be lower than 0
+     */
+    public int getCost(Player p){
+        int real_cost;
+
+        real_cost = baseFoodCost - p.getTotalFoodDiscountBuilder();
+        if(real_cost >= 0){
+            return real_cost;
+        }else{
+            return 0;
+        }
+    }
+    /**
+     *
+     * This method applies the building effect when it's just been acquired by the player
+     */
+    public applyEffect(Player p, Board b){
+        effect.appayOnCardAdded(p, b);
+    }
 }
