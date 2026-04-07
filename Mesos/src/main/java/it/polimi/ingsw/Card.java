@@ -1,4 +1,7 @@
 package it.polimi.ingsw;
+/**
+ * @author Daniele
+ */
 
 public abstract class Card {
     private EraEnum era;
