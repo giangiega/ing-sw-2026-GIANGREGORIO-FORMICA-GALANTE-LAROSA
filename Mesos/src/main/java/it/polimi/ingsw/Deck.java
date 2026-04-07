@@ -3,7 +3,7 @@ package it.polimi.ingsw;
 import java.util.List;
 
 /**
- * tribe deck
+ * tribe deck, addToBottom and shuffle methods must be implemented in CardFactory because are used to build the complete Deck
  * @author Ale
  */
 public class Deck {
