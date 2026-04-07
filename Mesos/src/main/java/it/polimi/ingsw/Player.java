@@ -58,6 +58,13 @@ public class Player {
         totalBuildingsPP += card.getBasePP();
     }
 
+    public String getName(){
+        return name;
+    }
+
+    public ColorEnum getTotemColor(){
+        return totemColor;
+    }
     public void gainFood(int num){
         food += num;
     }
