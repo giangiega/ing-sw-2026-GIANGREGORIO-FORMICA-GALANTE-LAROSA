@@ -1,17 +1,21 @@
 package it.polimi.ingsw;
-
 /**
  * @author Giuse
  */
-
 public class BuildingCard extends Card {
     private int baseFoodCost;
     private int basePrestigePoints;
     private BuildingEffect effect;
 
-
+    /**
+     * constructor of this class
+     * @param era :era of this card
+     * @param baseFoodCost : food cost of this card
+     * @param basePrestigePoints :prestige points awarded by this card
+     * @param effect : effect of this card
+     */
     public BuildingCard(EraEnum era, int baseFoodCost, int basePrestigePoints, BuildingEffect effect) {
-        //Costruttore di Card per l'attributo ereditato da Card
+        //Costruttore di Card per l'attributo era ereditato
         super(era);
         //this.era = era; vedere che dice Alessandro
 
@@ -21,7 +25,6 @@ public class BuildingCard extends Card {
     }
 
     /**
-     *
      * @return the base food cost to purchase the building
      */
     public int getBaseFC() {
@@ -29,21 +32,19 @@ public class BuildingCard extends Card {
     }
 
     /**
-     *
      * @return the base amount of prestiege points awarded by the building at the end of the game
      */
     public int getBasePP() {
         return basePrestigePoints;
     }
     /**
-     *
      * @return the effect of the building
      */
     public BuildingEffect getEffect(){
         return effect;
     }
     /**
-     *
+     * @param p : player who has this building card
      * @return the real amount of food needed to actually buy the building: each hunter lowers its cost
      *         The cost cannot be lower than 0
      */
@@ -58,8 +59,9 @@ public class BuildingCard extends Card {
         }
     }
     /**
-     *
-     * This method applies the building effect when it's just been acquired by the player
+     *This method applies the building effect when it's just been acquired by the player
+     * @param p : player who has this building card
+     * @param b
      */
     public void applyEffect(Player p, Board b){
         effect.applyOnCardAdded(p, b);
