@@ -1,4 +1,7 @@
 package it.polimi.ingsw;
+/**
+ * @author Daniele
+ */
 
 import java.util.List;
 
