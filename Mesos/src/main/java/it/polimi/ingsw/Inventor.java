@@ -17,8 +17,8 @@ public class Inventor extends CharacterCard {
 
     /**
      * when a player draw an Inventor this method will check if it is the first of that specific type and use
-     * updateDistinctInventorsIcon() to update the count , then it will add the card to the tribe and trigger the building effect
-     * ( if there is one )
+     * updateDistinctInventorsIcon() to update the count , then it will add the card to the tribe and trigger the
+     * possible building effect
      * @param player
      * @param board
      */

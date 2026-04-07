@@ -14,7 +14,7 @@ public class Builder extends CharacterCard {
 
     /**
      * this method will add the new card to the tribe , update the total food discount of the player and trigger
-     * a building effect ( if there is one )
+     * the possible building effect
      * @param player
      * @param board
      */

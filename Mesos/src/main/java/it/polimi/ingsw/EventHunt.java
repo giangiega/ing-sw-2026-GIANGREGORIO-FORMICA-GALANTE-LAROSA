@@ -1,8 +1,11 @@
 package it.polimi.ingsw;
-
+/**
+ * @author Daniele
+ */
 import java.util.List;
 
 public class EventHunt extends EventCard {
+    private int ppPerHunter;
 
     public EventHunt(EraEnum era) {
         super(era);
@@ -11,5 +14,8 @@ public class EventHunt extends EventCard {
     @Override
     public void resolve(List<Player> players, Board board) {
 
+    }
+    public int getPpPerHunter() {
+        return ppPerHunter;
     }
 }
