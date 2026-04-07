@@ -10,7 +10,7 @@ public class Builder extends CharacterCard {
         this.endGamePP = endGamePP;
     }
 
-    public int getWingCount(){
+    public int getWingCount() {
         return wingCount;
     }
     public int getEndGamePP() {
