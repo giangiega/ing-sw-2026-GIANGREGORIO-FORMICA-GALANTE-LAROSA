@@ -65,7 +65,7 @@ public class Game {
         Map<Player,Integer> scores = new HashMap<>();
         for(Player p : players) {
             int points = p.getPP();
-            /*points += punti totali dei constructor*/
+            /*points += punti totali dei builder*/
             points += p.getCharacterByType(CharacterEnum.INVENTOR).size() * p.getDistinctInventorsIcon();
             points += (p.getCharacterByType(CharacterEnum.ARTIST).size() / 2) * 10;
             /*points += punti totali dei buildings*/
