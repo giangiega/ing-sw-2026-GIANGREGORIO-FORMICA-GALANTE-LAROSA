@@ -10,8 +10,8 @@ import java.util.Map;
  * @author Ale
  */
 public class Player {
-    private String name;
-    private ColorEnum totemColor;
+    private final String name;
+    private final ColorEnum totemColor;
     private Map<CharacterEnum, List<CharacterCard>> tribe;
     private List<BuildingCard> buildings;
     private int food;
