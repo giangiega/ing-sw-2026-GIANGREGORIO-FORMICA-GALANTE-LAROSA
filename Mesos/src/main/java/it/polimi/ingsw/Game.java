@@ -33,9 +33,8 @@ public class Game {
      * other type of event because sustenance has to be resolved at the end, after all others events.
      * So the first for cycle is done for others List, then the second cycle for Sustenance.
      * At the end it calls rowsEndRound() from Board, with the rows update and the possible eraSwitch.
+     * If it's the last round (10th) I have to resolve events also from the upperRow, already sorted
      */
-    // manca un controllo sull'ultimo round in cui prima della fine devo risolvere anche gli
-    //eventi presenti nella fila superiore?
     public void endRound() {
         List<EventCard> others = new ArrayList<>();
         List<EventCard> sustenances = new ArrayList<>();
@@ -47,13 +46,24 @@ public class Game {
                 others.add((EventCard)card);
             }
         }
+        if(currentRound == 10) {
+            for (TribeCard card : board.getUpperRow()) {
+                if (card instanceof EventSustenance) {
+                    sustenances.add((EventCard) card);
+                } else if (card instanceof EventCard) {
+                    others.add((EventCard) card);
+                }
+            }
+        }
+
         for(EventCard event : others)
             event.resolve(players, board);
         for(EventCard s : sustenances)
             s.resolve(players, board);
 
         board.rowsEndRound();
-        currentRound++;
+        if(currentRound < 10)
+            currentRound++;
     }
 
     /**
@@ -65,10 +75,10 @@ public class Game {
         Map<Player,Integer> scores = new HashMap<>();
         for(Player p : players) {
             int points = p.getPP();
-            /*points += punti totali dei builder*/
+            points += p.getEndGameBuildersPP();
             points += p.getCharacterByType(CharacterEnum.INVENTOR).size() * p.getDistinctInventorsIcon();
             points += (p.getCharacterByType(CharacterEnum.ARTIST).size() / 2) * 10;
-            /*points += punti totali dei buildings*/
+            points += p.getTotalBuildingsPP();
 
             scores.put(p, points);
         }
