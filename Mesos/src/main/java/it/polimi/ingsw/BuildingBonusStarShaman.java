@@ -4,21 +4,13 @@ package it.polimi.ingsw;
  */
 
 public class BuildingBonusStarShaman extends BuildingEffect{
-    private int extraStars;
-    /**
-     * this is the constructor of the class
-     * @param extraStars : numbers of extra stars to count during the event "Shaman Ritual"
-     */
-    public BuildingBonusStarShaman(int extraStars) {
-        this.extraStars = extraStars;
-    }
-
+    private static final int BONUS_EXTRA_STARS = 3;
     /**
      *
-     * @return extraStars : number of stars
+     * @return extraStars : number of extra stars
      */
     public int getExtraStars() {
-        return extraStars;
+        return BONUS_EXTRA_STARS;
     }
 
     /**
