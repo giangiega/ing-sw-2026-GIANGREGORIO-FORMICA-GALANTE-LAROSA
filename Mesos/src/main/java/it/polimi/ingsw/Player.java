@@ -41,12 +41,20 @@ public class Player {
         this.buildings = new ArrayList<>();
     }
 
+    public void addCharacterCard(CharacterCard card, Board board){
+        //card.addToPlayerTribe(this);
+        for(BuildingCard b: buildings){
+            b.getEffect().applyOnCardAdded(this, board);
+        }
+    }
+
     /**
      * this method will add the building that a player draw from board
      * @param card
      */
     public void addBuildingCard(BuildingCard card){
         buildings.add(card);
+        totalBuildingsPP += card.getBasePP();
     }
 
     public void gainFood(int num){
