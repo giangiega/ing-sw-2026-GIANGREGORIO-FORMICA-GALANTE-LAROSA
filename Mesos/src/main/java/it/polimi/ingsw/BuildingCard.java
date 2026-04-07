@@ -15,7 +15,6 @@ public class BuildingCard extends Card {
      * @param effect : effect of this card
      */
     public BuildingCard(EraEnum era, int baseFoodCost, int basePrestigePoints, BuildingEffect effect) {
-        //Costruttore di Card per l'attributo era ereditato
         super(era);
         //this.era = era; vedere che dice Alessandro
 
