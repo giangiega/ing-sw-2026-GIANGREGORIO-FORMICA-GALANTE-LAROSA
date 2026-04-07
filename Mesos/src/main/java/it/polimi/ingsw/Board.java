@@ -29,7 +29,10 @@ public class Board {
         this.buildingDeckEra2 = buildingDeckEra2;
         this.buildingDeckEra3 = buildingDeckEra3;
 
-        this.turnOrderTile = new TurnOrderTile();
+        this.turnOrderTile = new TurnOrderTile(
+                config.getNumPlayers(),
+                config.getFoodBonuses()
+        );
         this.offerTrack = config.getOfferTiles();
         this.upperRow = new ArrayList<>();
         this.lowerRow = new ArrayList<>();
@@ -98,6 +101,14 @@ public class Board {
     }
     public void removeFromLowerRow(TribeCard card) {
         lowerRow.remove(card);
+    }
+
+    public void removeFromBuildingUpperRow(BuildingCard card) {
+        buildingUpperRow.remove(card);
+    }
+
+    public void removeFromBuildingLowerRow(BuildingCard card) {
+        buildingLowerRow.remove(card);
     }
 
     // rowsEndTurn needs this method to check every card era.

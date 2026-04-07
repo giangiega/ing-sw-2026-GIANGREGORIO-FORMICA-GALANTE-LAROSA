@@ -8,21 +8,20 @@ import java.util.List;
  * @author Ale
  */
 public class TurnOrderTile {
-    private /*final*/ int numPlayers;
-    private /*final*/ int[] foodBonus;
-    private List<Player> slots;
+    private final int numPlayers;
+    private final int[] foodBonus;
+    private final List<Player> slots;
 
     /**
      * constructor
      * @param
      * @param : list of all players
-
-    public TurnOrderTile(int numPlayers, List<Player> playerList){
+     */
+    public TurnOrderTile(int numPlayers, int[] foodBonus) {
         this.numPlayers = numPlayers;
-        this.foodBonus = new int[numPlayers];
+        this.foodBonus = foodBonus;
         this.slots = new ArrayList<>();
-        slots.addAll(playerList);
-    }*/
+    }
 
     /**
      * add the player to the slots of the TurnOrderTile
@@ -43,8 +42,13 @@ public class TurnOrderTile {
         return List.copyOf(slots);
     }
 
-    public int getFoodBonusForSlot(int pos){
+    //constructor has foodBonus from a GameConfig method
+   public int getFoodBonusForSlot(int pos){
         return foodBonus[pos];
+    }
+
+    public boolean isLastSlot(int pos) {
+        return pos == numPlayers - 1;
     }
 
 }

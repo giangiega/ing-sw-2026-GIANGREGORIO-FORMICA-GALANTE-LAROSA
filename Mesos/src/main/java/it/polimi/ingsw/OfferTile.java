@@ -12,6 +12,7 @@ public class OfferTile {
     private final int upperArrow;
     private final int lowerArrow;
     private boolean isFree = true;
+    private Player occupant;
 
     /**
      * constructor
@@ -37,6 +38,15 @@ public class OfferTile {
         return lowerArrow;
     }
 
+    public Player getOccupant() {
+        return occupant;
+    }
+
+    public void setOccupant(Player occupant) {
+        this.occupant = occupant;
+        this.isFree = false;
+    }
+
     /**
      * this method remove from board the cards chosen by the player on the OfferTile, and add these in the player's tribe or player's buildings
      * @param player
@@ -55,7 +65,7 @@ public class OfferTile {
                     throw new InvalidPlayerActionException("Player can't choose an EventCard");
                 else if (board.getUpperRow().get(i) instanceof CharacterCard) {
                     CharacterCard chosenCard = (CharacterCard) board.getUpperRow().get(i);
-                    board.getUpperRow().remove(i);
+                    board.removeFromUpperRow((TribeCard) chosenCard);
                     player.addCharacterCard(chosenCard, board);
                 }
             }
@@ -68,7 +78,7 @@ public class OfferTile {
                     throw new InvalidPlayerActionException("Player can't choose an EventCard");
                 else if (board.getLowerRow().get(i) instanceof CharacterCard) {
                     CharacterCard chosenCard = (CharacterCard) board.getLowerRow().get(i);
-                    board.getLowerRow().remove(i);
+                    board.removeFromLowerRow((TribeCard) chosenCard);
                     player.addCharacterCard(chosenCard, board);
                 }
             }
@@ -78,7 +88,7 @@ public class OfferTile {
             indexUpperChosenBuildings.sort(Collections.reverseOrder());
             for (Integer i : indexUpperChosenBuildings) {
                 BuildingCard chosenCard = board.getBuildingUpperRow().get(i);
-                board.getBuildingUpperRow().remove(i);
+                board.removeFromBuildingUpperRow(chosenCard);
                 player.addBuildingCard(chosenCard);
             }
         }
@@ -87,7 +97,7 @@ public class OfferTile {
             indexLowerChosenBuildings.sort(Collections.reverseOrder());
             for (Integer i : indexLowerChosenBuildings) {
                 BuildingCard chosenCard = board.getBuildingLowerRow().get(i);
-                board.getBuildingLowerRow().remove(i);
+                board.removeFromBuildingLowerRow(chosenCard);
                 player.addBuildingCard(chosenCard);
             }
         }

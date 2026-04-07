@@ -28,6 +28,35 @@ public class Game {
         return currentRound;
     }
 
+    public void placeTotem(Player player, OfferTile tile) throws InvalidPlayerActionException {
+        if (!tile.getFreeOfferTile())
+            throw new InvalidPlayerActionException("OfferTile is occupied by a player");
+        board.getTurnOrderTile().totemOut(player);
+        tile.setOccupant(player);
+        }
+
+    /*public void resolveAction(Player player, OfferTile tile,
+                              List<Integer> upperCards, List<Integer> lowerCards,
+                              List<Integer> upperBuildings, List<Integer> lowerBuildings)
+            throws InvalidPlayerActionException {
+
+    }*/
+
+    public void unplaceTotem(Player player) {
+        int nextSlot = board.getTurnOrderTile().getOrder().indexOf(player);
+        board.getTurnOrderTile().totemIn(player);
+
+        int bonus = board.getTurnOrderTile().getFoodBonusForSlot(nextSlot);
+        if (bonus > 0) {
+            player.gainFood(bonus);
+        } else if (board.getTurnOrderTile().isLastSlot(nextSlot)) {
+            if (player.getFood() > 0)
+                player.payFood(1);
+            else
+                player.losePP(2);
+        }
+    }
+
     /**
      * This method use 2 local list to pick every event into the lowerRow. Sustenance are divided by
      * other type of event because sustenance has to be resolved at the end, after all others events.

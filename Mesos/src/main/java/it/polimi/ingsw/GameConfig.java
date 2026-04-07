@@ -35,5 +35,6 @@ public abstract class GameConfig {
     public abstract Map<EraEnum,Integer> getBuildingCardsPerEra();
     public abstract List<OfferTile> getOfferTiles();
     public abstract int getNumPlayers();
+    public abstract int[] getFoodBonuses();
 
 }

@@ -35,5 +35,11 @@ public class GameConfig3 extends GameConfig {
     public int getNumPlayers() {
         return 3;
     }
+
+    //the last player lose 1 food or 2 PP
+    @Override
+    public int[] getFoodBonuses() {
+        return new int[]{2 , 0 , -1};
+    }
 }
 
