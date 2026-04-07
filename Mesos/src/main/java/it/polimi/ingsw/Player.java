@@ -17,12 +17,11 @@ public class Player {
     private int food;
     private int prestigePoints;
     private int countShamanStar;
-    private int gatherersCount;
     private int totalFoodDiscountBuilder;
-    private int huntersCount;
-    private int artistCount;
     private int distinctInventorsIcon;
     private int completedSetsCount;
+    private int endGameBuilderPP;
+    private int totalBuildingsPP;
 
     /**
      * constructor
@@ -40,16 +39,6 @@ public class Player {
         this.tribe.put(CharacterEnum.ARTIST, new ArrayList<>());
         this.tribe.put(CharacterEnum.INVENTOR, new ArrayList<>());
         this.buildings = new ArrayList<>();
-    }
-
-    /**
-     * this method will add the character that a player draw from board
-     * @param card
-     */
-    public void addCharacterCard(CharacterCard card){
-        /* with sublists model for tribe we should eliminate this method and handle adding of a character in
-        *  each character class with an overrided method:
-        card.addToPlayerTribe(player) */
     }
 
     /**
@@ -101,20 +90,8 @@ public class Player {
         return countShamanStar;
     }
 
-    public int getGatherersCount(){
-        return gatherersCount;
-    }
-
     public int getTotalFoodDiscountBuilder(){
         return totalFoodDiscountBuilder;
-    }
-
-    public int getHuntersCount(){
-        return huntersCount;
-    }
-
-    public int getArtistCount(){
-        return artistCount;
     }
 
     public int getDistinctInventorsIcon(){
@@ -125,16 +102,20 @@ public class Player {
         return completedSetsCount;
     }
 
+    public int getEndGameBuilderPP(){
+        return endGameBuilderPP;
+    }
+
+    public int getTotalBuildingsPP(){
+        return totalBuildingsPP;
+    }
+
     /**
      * when a player draw a shaman countShamanStar will be update using the number of star on the specific card
      * @param numStar
      */
     public void updateTotalStarCount(int numStar){
         countShamanStar += numStar;
-    }
-
-    public void updateGatherersCount(){
-        gatherersCount++;
     }
 
     /**
@@ -145,19 +126,19 @@ public class Player {
         totalFoodDiscountBuilder += discountBuilder;
     }
 
-    public void updateHuntersCount(){
-        huntersCount++;
-    }
-
-    public void updateArtistCount(){
-        artistCount++;
-    }
-
     public void updateDistinctInventorsIcon(){
         distinctInventorsIcon++;
     }
 
     public void updateCompletedSetsCount(){
         completedSetsCount++;
+    }
+
+    public void updateEndGameBuilderPP(int PP){
+        endGameBuilderPP += PP;
+    }
+
+    public void updateTotalBuildingsPP(int PP){
+        totalBuildingsPP += PP;
     }
 }
