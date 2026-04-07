@@ -13,4 +13,3 @@ public abstract class Card {
     public EraEnum getEra() {
         return era;
     }
-}
