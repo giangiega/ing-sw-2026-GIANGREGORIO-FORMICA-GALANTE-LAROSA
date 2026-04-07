@@ -41,8 +41,10 @@ public class OfferTile {
      * this method remove from board the cards chosen by the player on the OfferTile, and add these in the player's tribe or player's buildings
      * @param player
      * @param board
-     * @param indexUpperChosenCards: these are indexes of the upperRow's cards chosen by the player
-     * @param indexLowerChosenCards: these are indexes of the lowerRow's cards chosen by the player
+     * @param indexUpperChosenCards: these are indexes of the upperRow's CharacterCards chosen by the player
+     * @param indexLowerChosenCards: these are indexes of the lowerRow's CharacterCards chosen by the player
+     * @param indexUpperChosenBuildings: these are indexes of the upperRow's BuildingsCards chosen by the player
+     * @param indexLowerChosenBuildings: these are indexes of the lowerRow's BuildingsCards chosen by the player
      */
     public void playerMove(Player player, Board board, List<Integer> indexUpperChosenCards, List<Integer> indexLowerChosenCards, List<Integer> indexUpperChosenBuildings, List<Integer> indexLowerChosenBuildings) throws InvalidPlayerActionException{
         if(!indexUpperChosenCards.isEmpty()) {
@@ -54,7 +56,7 @@ public class OfferTile {
                 else if (board.getUpperRow().get(i) instanceof CharacterCard) {
                     CharacterCard chosenCard = (CharacterCard) board.getUpperRow().get(i);
                     board.getUpperRow().remove(i);
-                    //chosenCard.addToPlayerTribe(player);
+                    player.addCharacterCard(chosenCard, board);
                 }
             }
         }
@@ -67,7 +69,7 @@ public class OfferTile {
                 else if (board.getLowerRow().get(i) instanceof CharacterCard) {
                     CharacterCard chosenCard = (CharacterCard) board.getLowerRow().get(i);
                     board.getLowerRow().remove(i);
-                    //chosenCard.addToPlayerTribe(player);
+                    player.addCharacterCard(chosenCard, board);
                 }
             }
         }
@@ -77,7 +79,7 @@ public class OfferTile {
             for (Integer i : indexUpperChosenBuildings) {
                 BuildingCard chosenCard = board.getBuildingUpperRow().get(i);
                 board.getBuildingUpperRow().remove(i);
-                player.getBuildingCards().add(chosenCard);
+                player.addBuildingCard(chosenCard);
             }
         }
         if(!indexLowerChosenBuildings.isEmpty()) {
@@ -86,7 +88,7 @@ public class OfferTile {
             for (Integer i : indexLowerChosenBuildings) {
                 BuildingCard chosenCard = board.getBuildingLowerRow().get(i);
                 board.getBuildingLowerRow().remove(i);
-                player.getBuildingCards().add(chosenCard);
+                player.addBuildingCard(chosenCard);
             }
         }
     }
