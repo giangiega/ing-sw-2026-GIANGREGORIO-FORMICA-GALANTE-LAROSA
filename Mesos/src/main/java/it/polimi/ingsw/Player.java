@@ -110,7 +110,7 @@ public class Player {
         return completedSetsCount;
     }
 
-    public int getEndGameBuilderPP(){
+    public int getEndGameBuildersPP(){
         return endGameBuilderPP;
     }
 
