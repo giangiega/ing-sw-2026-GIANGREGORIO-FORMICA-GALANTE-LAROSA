@@ -19,6 +19,7 @@ public class Player {
     private int countShamanStar;
     private int totalFoodDiscountBuilder;
     private int distinctInventorsIcon;
+    private int coupleSameInventors;
     private int completedSetsCount;
     private int endGameBuilderPP;
     private int totalBuildingsPP;
@@ -106,6 +107,10 @@ public class Player {
         return distinctInventorsIcon;
     }
 
+    public int getCoupleSameInventors(){
+        return coupleSameInventors;
+    }
+
     public int getCompletedSetsCount(){
         return completedSetsCount;
     }
@@ -136,6 +141,10 @@ public class Player {
 
     public void updateDistinctInventorsIcon(){
         distinctInventorsIcon++;
+    }
+
+    public void updateCoupleSameInventors(){
+        coupleSameInventors++;
     }
 
     public void updateCompletedSetsCount(){
