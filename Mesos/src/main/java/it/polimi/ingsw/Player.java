@@ -17,6 +17,7 @@ public class Player {
     private int food;
     private int prestigePoints;
     private int countShamanStar;
+    private int effectiveStars;
     private int totalFoodDiscountBuilder;
     private int distinctInventorsIcon;
     private int coupleSameInventors;
@@ -136,6 +137,7 @@ public class Player {
      */
     public void updateTotalStarCount(int numStar){
         countShamanStar += numStar;
+        effectiveStars += numStar;
     }
 
     /**
@@ -165,4 +167,20 @@ public class Player {
     public void updateTotalBuildingsPP(int PP){
         totalBuildingsPP += PP;
     }
+    /**
+     * @author Giuse
+     * @param extraStars : number of extra stars given to the player
+     * this method gives the player 3 extra stars to the player
+     */
+    public void setEffectiveStars(int extraStars){
+        effectiveStars = effectiveStars + extraStars;
+    }
+    /**
+     * @author Giuse
+     * @return effectiveStars : number of stars of the player considering the eventual bonuses
+     */
+    public int getEffectiveStars(){
+        return effectiveStars;
+    }
 }
+

@@ -22,14 +22,22 @@ public class EventShamanRitual extends EventCard {
     @Override
     public void resolve(List<Player> players, Board board) {
         //Finding losers and winners
-        int minStars = players.get(0).getEffectiveShamanStars();
-        int maxStars = players.get(0).getEffectiveShamanStars();
+        for(Player p : players){
+            List<BuildingCard> buildings = p.getBuildingCards();
+            for (BuildingCard b : buildings){
+                if(b.getEffect() instanceof BuildingBonusStarShaman bonus){
+                    bonus.applyEventShaman(p, board);
+                }
+            }
+        }
+        int minStars = players.get(0).getEffectiveStars();
+        int maxStars = players.get(0).getEffectiveStars();
         int playerStars;
         List <Player> winners = new ArrayList<>();
         List <Player> losers = new ArrayList<>();
 
         for (Player p : players) {
-            playerStars = p.getEffectiveShamanStars();
+            playerStars = p.getEffectiveStars();
             if (playerStars < minStars) {
                 minStars = playerStars;
             }
@@ -38,7 +46,7 @@ public class EventShamanRitual extends EventCard {
             }
         }
         for (Player p : players){
-            playerStars = p.getEffectiveShamanStars();
+            playerStars = p.getEffectiveStars();
             if (playerStars == minStars) {
                 losers.add(p);
             }
@@ -50,13 +58,17 @@ public class EventShamanRitual extends EventCard {
         for(Player p : losers){
             p.losePP(lostPP);
             for(BuildingCard c : p.getBuildingCards()){
-                c.getEffect().applyEventShaman(p, board);
+                if(c.getEffect() instanceof BuildingSaveShamanPP save){
+                    save.applyEventShaman(p, board);
+                }
             }
         }
         for(Player p : winners){
             p.gainPP(gainedPP);
             for(BuildingCard c : p.getBuildingCards()){
-                c.getEffect().applyEventShaman(p, board);
+                if(c.getEffect() instanceof BuildingBonusDoubleShamanPP bonus) {
+                    bonus.applyEventShaman(p, board);
+                }
             }
         }
     }
