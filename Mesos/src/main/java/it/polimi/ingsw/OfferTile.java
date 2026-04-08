@@ -45,6 +45,8 @@ public class OfferTile {
     public void setOccupant(Player occupant) {
         this.occupant = occupant;
         this.isFree = false;
+        if(occupant == null)
+            this.isFree = true;
     }
 
     /**

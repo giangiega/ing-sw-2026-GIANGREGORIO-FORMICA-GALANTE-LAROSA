@@ -28,6 +28,14 @@ public class Game {
         return currentRound;
     }
 
+    /**
+     * called for each player in TurnOrderTile, from the top to the bottom.
+     * The totem moves to a free chosen OfferTile
+     * @author Ric
+     * @param player that has a totem on OfferTile
+     * @param tile from A to G
+     * @throws InvalidPlayerActionException
+     */
     public void placeTotem(Player player, OfferTile tile) throws InvalidPlayerActionException {
         if (!tile.getFreeOfferTile())
             throw new InvalidPlayerActionException("OfferTile is occupied by a player");
@@ -35,13 +43,34 @@ public class Game {
         tile.setOccupant(player);
         }
 
-    /*public void resolveAction(Player player, OfferTile tile,
+
+    /**
+     * called for each player in an OfferTile, from left to right.
+     * The lists as parameters indicates the cards taken from the rows by the player.
+     * playerMove() moves this cards into the player's tribe or buildings.
+     * Then I unplace the totem, that returns onto the OferTile
+     */
+    public void resolveAction( OfferTile tile,
                               List<Integer> upperCards, List<Integer> lowerCards,
                               List<Integer> upperBuildings, List<Integer> lowerBuildings)
             throws InvalidPlayerActionException {
+        Player player = tile.getOccupant();
+        if(player == null)
+            throw new InvalidPlayerActionException("OfferTile is not occupied by any player");
+        if (upperCards.size() > tile.getCountUpperArrow())
+            throw new InvalidPlayerActionException("Too many upper cards chosen");
+        if (lowerCards.size() > tile.getCountLowerArrow())
+            throw new InvalidPlayerActionException("Too many lower cards chosen");
 
-    }*/
+        tile.playerMove(player, board, upperCards, lowerCards, upperBuildings, lowerBuildings);
+        tile.setOccupant(null);
+        unplaceTotem(player);
+    }
 
+    /**
+     * called at the end of resolveAction(), moves the totem to the first free TurnOrderTile slot.
+     * If the slot has a food bonus, the player gains food immediately, same for malus.
+     */
     public void unplaceTotem(Player player) {
         int nextSlot = board.getTurnOrderTile().getOrder().indexOf(player);
         board.getTurnOrderTile().totemIn(player);
