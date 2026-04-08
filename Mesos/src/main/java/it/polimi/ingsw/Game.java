@@ -55,14 +55,19 @@ public class Game {
                               List<Integer> upperBuildings, List<Integer> lowerBuildings)
             throws InvalidPlayerActionException {
         Player player = tile.getOccupant();
-        if(player == null)
+        if (player == null)
             throw new InvalidPlayerActionException("OfferTile is not occupied by any player");
-        if (upperCards.size() > tile.getCountUpperArrow())
-            throw new InvalidPlayerActionException("Too many upper cards chosen");
-        if (lowerCards.size() > tile.getCountLowerArrow())
-            throw new InvalidPlayerActionException("Too many lower cards chosen");
 
-        tile.playerMove(player, board, upperCards, lowerCards, upperBuildings, lowerBuildings);
+        if (tile.getLetter() == 'A') {
+            player.gainFood(3);
+        } else {
+            if (upperCards.size() > tile.getCountUpperArrow())
+                throw new InvalidPlayerActionException("Too many upper cards chosen");
+            if (lowerCards.size() > tile.getCountLowerArrow())
+                throw new InvalidPlayerActionException("Too many lower cards chosen");
+            tile.playerMove(player, board, upperCards, lowerCards, upperBuildings, lowerBuildings);
+        }
+
         tile.setOccupant(null);
         unplaceTotem(player);
     }
