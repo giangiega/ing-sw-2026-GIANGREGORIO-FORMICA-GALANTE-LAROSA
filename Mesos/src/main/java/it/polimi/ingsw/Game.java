@@ -142,7 +142,7 @@ public class Game {
      */
     public Map<Player,Integer> calculateFinalScores() {
         Map<Player,Integer> scores = new HashMap<>();
-        /// ////////aggiornamento dei punti a fine partita: i building danno punti////////
+        /// ////////aggiornamento dei   punti a fine partita: i building danno punti////////
         for(Player p : players){
             for(BuildingCard c : p.getBuildingCards()){
                 c.getEffect().applyEndGame(p, board);
