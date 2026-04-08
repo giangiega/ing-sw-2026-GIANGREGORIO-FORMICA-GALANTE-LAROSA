@@ -33,7 +33,6 @@ public class Inventor extends CharacterCard {
         }
         player.getCharacterByType(CharacterEnum.INVENTOR).add(this);
 
-        triggerBuildingEffect(player,board);
     }
 
 

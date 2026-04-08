@@ -16,7 +16,7 @@ public class Artist extends CharacterCard{
     @Override
     public void AddToPlayerTribe(Player player, Board board){
         player.getCharacterByType(CharacterEnum.ARTIST).add(this);
-        triggerBuildingEffect(player,board);
+
 
     }
 }

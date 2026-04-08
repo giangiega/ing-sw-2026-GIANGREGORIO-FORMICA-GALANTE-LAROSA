@@ -20,7 +20,7 @@ public class Shaman extends CharacterCard{
     public void AddToPlayerTribe(Player player, Board board){
         player.getCharacterByType(CharacterEnum.SHAMAN).add(this);
         player.updateTotalStarCount(this.StarCount);
-        triggerBuildingEffect(player,board);
+
 
     }
     public int getStarCount()

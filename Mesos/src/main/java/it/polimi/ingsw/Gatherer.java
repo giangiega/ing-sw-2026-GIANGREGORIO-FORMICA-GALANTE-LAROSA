@@ -16,7 +16,6 @@ public class Gatherer extends CharacterCard{
     @Override
     public void AddToPlayerTribe(Player player, Board board){
         player.getCharacterByType(CharacterEnum.GATHERER).add(this);
-        triggerBuildingEffect(player,board);
 
     }
 }
