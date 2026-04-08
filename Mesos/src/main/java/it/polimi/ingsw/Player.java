@@ -182,5 +182,20 @@ public class Player {
     public int getEffectiveStars(){
         return effectiveStars;
     }
+
+    /**
+     * @author Daniele
+     * @return the total amount of the characters in the tribe
+     */
+    public int getTotalCharactersCount(){
+        int totalCharactersCount = 0;
+
+        for(List<CharacterCard> cards: tribe.values()){
+            totalCharactersCount += cards.size();
+        }
+
+        return totalCharactersCount;
+
+    }
 }
 
