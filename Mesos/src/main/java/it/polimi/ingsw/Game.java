@@ -148,6 +148,7 @@ public class Game {
                 c.getEffect().applyEndGame(p, board);
             }
         }
+        int t = 0;///inutile
         for(Player p : players) {
             int points = p.getPP();
             points += p.getEndGameBuildersPP();
