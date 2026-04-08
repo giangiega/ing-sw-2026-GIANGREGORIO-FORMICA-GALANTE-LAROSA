@@ -78,6 +78,12 @@ public class Game {
         int bonus = board.getTurnOrderTile().getFoodBonusForSlot(nextSlot);
         if (bonus > 0) {
             player.gainFood(bonus);
+            ///  Aggiunta per totem////////////////////////////////////////////////////
+            for (BuildingCard c : player.getBuildingCards()) {
+                if(c.getEffect() instanceof BuildingBonusTotem){
+                    c.getEffect().applyEndTurn(player, board);
+                }
+            }
         } else if (board.getTurnOrderTile().isLastSlot(nextSlot)) {
             if (player.getFood() > 0)
                 player.payFood(1);
@@ -131,6 +137,12 @@ public class Game {
      */
     public Map<Player,Integer> calculateFinalScores() {
         Map<Player,Integer> scores = new HashMap<>();
+        /// ////////aggiornamento dei punti a fine partita: i building danno punti////////
+        for(Player p : players){
+            for(BuildingCard c : p.getBuildingCards()){
+                c.getEffect().applyEndGame(p, board);
+            }
+        }
         for(Player p : players) {
             int points = p.getPP();
             points += p.getEndGameBuildersPP();
