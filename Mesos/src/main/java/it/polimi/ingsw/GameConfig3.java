@@ -36,10 +36,10 @@ public class GameConfig3 extends GameConfig {
         return 3;
     }
 
-    //the last player lose 1 food or 2 PP
+    //the last player lose 1 food or 2 PP, already managed in unplaceTotem(), with isLastSlot()
     @Override
     public int[] getFoodBonuses() {
-        return new int[]{2 , 0 , -1};
+        return new int[]{2 , 0 , 0};
     }
 }
 

@@ -72,7 +72,7 @@ public class Game {
      * If the slot has a food bonus, the player gains food immediately, same for malus.
      */
     public void unplaceTotem(Player player) {
-        int nextSlot = board.getTurnOrderTile().getOrder().indexOf(player);
+        int nextSlot = board.getTurnOrderTile().getOrder().size();
         board.getTurnOrderTile().totemIn(player);
 
         int bonus = board.getTurnOrderTile().getFoodBonusForSlot(nextSlot);

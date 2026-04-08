@@ -42,10 +42,14 @@ public class OfferTile {
         return occupant;
     }
 
+    public boolean getFreeOfferTile(){
+        return isFree;
+    }
+
     public void setOccupant(Player occupant) {
         this.occupant = occupant;
         this.isFree = false;
-        if(occupant == null)
+        if (occupant == null)
             this.isFree = true;
     }
 
@@ -105,11 +109,4 @@ public class OfferTile {
         }
     }
 
-    public boolean getFreeOfferTile(){
-        return isFree;
-    }
-
-    public void setFreeOfferTile(boolean b){
-        this.isFree = b;
-    }
 }
