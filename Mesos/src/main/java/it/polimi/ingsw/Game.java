@@ -57,7 +57,7 @@ public class Game {
         Player player = tile.getOccupant();
         if (player == null)
             throw new InvalidPlayerActionException("OfferTile is not occupied by any player");
-
+            //verificare funzionamento eccezione
         if (tile.getLetter() == 'A') {
             player.gainFood(3);
         } else {
@@ -83,7 +83,6 @@ public class Game {
         int bonus = board.getTurnOrderTile().getFoodBonusForSlot(nextSlot);
         if (bonus > 0) {
             player.gainFood(bonus);
-            ///  Aggiunta per totem////////////////////////////////////////////////////
             for (BuildingCard c : player.getBuildingCards()) {
                 if(c.getEffect() instanceof BuildingBonusTotem){
                     c.getEffect().applyEndTurn(player, board);
@@ -127,7 +126,9 @@ public class Game {
 
         for(Player p : players){
             for(BuildingCard c : p.getBuildingCards()){
-                c.getEffect().applyEndTurn(p, board);
+                if(c.getEffect() instanceof BuildingCardUpperRow) {
+                    c.getEffect().applyEndTurn(p, board);
+                }
             }
         }
 
