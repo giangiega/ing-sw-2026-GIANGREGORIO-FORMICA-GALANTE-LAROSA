@@ -34,7 +34,7 @@ public class Game {
      * @author Ric
      * @param player that has a totem on OfferTile
      * @param tile from A to G
-     * @throws InvalidPlayerActionException
+     * @throws InvalidPlayerActionException : player error
      */
     public void placeTotem(Player player, OfferTile tile) throws InvalidPlayerActionException {
         if (!tile.getFreeOfferTile())
@@ -76,7 +76,7 @@ public class Game {
      * called at the end of resolveAction(), moves the totem to the first free TurnOrderTile slot.
      * If the slot has a food bonus, the player gains food immediately, same for malus.
      */
-    public void unplaceTotem(Player player) {
+    public void unplaceTotem(Player player) throws InvalidPlayerActionException {
         int nextSlot = board.getTurnOrderTile().getOrder().size();
         board.getTurnOrderTile().totemIn(player);
 
@@ -127,7 +127,9 @@ public class Game {
         for(Player p : players){
             for(BuildingCard c : p.getBuildingCards()){
                 if(c.getEffect() instanceof BuildingCardUpperRow) {
-                    c.getEffect().applyEndTurn(p, board);
+                    try{
+                        c.getEffect().applyEndTurn(p, board);
+                    }catch(InvalidPlayerActionException e){}
                 }
             }
         }
