@@ -44,7 +44,7 @@ public class Player {
     }
 
     public void addCharacterCard(CharacterCard card, Board board){
-        //card.addToPlayerTribe(this);
+        card.AddToPlayerTribe(this, board);
         for(BuildingCard b: buildings){
             b.getEffect().applyOnCardAdded(this, board);
         }
