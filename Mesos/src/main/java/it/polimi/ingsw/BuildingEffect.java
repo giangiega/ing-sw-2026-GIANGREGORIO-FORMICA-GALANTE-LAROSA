@@ -38,7 +38,7 @@ public abstract class BuildingEffect {
      * @param b : state of the board
      * This method is called at the end of a turn
      */
-    public void applyEndTurn(Player p, Board b){}
+    public void applyEndTurn(Player p, Board b){} //turn means round
     /**
      * @param p : player who has this building card
      * @param b : state of the board

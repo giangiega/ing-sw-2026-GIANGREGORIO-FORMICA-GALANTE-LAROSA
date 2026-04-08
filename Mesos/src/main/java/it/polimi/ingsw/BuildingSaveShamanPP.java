@@ -4,12 +4,13 @@ package it.polimi.ingsw;
  */
 public class BuildingSaveShamanPP extends BuildingEffect {
     private int lostPP;
+
     /**
-     * this is the constructor of the class
-     * @param lostPP : must be the exact amount of pp lost during the event "Shaman Ritual"
+     * @param PP : amount of PP lost by losing the event "Shaman Ritual"
+     * this method updates lostPP
      */
-    public BuildingSaveShamanPP(int lostPP) {
-        this.lostPP = lostPP;
+    public void setLostPP(int PP){
+        this.lostPP = PP;
     }
     /**
      *@param p : player who has this building card

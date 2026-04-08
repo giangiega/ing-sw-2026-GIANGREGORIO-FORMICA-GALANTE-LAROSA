@@ -59,6 +59,7 @@ public class EventShamanRitual extends EventCard {
             p.losePP(lostPP);
             for(BuildingCard c : p.getBuildingCards()){
                 if(c.getEffect() instanceof BuildingSaveShamanPP save){
+                    save.setLostPP(lostPP);
                     save.applyEventShaman(p, board);
                 }
             }
@@ -67,6 +68,7 @@ public class EventShamanRitual extends EventCard {
             p.gainPP(gainedPP);
             for(BuildingCard c : p.getBuildingCards()){
                 if(c.getEffect() instanceof BuildingBonusDoubleShamanPP bonus) {
+                    bonus.setGainedPP(gainedPP);
                     bonus.applyEventShaman(p, board);
                 }
             }

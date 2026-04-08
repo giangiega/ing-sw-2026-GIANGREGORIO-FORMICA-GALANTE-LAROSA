@@ -4,12 +4,13 @@ package it.polimi.ingsw;
  */
 public class BuildingBonusDoubleShamanPP extends BuildingEffect{
     private int gainedPP;
+
     /**
-     * this is the constructor of the class
-     * @param gainedPP : must be the exact amount of pp gained during the event "Shaman Ritual"
+     * @param PP : amount of PP won by winning the event "Shaman Ritual"
+     * this method updates gainedPP
      */
-    public  BuildingBonusDoubleShamanPP(int gainedPP){
-        this.gainedPP=gainedPP;
+    public void setGainedPP(int PP){
+        this.gainedPP = PP;
     }
     /**
      *@param p : player who has this building card
