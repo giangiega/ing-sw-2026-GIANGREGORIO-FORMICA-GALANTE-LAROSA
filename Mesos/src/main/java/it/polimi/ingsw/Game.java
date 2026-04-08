@@ -125,6 +125,12 @@ public class Game {
             }
         }
 
+        for(Player p : players){
+            for(BuildingCard c : p.getBuildingCards()){
+                c.getEffect().applyEndTurn(p, board);
+            }
+        }
+
         for(EventCard event : others)
             event.resolve(players, board);
         for(EventCard s : sustenances)
@@ -139,16 +145,16 @@ public class Game {
      * has to be called only when currentRound == 10 , and before getWinner()
      * PP from eventual effects of the last round events are not calculated in this method,
      * so they have to be resolved before calling calculateFinalScores() and getWinner()
+     * Buildings that modify PP or in general every building which effect has to be shown at the end
+     * of the game are resolved here, before than the final score calculation.
      */
     public Map<Player,Integer> calculateFinalScores() {
         Map<Player,Integer> scores = new HashMap<>();
-        /// ////////aggiornamento dei   punti a fine partita: i building danno punti////////
         for(Player p : players){
             for(BuildingCard c : p.getBuildingCards()){
                 c.getEffect().applyEndGame(p, board);
             }
         }
-        int t = 0;///inutile
         for(Player p : players) {
             int points = p.getPP();
             points += p.getEndGameBuildersPP();
@@ -167,7 +173,7 @@ public class Game {
      *
      */
     public List<Player> getWinner() {
-        Player winner = players.get(0);
+        Player winner = players.getFirst();
         Map<Player,Integer> scores = calculateFinalScores();
 
         for(int i = 1; i < players.size(); i++) {
