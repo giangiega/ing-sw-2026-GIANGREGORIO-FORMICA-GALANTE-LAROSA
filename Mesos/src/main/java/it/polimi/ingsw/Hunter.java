@@ -28,7 +28,6 @@ public class Hunter extends CharacterCard{
         numHunters = player.getCharacterByType(CharacterEnum.HUNTER).size();
         player.gainFood(numHunters);
     }
-    triggerBuildingEffect(player,board);
     }
     public boolean getHunt(){
         return hunt;

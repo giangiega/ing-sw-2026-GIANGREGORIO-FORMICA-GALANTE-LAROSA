@@ -10,11 +10,6 @@ public abstract class CharacterCard extends TribeCard {
 
    public abstract void AddToPlayerTribe(Player player, Board board);
 
-    protected void triggerBuildingEffect(Player player, Board board){
-        for(BuildingCard b : player.getBuildingCards()){
-            b.getEffect().applyOnCardAdded(player, board);
-        }
-    }
 }
 
 

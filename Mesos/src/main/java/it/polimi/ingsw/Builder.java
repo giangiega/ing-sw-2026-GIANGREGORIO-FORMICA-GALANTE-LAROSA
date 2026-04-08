@@ -22,7 +22,7 @@ public class Builder extends CharacterCard {
     public void AddToPlayerTribe(Player player, Board board){
         player.getCharacterByType(CharacterEnum.BUILDER).add(this);
         player.updateTotalFoodDiscountBuilder(this.wingCount);
-        triggerBuildingEffect(player,board);
+
 
     }
 

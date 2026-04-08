@@ -44,7 +44,7 @@ public class Player {
     }
 
     public void addCharacterCard(CharacterCard card, Board board){
-        //card.addToPlayerTribe(this);
+        card.AddToPlayerTribe(this, board);
         for(BuildingCard b: buildings){
             b.getEffect().applyOnCardAdded(this, board);
         }
@@ -181,6 +181,21 @@ public class Player {
      */
     public int getEffectiveStars(){
         return effectiveStars;
+    }
+
+    /**
+     * @author Daniele
+     * @return the total amount of the characters in the tribe
+     */
+    public int getTotalCharactersCount(){
+        int totalCharactersCount = 0;
+
+        for(List<CharacterCard> cards: tribe.values()){
+            totalCharactersCount += cards.size();
+        }
+
+        return totalCharactersCount;
+
     }
 }
 

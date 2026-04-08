@@ -12,6 +12,12 @@ public class EventHunt extends EventCard {
         this.ppPerHunter = ppPerHunter;
     }
 
+    /**
+     * this method will scroll through the list of players and based on the possible building of a player , it will
+     * change the quantity of food and PP gained by that specific player
+     * @param players
+     * @param board
+     */
     @Override
     public void resolve(List<Player> players, Board board) {
 
@@ -31,13 +37,3 @@ public class EventHunt extends EventCard {
     }
 }
 
-/**
- * Prendete 1 Cibo e guadagnate i Punti Prestigio
- * indicati sulla carta Evento per ogni Cacciatore
- * nella vostra tribù (nell’esempio illustrato qui a
- * sinistra, 2 PP per ogni Cacciatore).
- *
- * Durante l’Evento Caccia, per ogni Cacciatore
- * nella vostra tribù, prendete 1 Cibo e
- * guadagnate 1 Punto Prestigio addizionali
- */
