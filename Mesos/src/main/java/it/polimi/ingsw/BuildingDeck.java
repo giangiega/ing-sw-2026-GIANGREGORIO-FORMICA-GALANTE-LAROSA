@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Collections;
 
 /**
- * building deck of a specific era
+ * building deck of a specific era, decks must be shuffled in buildBuildingsDeck (CardFactory class)
  * @author Ale
  */
 public class BuildingDeck {
@@ -19,13 +19,6 @@ public class BuildingDeck {
     public BuildingDeck(EraEnum era){
         this.cards = new ArrayList<>();
         this.era = era;
-    }
-
-    /**
-     * shuffle BuildingDeck
-     */
-    public void shuffle(){
-        Collections.shuffle(cards);
     }
 
     /**
