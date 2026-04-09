@@ -28,6 +28,16 @@ public class Game {
         return currentRound;
     }
 
+    public void startGame() {
+        Collections.shuffle(players); // player's casual order
+
+        for (int i = 0; i < players.size(); i++) {
+            Player p =  players.get(i);
+            p.gainFood(config.getInitialFood(i+1)); // i = 0 match pos = 1 in getInitialFood()
+            board.getTurnOrderTile().totemIn(p);
+        }
+    }
+
     /**
      * called for each player in TurnOrderTile, from the top to the bottom.
      * The totem moves to a free chosen OfferTile
@@ -145,13 +155,14 @@ public class Game {
     }
 
     /**
-     * has to be called only when currentRound == 10 , and before getWinner()
+     * NEVER CALL THIS METHOD, already called inside getWinner() bc is private.
      * PP from eventual effects of the last round events are not calculated in this method,
      * so they have to be resolved before calling calculateFinalScores() and getWinner()
      * Buildings that modify PP or in general every building which effect has to be shown at the end
      * of the game are resolved here, before than the final score calculation.
+     *
      */
-    public Map<Player,Integer> calculateFinalScores() {
+    private Map<Player,Integer> calculateFinalScores() {
         Map<Player,Integer> scores = new HashMap<>();
         for(Player p : players){
             for(BuildingCard c : p.getBuildingCards()){
@@ -173,7 +184,8 @@ public class Game {
     /**
      * this method returns a list of players bc it has to manage the case of draw between 2 players.
      * When 2 players have equals PP and food, they both win, so getWinner() has to return them both.
-     *
+     * UPDATE : calculateFinalScores() is now private. At the end, only getWinner() is called.
+     * calculateFinalScores() is already called inside getWinner() , safer solution.
      */
     public List<Player> getWinner() {
         Player winner = players.getFirst();
