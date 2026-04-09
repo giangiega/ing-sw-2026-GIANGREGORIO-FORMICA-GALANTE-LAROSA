@@ -4,12 +4,23 @@ package it.polimi.ingsw;
  */
 
 public abstract class CharacterCard extends TribeCard {
-    public CharacterCard(EraEnum era){
+    private final int numPlayers;
+
+    /**
+     * constructor
+     * @param era
+     * @param numPlayers: this is the minimum number of players for the card
+     */
+    public CharacterCard(EraEnum era, int numPlayers){
         super(era);
+        this.numPlayers = numPlayers;
     }
 
    public abstract void AddToPlayerTribe(Player player, Board board);
 
+    public int getNumPlayers(){
+        return numPlayers;
+    }
 }
 
 
