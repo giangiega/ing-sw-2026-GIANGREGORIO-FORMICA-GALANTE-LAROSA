@@ -4,8 +4,8 @@ package it.polimi.ingsw;
  */
 public class Artist extends CharacterCard{
 
-    public Artist(EraEnum era) {
-        super(era);
+    public Artist(EraEnum era, int numPlayers) {
+        super(era, numPlayers);
     }
 
     /**

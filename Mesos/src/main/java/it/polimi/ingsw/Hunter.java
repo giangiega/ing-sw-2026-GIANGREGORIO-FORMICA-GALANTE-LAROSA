@@ -6,8 +6,8 @@ public class Hunter extends CharacterCard{
 
     private final boolean hunt;
 
-    public Hunter(EraEnum era, boolean hunt) {
-        super(era);
+    public Hunter(EraEnum era, int numPlayers, boolean hunt) {
+        super(era, numPlayers);
         this.hunt = hunt;
 
     }

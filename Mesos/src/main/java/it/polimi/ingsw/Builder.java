@@ -6,8 +6,8 @@ public class Builder extends CharacterCard {
     private int wingCount;
     private int endGamePP;
 
-    public Builder(EraEnum era, int wingCount, int endGamePP) {
-        super(era);
+    public Builder(EraEnum era, int numPlayers, int wingCount, int endGamePP) {
+        super(era, numPlayers);
         this.wingCount = wingCount;
         this.endGamePP = endGamePP;
     }

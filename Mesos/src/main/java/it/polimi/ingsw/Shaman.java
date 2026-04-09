@@ -5,8 +5,8 @@ package it.polimi.ingsw;
 public class Shaman extends CharacterCard{
     private final int StarCount;
 
-    public Shaman(EraEnum era, int StarCount) {
-        super(era);
+    public Shaman(EraEnum era, int numPlayers, int StarCount) {
+        super(era, numPlayers);
         this.StarCount = StarCount;
     }
 

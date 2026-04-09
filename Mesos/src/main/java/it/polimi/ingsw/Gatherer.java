@@ -4,8 +4,8 @@ package it.polimi.ingsw;
  */
 public class Gatherer extends CharacterCard{
 
-    public Gatherer(EraEnum era) {
-        super(era);
+    public Gatherer(EraEnum era, int numPlayers) {
+        super(era, numPlayers);
     }
 
     /**

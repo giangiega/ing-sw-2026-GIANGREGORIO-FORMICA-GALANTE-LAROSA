@@ -6,8 +6,8 @@ package it.polimi.ingsw;
 public class Inventor extends CharacterCard {
     private final IconEnum iconType;
 
-    public Inventor(EraEnum era, IconEnum iconType) {
-        super(era);
+    public Inventor(EraEnum era, int numPlayers, IconEnum iconType) {
+        super(era, numPlayers);
         this.iconType = iconType;
     }
     public IconEnum getIconType()
