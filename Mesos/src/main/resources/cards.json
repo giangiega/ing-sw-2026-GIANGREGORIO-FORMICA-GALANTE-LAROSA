@@ -1,0 +1,500 @@
+{
+  "CharacterCardEraI": [
+    {
+      "era": "I",
+      "numPlayer": 3,
+      "type": "HUNTER",
+      "hunt": false
+    },
+    {
+      "era": "I",
+      "numPlayer": 3,
+      "type": "HUNTER",
+      "hunt": false
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "HUNTER",
+      "hunt": true
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "HUNTER",
+      "hunt": false
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "HUNTER",
+      "hunt": true
+    },
+    {
+      "era": "I",
+      "numPlayer": 4,
+      "type": "INVENTOR",
+      "iconType": "BOWL"
+    },
+    {
+      "era": "I",
+      "numPlayer": 4,
+      "type": "INVENTOR",
+      "iconType": "STRAW"
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "POINTER"
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "BOAT"
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "BREAD"
+    },
+    {
+      "era": "I",
+      "numPlayer": 4,
+      "type": "INVENTOR",
+      "iconType": "KNOT"
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "LEATHER"
+    },
+    {
+      "era": "I",
+      "numPlayer": 3,
+      "type": "GATHERER"
+    },
+    {
+      "era": "I",
+      "numPlayer": 5,
+      "type": "GATHERER"
+    },
+    {
+      "era": "I",
+      "numPlayer":1,
+      "type": "GATHERER"
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "GATHERER"
+    },
+    {
+      "era": "I",
+      "numPlayer": 5,
+      "type": "BUILDER",
+      "wingCount": 2,
+      "endGamePP": 1
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "BUILDER",
+      "wingCount": 1,
+      "endGamePP": 3
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "BUILDER",
+      "wingCount": 1,
+      "endGamePP": 2
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "BUILDER",
+      "wingCount": 2,
+      "endGamePP": 0
+    },
+    {
+      "era": "I",
+      "numPlayer": 3,
+      "type": "ARTIST"
+    },
+    {
+      "era": "I",
+      "numPlayer": 4,
+      "type": "ARTIST"
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "ARTIST"
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "ARTIST"
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "ARTIST"
+    },
+    {
+      "era": "I",
+      "numPlayer": 4,
+      "type": "SHAMAN",
+      "starCount": 1
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "SHAMAN",
+      "starCount": 2
+    },
+    {
+      "era": "I",
+      "numPlayer": 1,
+      "type": "SHAMAN",
+      "starCount": 1
+    },
+    {
+      "era": "I",
+      "numPlayer": 5,
+      "type": "SHAMAN",
+      "starCount": 2
+    }
+  ],
+  "CharacterCardEraII": [
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "HUNTER",
+      "hunt": false
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "HUNTER",
+      "hunt": true
+    },
+    {
+      "era": "II",
+      "numPlayer": 5,
+      "type": "HUNTER",
+      "hunt": false
+    },
+    {
+      "era": "II",
+      "numPlayer": 4,
+      "type": "HUNTER",
+      "hunt": true
+    },
+    {
+      "era": "II",
+      "numPlayer": 3,
+      "type": "HUNTER",
+      "hunt": true
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "HUNTER",
+      "hunt": false
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "LEATHER"
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "KNOT"
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "BOWL"
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "STRAW"
+    },
+    {
+      "era": "II",
+      "numPlayer": 4,
+      "type": "INVENTOR",
+      "iconType": "HOOK"
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "DOLL"
+    },
+    {
+      "era": "II",
+      "numPlayer": 4,
+      "type": "GATHERER"
+    },
+    {
+      "era": "II",
+      "numPlayer": 3,
+      "type": "GATHERER"
+    },
+    {
+      "era": "II",
+      "numPlayer": 5,
+      "type": "GATHERER"
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "GATHERER"
+    },
+    {
+      "era": "II",
+      "numPlayer": 3,
+      "type": "BUILDER",
+      "wingCount": 1,
+      "endGamePP": 2
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "BUILDER",
+      "wingCount": 1,
+      "endGamePP": 4
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "BUILDER",
+      "wingCount": 2,
+      "endGamePP": 3
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "BUILDER",
+      "wingCount": 2,
+      "endGamePP": 1
+    },
+    {
+      "era": "II",
+      "numPlayer": 3,
+      "type": "ARTIST"
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "ARTIST"
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "ARTIST"
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "ARTIST"
+    },
+    {
+      "era": "II",
+      "numPlayer": 5,
+      "type": "SHAMAN",
+      "starCount": 2
+    },
+    {
+      "era": "II",
+      "numPlayer": 5,
+      "type": "SHAMAN",
+      "starCount": 1
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "SHAMAN",
+      "starCount": 2
+    },
+    {
+      "era": "II",
+      "numPlayer": 1,
+      "type": "SHAMAN",
+      "starCount": 2
+    }
+  ],
+  "CharacterCardIII": [
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "HUNTER",
+      "hunt": false
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "HUNTER",
+      "hunt": false
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "HUNTER",
+      "hunt": true
+    },
+    {
+      "era": "III",
+      "numPlayer": 5,
+      "type": "HUNTER",
+      "hunt": true
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "DOLL"
+    },
+    {
+      "era": "III",
+      "numPlayer": 4,
+      "type": "INVENTOR",
+      "iconType": "NECKLACE"
+    },
+    {
+      "era": "III",
+      "numPlayer": 3,
+      "type": "INVENTOR",
+      "iconType": "BOAT"
+    },
+    {
+      "era": "III",
+      "numPlayer": 3,
+      "type": "INVENTOR",
+      "iconType": "POINTER"
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "NECKLACE"
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "HOOK"
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "INVENTOR",
+      "iconType": "BREAD"
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "GATHERER"
+    },
+    {
+      "era": "III",
+      "numPlayer": 4,
+      "type": "GATHERER"
+    },
+    {
+      "era": "III",
+      "numPlayer": 5,
+      "type": "GATHERER"
+    },
+    {
+      "era": "III",
+      "numPlayer": 5,
+      "type": "BUILDER",
+      "wingCount": 1,
+      "endGamePP": 4
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "BUILDER",
+      "wingCount": 1,
+      "endGamePP": 5
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "BUILDER",
+      "wingCount": 2,
+      "endGamePP": 3
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "BUILDER",
+      "wingCount": 2,
+      "endGamePP": 2
+    },
+    {
+      "era": "III",
+      "numPlayer": 5,
+      "type": "ARTIST"
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "ARTIST"
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "ARTIST"
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "ARTIST"
+    },
+    {
+      "era": "III",
+      "numPlayer": 4,
+      "type": "SHAMAN",
+      "starCount": 2
+    },
+    {
+      "era": "III",
+      "numPlayer": 3,
+      "type": "SHAMAN",
+      "starCount": 2
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "SHAMAN",
+      "starCount": 3
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "SHAMAN",
+      "starCount": 2
+    },
+    {
+      "era": "III",
+      "numPlayer": 1,
+      "type": "SHAMAN",
+      "starCount": 3
+    }
+  ]
+}
