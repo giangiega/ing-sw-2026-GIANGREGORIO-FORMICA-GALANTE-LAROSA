@@ -5,10 +5,10 @@ package it.polimi.ingsw;
 import java.util.List;
 
 public class EventSustenance extends EventCard {
-    private int ppPerUnfedCharacter;
+    private final int ppPerUnfedCharacter;
 
-    public EventSustenance(EraEnum era) {
-        super(era);
+    public EventSustenance(EraEnum era, boolean isFinalEvent, int ppPerUnfedCharacter) {
+        super(era, isFinalEvent);
         this.ppPerUnfedCharacter = ppPerUnfedCharacter;
 
     }

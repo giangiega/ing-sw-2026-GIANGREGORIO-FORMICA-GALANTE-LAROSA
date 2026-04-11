@@ -7,8 +7,8 @@ import java.util.List;
 public class EventHunt extends EventCard {
     private final int ppPerHunter;
 
-    public EventHunt(EraEnum era, int ppPerHunter) {
-        super(era);
+    public EventHunt(EraEnum era, boolean isFinalEvent, int ppPerHunter) {
+        super(era, isFinalEvent);
         this.ppPerHunter = ppPerHunter;
     }
 

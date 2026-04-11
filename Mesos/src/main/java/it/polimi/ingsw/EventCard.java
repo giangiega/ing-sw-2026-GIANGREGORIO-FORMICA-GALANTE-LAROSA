@@ -6,9 +6,10 @@ package it.polimi.ingsw;
 import java.util.List;
 
 public abstract class EventCard extends TribeCard {
-
-    public EventCard(EraEnum era) {
+    private final boolean isFinalEvent;
+    public EventCard(EraEnum era, boolean isFinalEvent) {
         super(era);
+        this.isFinalEvent = isFinalEvent;
     }
 
     public abstract void resolve(List<Player> players, Board board);

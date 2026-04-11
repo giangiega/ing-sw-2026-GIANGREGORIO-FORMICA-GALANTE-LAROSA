@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class EventShamanRitual extends EventCard {
-    private int gainedPP;
-    private int lostPP;
+    private final int gainedPP;
+    private final int lostPP;
 
-    public EventShamanRitual(EraEnum era) {
-        super(era);
+    public EventShamanRitual(EraEnum era, boolean isFinalEvent, int gainedPP, int lostPP) {
+        super(era, isFinalEvent);
+        this.gainedPP = gainedPP;
+        this.lostPP = lostPP;
     }
 
     /**

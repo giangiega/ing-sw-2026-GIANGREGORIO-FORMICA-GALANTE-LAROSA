@@ -6,12 +6,12 @@ import java.util.List;
 
 public class EventCavePainting extends EventCard {
 
-    private int minArtist;
-    private int gainedPP;
-    private int lostPP;
+    private final int minArtist;
+    private final int gainedPP;
+    private final int lostPP;
 
-    public EventCavePainting(EraEnum era) {
-        super(era);
+    public EventCavePainting(EraEnum era, boolean isFinalEvent, int minArtist, int gainedPP, int lostPP) {
+        super(era, isFinalEvent);
         this.minArtist = minArtist;
         this.gainedPP = gainedPP;
         this.lostPP = lostPP;
