@@ -1,0 +1,145 @@
+{
+  "BuildingCards": [
+    {
+      "type": "buildingFoodSet",
+      "era": "I",
+      "baseFoodCost": 4,
+      "basePrestigePoints": 3
+    },
+    {
+      "type": "buildingDiscountFood",
+      "era": "I",
+      "baseFoodCost": 5,
+      "basePrestigePoints": 3,
+      "characterType": "ARTIST"
+    },
+    {
+      "type": "buildingDiscountFood",
+      "era": "I",
+      "baseFoodCost": 4,
+      "basePrestigePoints": 4,
+      "characterType": "GATHERER"
+    },
+    {
+      "type": "buildingSaveShamanPP",
+      "era": "I",
+      "baseFoodCost": 5,
+      "basePrestigePoints": 2
+    },
+    {
+      "type": "buildingBonusTotem",
+      "era": "I",
+      "baseFoodCost": 3,
+      "basePrestigePoints": 3
+    },
+    {
+      "type": "buildingBonusSameInventors",
+      "era": "I",
+      "baseFoodCost": 3,
+      "basePrestigePoints": 4
+    },
+    {
+      "type": "buildingDiscountFood",
+      "era": "II",
+      "baseFoodCost": 7,
+      "basePrestigePoints": 4,
+      "characterType": "INVENTOR"
+    },
+    {
+      "type": "buildingBonusStarShaman",
+      "era": "II",
+      "baseFoodCost": 6,
+      "basePrestigePoints": 4
+    },
+    {
+      "type": "buildingBonusDoubleShamanPP",
+      "era": "II",
+      "baseFoodCost": 7,
+      "basePrestigePoints": 0
+    },
+    {
+      "type": "buildingBonusHunt",
+      "era": "II",
+      "baseFoodCost": 7,
+      "basePrestigePoints": 2
+    },
+    {
+      "type": "buildingDoubleBuilderPP",
+      "era": "II",
+      "baseFoodCost": 6,
+      "basePrestigePoints": 4
+    },
+    {
+      "type": "buildingBonusArtist",
+      "era": "II",
+      "baseFoodCost": 5,
+      "basePrestigePoints": 6
+    },
+    {
+      "type": "buildingPPForSet",
+      "era": "II",
+      "baseFoodCost": 5,
+      "basePrestigePoints": 6
+    },
+    {
+      "type": "buildingBonusForCharacterType",
+      "era": "III",
+      "baseFoodCost": 7,
+      "basePrestigePoints": 4,
+      "PP": 4,
+      "characterType": "ARTIST"
+    },
+    {
+      "type": "buildingBonusForCharacterType",
+      "era": "III",
+      "baseFoodCost": 6,
+      "basePrestigePoints": 6,
+      "PP": 2,
+      "characterType": "INVENTOR"
+    },
+    {
+      "type": "buildingBonusForCharacterType",
+      "era": "III",
+      "baseFoodCost": 7,
+      "basePrestigePoints": 4,
+      "PP": 4,
+      "characterType": "SHAMAN"
+    },
+    {
+      "type": "buildingBonusForCharacterType",
+      "era": "III",
+      "baseFoodCost": 6,
+      "basePrestigePoints": 3,
+      "PP": 4,
+      "characterType": "BUILDER"
+    },
+    {
+      "type": "buildingBonusForCharacterType",
+      "era": "III",
+      "baseFoodCost": 8,
+      "basePrestigePoints": 8,
+      "PP": 3,
+      "characterType": "HUNTER"
+    },
+    {
+      "type": "buildingBonusForCharacterType",
+      "era": "III",
+      "baseFoodCost": 7,
+      "basePrestigePoints": 6,
+      "PP": 4,
+      "characterType": "GATHERER"
+    },
+    {
+      "type": "buildingCardUpperRow",
+      "era": "III",
+      "baseFoodCost": 9,
+      "basePrestigePoints": 3
+    },
+    {
+      "type": "buildingFinal25PP",
+      "era": "III",
+      "baseFoodCost": 10,
+      "basePrestigePoints": 0
+    }
+  ]
+}
