@@ -1,5 +1,5 @@
 {
-  "CharacterCardEraI": [
+  "CharacterCards": [
     {
       "era": "I",
       "numPlayer": 3,
@@ -168,9 +168,7 @@
       "numPlayer": 5,
       "type": "SHAMAN",
       "starCount": 2
-    }
-  ],
-  "CharacterCardEraII": [
+    },
     {
       "era": "II",
       "numPlayer": 1,
@@ -334,9 +332,7 @@
       "numPlayer": 1,
       "type": "SHAMAN",
       "starCount": 2
-    }
-  ],
-  "CharacterCardIII": [
+    },
     {
       "era": "III",
       "numPlayer": 1,
@@ -495,6 +491,89 @@
       "numPlayer": 1,
       "type": "SHAMAN",
       "starCount": 3
+    }
+  ],
+  "EventCards": [
+    {
+      "era": "I",
+      "isFinalEvent": false,
+      "type": "sustenance",
+      "ppPerUnfedCharacter": 1
+    },
+    {
+      "era": "II",
+      "isFinalEvent": false,
+      "type": "sustenance",
+      "ppPerUnfedCharacter": 2
+    },
+    {
+      "era": "I",
+      "isFinalEvent": false,
+      "type": "shamanRitual",
+      "gainedPP": 5,
+      "lostPP": 3
+    },
+    {
+      "era": "II",
+      "isFinalEvent": false,
+      "type": "shamanRitual",
+      "gainedPP": 10,
+      "lostPP": 5
+    },
+    {
+      "era": "I",
+      "isFinalEvent": false,
+      "type": "hunt",
+      "ppPerHunter": 1
+    },
+    {
+      "era": "II",
+      "isFinalEvent": false,
+      "type": "hunt",
+      "ppPerHunter": 2
+    },
+    {
+      "era": "III",
+      "isFinalEvent": false,
+      "type": "hunt",
+      "ppPerHunter": 3
+    },
+    {
+      "era": "I",
+      "isFinalEvent": false,
+      "type": "cavePainting",
+      "minArtists": 1,
+      "gainedPP": 1,
+      "lostPP": 2
+    },
+    {
+      "era": "II",
+      "isFinalEvent": false,
+      "type": "cavePainting",
+      "minArtists": 2,
+      "gainedPP": 2,
+      "lostPP": 2
+    },
+    {
+      "era": "III",
+      "isFinalEvent": false,
+      "type": "cavePainting",
+      "minArtists": 3,
+      "gainedPP": 3,
+      "lostPP": 2
+    },
+    {
+      "era": "III",
+      "isFinalEvent": true,
+      "type": "shamanRitual",
+      "gainedPP": 15,
+      "lostPP": 7
+    },
+    {
+      "era": "III",
+      "isFinalEvent": true,
+      "type": "sustenance",
+      "ppPerUnfedCharacter": 3
     }
   ]
 }
