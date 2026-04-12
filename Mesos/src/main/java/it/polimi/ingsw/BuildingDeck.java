@@ -16,8 +16,8 @@ public class BuildingDeck {
      * constructor
      * @param era
      */
-    public BuildingDeck(EraEnum era){
-        this.cards = new ArrayList<>();
+    public BuildingDeck(EraEnum era, List<BuildingCard> cards){
+        this.cards = cards;
         this.era = era;
     }
 
