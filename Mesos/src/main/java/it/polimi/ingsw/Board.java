@@ -49,16 +49,23 @@ public class Board {
     }
     // NOT IN UML
     private void initializeRows() {
-        for (int i = 0; i < config.getUpperRowSize(); i++) {
+        for (int counter = 0; counter < config.getLowerRowSize(); ) {
+            TribeCard c = tribeDeck.getFirstCard();
+            if (c instanceof EventCard)
+                upperRow.add(c);
+            else {
+                lowerRow.add(c);
+                counter++;
+            }
+        }
+        int remaining = config.getUpperRowSize() - upperRow.size();
+        for (int i = 0; i <= remaining; i++)
             upperRow.add(tribeDeck.getFirstCard());
-        }
-        for (int i = 0; i < config.getLowerRowSize(); i++) {
-            lowerRow.add(tribeDeck.getFirstCard());
-        }
-        while(!buildingDeckEra1.isEmpty()) {
+
+        while (!buildingDeckEra1.isEmpty())
             buildingUpperRow.add(buildingDeckEra1.getFirstCard());
-        }
     }
+
     // can be useful to check if the match ends (because there are no more cards)
     public Deck getTribeDeck() {
         return tribeDeck;
