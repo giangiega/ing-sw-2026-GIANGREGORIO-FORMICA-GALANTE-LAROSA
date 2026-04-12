@@ -184,7 +184,14 @@ public class CardFactory {
         }
 
         Collections.shuffle(cards);
-        return new BuildingDeck(era, cards);
+
+        List<BuildingCard> effectiveCards = new ArrayList<>();
+        for(int i = 0; i < config.getBuildingCardsPerEra().get(era); i++){
+            effectiveCards.add(cards.getFirst());
+            cards.removeFirst();
+        }
+
+        return new BuildingDeck(era, effectiveCards);
     }
 
     /**
