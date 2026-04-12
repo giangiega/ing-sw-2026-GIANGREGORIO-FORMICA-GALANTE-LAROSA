@@ -187,6 +187,12 @@ public class CardFactory {
         return new BuildingDeck(era, cards);
     }
 
+    /**
+     * creates a specific buildingCard using a switch case for
+     * creating the correct BuildingEffect (variable of instance)
+     * @param data
+     * @return
+     */
     private BuildingCard createBuildingCard(JsonObject data) {
         String type = data.get("type").getAsString();
         EraEnum era = EraEnum.valueOf(data.get("era").getAsString());
