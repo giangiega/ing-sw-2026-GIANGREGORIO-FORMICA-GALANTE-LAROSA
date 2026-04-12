@@ -13,4 +13,8 @@ public abstract class EventCard extends TribeCard {
     }
 
     public abstract void resolve(List<Player> players, Board board);
+
+    public boolean isFinalEvent(){
+        return isFinalEvent;
+    }
 }
