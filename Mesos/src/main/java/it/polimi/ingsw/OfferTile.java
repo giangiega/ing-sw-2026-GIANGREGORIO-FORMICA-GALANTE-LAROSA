@@ -63,15 +63,45 @@ public class OfferTile {
      * @param indexLowerChosenBuildings: these are indexes of the lowerRow's BuildingsCards chosen by the player
      */
     public void playerMove(Player player, Board board, List<Integer> indexUpperChosenCards, List<Integer> indexLowerChosenCards, List<Integer> indexUpperChosenBuildings, List<Integer> indexLowerChosenBuildings) throws InvalidPlayerActionException{
+        if(!indexUpperChosenBuildings.isEmpty()) {
+            //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
+            indexUpperChosenBuildings.sort(Collections.reverseOrder());
+            for (Integer i : indexUpperChosenBuildings) {
+                BuildingCard chosenCard = board.getBuildingUpperRow().get(i);
+                int effectiveCost = Math.max(0, chosenCard.getBaseFC() - player.getTotalFoodDiscountBuilder());
+                if(effectiveCost <= player.getFood()) {
+                    board.removeFromBuildingUpperRow(chosenCard);
+                    player.addBuildingCard(chosenCard);
+                    player.payFood(effectiveCost);
+                }else{
+                    throw new InvalidPlayerActionException("player hasn't food to take this building");
+                }
+            }
+        }
+        if(!indexLowerChosenBuildings.isEmpty()) {
+            //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
+            indexLowerChosenBuildings.sort(Collections.reverseOrder());
+            for (Integer i : indexLowerChosenBuildings) {
+                BuildingCard chosenCard = board.getBuildingLowerRow().get(i);
+                int effectiveCost = Math.max(0, chosenCard.getBaseFC() - player.getTotalFoodDiscountBuilder());
+                if(effectiveCost <= player.getFood()) {
+                    board.removeFromBuildingLowerRow(chosenCard);
+                    player.addBuildingCard(chosenCard);
+                    player.payFood(effectiveCost);
+                }else{
+                    throw new InvalidPlayerActionException("player hasn't food to take this building");
+                }
+            }
+        }
+
         if(!indexUpperChosenCards.isEmpty()) {
             //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
             indexUpperChosenCards.sort(Collections.reverseOrder());
             for (Integer i : indexUpperChosenCards) {
                 if (board.getUpperRow().get(i) instanceof EventCard)
                     throw new InvalidPlayerActionException("Player can't choose an EventCard");
-                else if (board.getUpperRow().get(i) instanceof CharacterCard) {
-                    CharacterCard chosenCard = (CharacterCard) board.getUpperRow().get(i);
-                    board.removeFromUpperRow((TribeCard) chosenCard);
+                else if (board.getUpperRow().get(i) instanceof CharacterCard chosenCard) {
+                    board.removeFromUpperRow(chosenCard);
                     player.addCharacterCard(chosenCard, board);
                 }
             }
@@ -82,31 +112,11 @@ public class OfferTile {
             for (Integer i : indexLowerChosenCards) {
                 if (board.getLowerRow().get(i) instanceof EventCard)
                     throw new InvalidPlayerActionException("Player can't choose an EventCard");
-                else if (board.getLowerRow().get(i) instanceof CharacterCard) {
-                    CharacterCard chosenCard = (CharacterCard) board.getLowerRow().get(i);
-                    board.removeFromLowerRow((TribeCard) chosenCard);
+                else if (board.getLowerRow().get(i) instanceof CharacterCard chosenCard) {
+                    board.removeFromLowerRow(chosenCard);
                     player.addCharacterCard(chosenCard, board);
                 }
             }
         }
-        if(!indexUpperChosenBuildings.isEmpty()) {
-            //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
-            indexUpperChosenBuildings.sort(Collections.reverseOrder());
-            for (Integer i : indexUpperChosenBuildings) {
-                BuildingCard chosenCard = board.getBuildingUpperRow().get(i);
-                board.removeFromBuildingUpperRow(chosenCard);
-                player.addBuildingCard(chosenCard);
-            }
-        }
-        if(!indexLowerChosenBuildings.isEmpty()) {
-            //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
-            indexLowerChosenBuildings.sort(Collections.reverseOrder());
-            for (Integer i : indexLowerChosenBuildings) {
-                BuildingCard chosenCard = board.getBuildingLowerRow().get(i);
-                board.removeFromBuildingLowerRow(chosenCard);
-                player.addBuildingCard(chosenCard);
-            }
-        }
     }
-
 }

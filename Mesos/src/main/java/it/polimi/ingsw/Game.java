@@ -71,9 +71,9 @@ public class Game {
         if (tile.getLetter() == 'A') {
             player.gainFood(3);
         } else {
-            if (upperCards.size() > tile.getCountUpperArrow())
+            if (upperCards.size() + upperBuildings.size() > tile.getCountUpperArrow())
                 throw new InvalidPlayerActionException("Too many upper cards chosen");
-            if (lowerCards.size() > tile.getCountLowerArrow())
+            if (lowerCards.size() + lowerBuildings.size() > tile.getCountLowerArrow())
                 throw new InvalidPlayerActionException("Too many lower cards chosen");
             tile.playerMove(player, board, upperCards, lowerCards, upperBuildings, lowerBuildings);
         }
