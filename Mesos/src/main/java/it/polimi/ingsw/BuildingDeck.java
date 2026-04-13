@@ -28,7 +28,11 @@ public class BuildingDeck {
      */
     public BuildingCard getFirstCard() throws EmptyDeckException{
         if(cards.isEmpty()) throw new EmptyDeckException("deck is empty");
-        else return cards.get(0);
+        else{
+            BuildingCard card = cards.getFirst();
+            cards.removeFirst();
+            return card;
+        }
     }
 
     public boolean isEmpty(){
