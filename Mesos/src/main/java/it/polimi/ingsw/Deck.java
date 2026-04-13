@@ -20,7 +20,11 @@ public class Deck {
      * */
     public TribeCard getFirstCard() throws EmptyDeckException{
         if(cards.isEmpty()) throw new EmptyDeckException("deck is empty");
-        else return cards.get(0);
+        else{
+            TribeCard card = cards.getFirst();
+            cards.removeFirst();
+            return card;
+        }
     }
 
     /**
