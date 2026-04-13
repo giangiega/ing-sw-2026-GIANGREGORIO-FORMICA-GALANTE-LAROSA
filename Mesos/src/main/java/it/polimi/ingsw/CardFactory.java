@@ -219,6 +219,8 @@ public class CardFactory {
                     new BuildingBonusTotem();
             case "buildingBonusSameInventors" ->
                     new BuildingBonusSameInventors();
+            case "buildingBonusStarShaman" ->
+                    new BuildingBonusStarShaman();
             case "buildingBonusDoubleShamanPP" ->
                     new BuildingBonusDoubleShamanPP();
             case "buildingBonusHunt" ->

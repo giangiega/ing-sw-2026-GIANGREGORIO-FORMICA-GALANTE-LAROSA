@@ -59,7 +59,7 @@ public class Board {
             }
         }
         int remaining = config.getUpperRowSize() - upperRow.size();
-        for (int i = 0; i <= remaining; i++)
+        for (int i = 0; i < remaining; i++)
             upperRow.add(tribeDeck.getFirstCard());
 
         while (!buildingDeckEra1.isEmpty())
