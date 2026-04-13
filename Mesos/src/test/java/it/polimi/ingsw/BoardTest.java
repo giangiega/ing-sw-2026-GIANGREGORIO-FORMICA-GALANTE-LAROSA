@@ -1,6 +1,9 @@
 package it.polimi.ingsw;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest{
@@ -12,7 +15,7 @@ class BoardTest{
     private BuildingDeck buildingDeckEra2;
     private BuildingDeck buildingDeckEra3;
 
-
+    //da testare anche con numPlayers 3,4,5
     @BeforeEach
     void setUp(){
         config = GameConfig.create(2);
@@ -33,5 +36,47 @@ class BoardTest{
                 "la riga sotto della board dovrebbe avere la size prevista dal config, e le carte devono essere tutte personaggio");
         assertEquals(config.getUpperRowSize(), board.getUpperRow().size(),
                 "la riga sopra della board deve avere la size prevista dal config");
+        assertFalse(board.getBuildingUpperRow().isEmpty());
+        assertTrue(board.getBuildingDeckEra1().isEmpty());
+    }
+
+    //da testare anche per passaggio da era II a III
+    @Test
+    void testCheckEraSwitch(){
+        List<BuildingCard> upperBefore = board.getBuildingUpperRow();
+
+        board.checkEraSwitch(EraEnum.II);
+
+        assertTrue(board.getBuildingLowerRow().containsAll(upperBefore));
+        assertFalse(board.getBuildingUpperRow().isEmpty());
+        assertTrue(board.getBuildingDeckEra2().isEmpty());
+    }
+
+    @Test
+    void testRowsEndRound(){
+        List<TribeCard> upperBefore = board.getUpperRow();
+
+        board.rowsEndRound();
+
+        assertTrue(board.getLowerRow().containsAll(upperBefore));
+        assertEquals(config.getUpperRowSize(), board.getUpperRow().size());
+    }
+
+    @Test
+    void testMoveBuildingsToLowerRow(){
+        List<BuildingCard> upperBefore = board.getBuildingUpperRow();
+
+        board.moveBuildingsToLowerRow();
+
+        assertTrue(board.getBuildingLowerRow().containsAll(upperBefore));
+        assertTrue(board.getBuildingUpperRow().isEmpty());
+    }
+
+    @Test
+    void testFillBuildingUpperRow(){
+        board.fillBuildingUpperRow(board.getBuildingDeckEra2());
+
+        assertTrue(board.getBuildingDeckEra2().isEmpty());
+        assertFalse(board.getBuildingUpperRow().isEmpty());
     }
 }
