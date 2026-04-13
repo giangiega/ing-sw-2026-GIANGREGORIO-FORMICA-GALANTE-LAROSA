@@ -1,16 +1,14 @@
 package it.polimi.ingsw;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Collections;
 
 /**
  * building deck of a specific era, decks must be shuffled in buildBuildingsDeck (CardFactory class)
  * @author Ale
  */
 public class BuildingDeck {
-    private EraEnum era;
-    private List<BuildingCard> cards;
+    private final EraEnum era;
+    private final List<BuildingCard> cards;
 
     /**
      * constructor
@@ -29,9 +27,7 @@ public class BuildingDeck {
     public BuildingCard getFirstCard() throws EmptyDeckException{
         if(cards.isEmpty()) throw new EmptyDeckException("deck is empty");
         else{
-            BuildingCard card = cards.getFirst();
-            cards.removeFirst();
-            return card;
+            return cards.removeFirst();
         }
     }
 
