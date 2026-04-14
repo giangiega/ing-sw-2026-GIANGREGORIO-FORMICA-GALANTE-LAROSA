@@ -17,4 +17,9 @@ public abstract class EventCard extends TribeCard {
     public boolean isFinalEvent(){
         return isFinalEvent;
     }
+
+    @Override
+    public boolean isPickable(){
+        return false;
+    }
 }
