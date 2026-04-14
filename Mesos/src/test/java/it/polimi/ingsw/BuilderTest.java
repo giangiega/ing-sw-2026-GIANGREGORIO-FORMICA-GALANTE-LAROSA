@@ -53,7 +53,7 @@ public class BuilderTest {
 
         builder.AddToPlayerTribe(player, board);
         assertEquals(before + 1, player.getCharacterByType(CharacterEnum.BUILDER).size(),
-                "The number of builder in the player's builder list should be increased by one" );
+                "The number of builders in the player's builder list should be increased by one");
     }
     @Test//checking to see if the player's builder list actually contains the new builder
     void testAddToPlayerTribe_correctCardInList(){
@@ -102,7 +102,7 @@ public class BuilderTest {
         builder.AddToPlayerTribe(player, board);
 
         assertEquals(discountBefore + builder.getWingCount(), player.getTotalFoodDiscountBuilder(),
-                "The food discount should have increased by wingCount");
+                "The food discount should have increased by wingCounts");
     }
     @Test//Multiple adds should give the player multiple discounts
     void testAddToPlayerTribe_multipleBuilder_multipleDiscount(){
