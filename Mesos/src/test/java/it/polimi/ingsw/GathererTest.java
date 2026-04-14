@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
-
+/**
+ * @author Giuse
+ */
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
@@ -26,12 +28,12 @@ public class GathererTest {
     @Test//Checking to see if the new gatherer has the right proprieties: ERA
     void testGetEra(){
         Gatherer gatherer = new Gatherer(EraEnum.I, 2);
-        assertEquals(EraEnum.I, gatherer.getEra(), "Gatherer should have the chosen ERA");
+        assertEquals(EraEnum.I, gatherer.getEra(), "The gatherer should have the chosen ERA");
     }
     @Test//Checking to see if the new gatherer has the right proprieties: numPlayers
     void testGetNumPlayers(){
         Gatherer gatherer = new Gatherer(EraEnum.I, 2);
-        assertEquals(2, gatherer.getNumPlayers(), "Gatherer should have the chosen number of players");
+        assertEquals(2, gatherer.getNumPlayers(), "The gatherer should have the chosen numPlayers");
     }
 
     @Test//checking to see if the player's gatherer list has increased in size after adding a Gatherer
@@ -41,7 +43,7 @@ public class GathererTest {
 
         gatherer.AddToPlayerTribe(player, board);
         assertEquals(before + 1, player.getCharacterByType(CharacterEnum.GATHERER).size(),
-                "The number of gatherers in the player's gatherer list should be increased by one" );
+                "The number of gatherers in the player's gatherer list should be increased by one");
     }
     @Test//checking to see if the player's gatherer list actually contains the new gatherer
     void testAddToPlayerTribe_correctCardInList(){
@@ -49,7 +51,7 @@ public class GathererTest {
         gatherer.AddToPlayerTribe(player, board);
 
         assertTrue(player.getCharacterByType(CharacterEnum.GATHERER).contains(gatherer),
-                "The player's gatherer list doesn't contain the new gatherer" );
+                "The player's gatherer list doesn't contain the new gatherer");
     }
     @Test//checking to see if all the other card are still in the player's tribe
     void testAddToPlayerTribe_doesNotAffectOtherCards(){

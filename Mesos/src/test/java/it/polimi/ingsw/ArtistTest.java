@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
-
+/**
+ * @author Giuse
+ */
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
@@ -26,12 +28,12 @@ public class ArtistTest {
     @Test//Checking to see if the new artist has the right proprieties: ERA
     void testGetEra(){
         Artist artist = new Artist(EraEnum.I, 2);
-        assertEquals(EraEnum.I, artist.getEra(), "Artist should have the chosen ERA");
+        assertEquals(EraEnum.I, artist.getEra(), "The artist should have the chosen ERA");
     }
     @Test
     void testGetNumPlayers(){//Checking to see if the new artist has the right proprieties: numPlayers
         Artist artist = new Artist(EraEnum.I, 2);
-        assertEquals(2, artist.getNumPlayers(), "Artist should have the chosen number of players");
+        assertEquals(2, artist.getNumPlayers(), "The artist should have the chosen numPlayers");
     }
 
     @Test//checking to see if the player's artist list has increased in size after adding an artist
@@ -41,7 +43,7 @@ public class ArtistTest {
 
         artist.AddToPlayerTribe(player, board);
         assertEquals(before + 1, player.getCharacterByType(CharacterEnum.ARTIST).size(),
-                "The number of artists in the player's artist list should be increased by one" );
+                "The number of artists in the player's artist list should be increased by one");
     }
     @Test//checking to see if the player's artist list actually contains the new artist
     void testAddToPlayerTribe_correctCardInList(){
@@ -49,7 +51,7 @@ public class ArtistTest {
         artist.AddToPlayerTribe(player, board);
 
         assertTrue(player.getCharacterByType(CharacterEnum.ARTIST).contains(artist),
-                "The player's artist list doesn't contain the new artist" );
+                "The player's artist list doesn't contain the new artist");
     }
     @Test//checking to see if all the other card are still in the player's tribe
     void testAddToPlayerTribe_doesNotAffectOtherCards(){
