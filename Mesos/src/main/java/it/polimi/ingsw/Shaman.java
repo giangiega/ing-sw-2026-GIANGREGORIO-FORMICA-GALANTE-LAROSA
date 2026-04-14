@@ -5,8 +5,11 @@ package it.polimi.ingsw;
 public class Shaman extends CharacterCard{
     private final int StarCount;
 
-    public Shaman(EraEnum era, int numPlayers, int StarCount) {
+    public Shaman(EraEnum era, int numPlayers, int StarCount) throws InvalidStarCountException {
         super(era, numPlayers);
+        if (StarCount < 1 || StarCount > 3) {
+            throw new InvalidStarCountException(StarCount);
+        }
         this.StarCount = StarCount;
     }
 
