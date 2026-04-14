@@ -68,7 +68,7 @@ public class OfferTile {
             indexUpperChosenBuildings.sort(Collections.reverseOrder());
             for (Integer i : indexUpperChosenBuildings) {
                 BuildingCard chosenCard = board.getBuildingUpperRow().get(i);
-                int effectiveCost = Math.max(0, chosenCard.getBaseFC() - player.getTotalFoodDiscountBuilder());
+                int effectiveCost = chosenCard.getCost(player);
                 if(effectiveCost <= player.getFood()) {
                     board.removeFromBuildingUpperRow(chosenCard);
                     player.addBuildingCard(chosenCard);
@@ -83,7 +83,7 @@ public class OfferTile {
             indexLowerChosenBuildings.sort(Collections.reverseOrder());
             for (Integer i : indexLowerChosenBuildings) {
                 BuildingCard chosenCard = board.getBuildingLowerRow().get(i);
-                int effectiveCost = Math.max(0, chosenCard.getBaseFC() - player.getTotalFoodDiscountBuilder());
+                int effectiveCost = chosenCard.getCost(player);
                 if(effectiveCost <= player.getFood()) {
                     board.removeFromBuildingLowerRow(chosenCard);
                     player.addBuildingCard(chosenCard);
@@ -100,7 +100,8 @@ public class OfferTile {
             for (Integer i : indexUpperChosenCards) {
                 if (board.getUpperRow().get(i) instanceof EventCard)
                     throw new InvalidPlayerActionException("Player can't choose an EventCard");
-                else if (board.getUpperRow().get(i) instanceof CharacterCard chosenCard) {
+                else {
+                    CharacterCard chosenCard = (CharacterCard)board.getUpperRow().get(i);
                     board.removeFromUpperRow(chosenCard);
                     player.addCharacterCard(chosenCard, board);
                 }
@@ -112,7 +113,8 @@ public class OfferTile {
             for (Integer i : indexLowerChosenCards) {
                 if (board.getLowerRow().get(i) instanceof EventCard)
                     throw new InvalidPlayerActionException("Player can't choose an EventCard");
-                else if (board.getLowerRow().get(i) instanceof CharacterCard chosenCard) {
+                else{
+                    CharacterCard chosenCard = (CharacterCard) board.getLowerRow().get(i);
                     board.removeFromLowerRow(chosenCard);
                     player.addCharacterCard(chosenCard, board);
                 }
