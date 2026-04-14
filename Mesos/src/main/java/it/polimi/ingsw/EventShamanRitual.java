@@ -27,11 +27,10 @@ public class EventShamanRitual extends EventCard {
         for(Player p : players){
             List<BuildingCard> buildings = p.getBuildingCards();
             for (BuildingCard b : buildings){
-                if(b.getEffect() instanceof BuildingBonusStarShaman bonus){
-                    bonus.applyEventShaman(p, board);
-                }
+                b.getEffect().applyEventShamanBonusStars(p, board);
             }
         }
+
         int minStars = players.get(0).getEffectiveStars();
         int maxStars = players.get(0).getEffectiveStars();
         int playerStars;
@@ -60,22 +59,16 @@ public class EventShamanRitual extends EventCard {
         for(Player p : losers){
             p.losePP(lostPP);
             for(BuildingCard c : p.getBuildingCards()){
-                if(c.getEffect() instanceof BuildingSaveShamanPP save){
-                    save.setLostPP(lostPP);
-                    save.applyEventShaman(p, board);
+                    c.getEffect().applyEventShamanWinner(p, board, lostPP, false);
                 }
-            }
         }
         for(Player p : winners){
             p.gainPP(gainedPP);
             for(BuildingCard c : p.getBuildingCards()){
-                if(c.getEffect() instanceof BuildingBonusDoubleShamanPP bonus) {
-                    bonus.setGainedPP(gainedPP);
-                    bonus.applyEventShaman(p, board);
+                    c.getEffect().applyEventShamanWinner(p, board, gainedPP, true);
                 }
             }
         }
-    }
     public int getGainedPP() {
         return gainedPP;
     }

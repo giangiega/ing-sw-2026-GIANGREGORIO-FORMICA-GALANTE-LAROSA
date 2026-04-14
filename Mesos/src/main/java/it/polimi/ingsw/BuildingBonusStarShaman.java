@@ -10,7 +10,7 @@ public class BuildingBonusStarShaman extends BuildingEffect{
      * This method gives 3 extra shaman stars
      */
     @Override
-    public void applyEventShaman(Player p, Board b){
+    public void applyEventShamanBonusStars(Player p, Board b){
         p.setEffectiveStars(BONUS_EXTRA_STARS);
     }
 }
