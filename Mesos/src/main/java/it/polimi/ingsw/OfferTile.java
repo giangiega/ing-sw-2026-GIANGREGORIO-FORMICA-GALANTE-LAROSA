@@ -98,7 +98,7 @@ public class OfferTile {
             //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
             indexUpperChosenCards.sort(Collections.reverseOrder());
             for (Integer i : indexUpperChosenCards) {
-                if (board.getUpperRow().get(i) instanceof EventCard)
+                if (!board.getUpperRow().get(i).isPickable())
                     throw new InvalidPlayerActionException("Player can't choose an EventCard");
                 else {
                     CharacterCard chosenCard = (CharacterCard)board.getUpperRow().get(i);
@@ -111,7 +111,7 @@ public class OfferTile {
             //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
             indexLowerChosenCards.sort(Collections.reverseOrder());
             for (Integer i : indexLowerChosenCards) {
-                if (board.getLowerRow().get(i) instanceof EventCard)
+                if (!board.getLowerRow().get(i).isPickable())
                     throw new InvalidPlayerActionException("Player can't choose an EventCard");
                 else{
                     CharacterCard chosenCard = (CharacterCard) board.getLowerRow().get(i);

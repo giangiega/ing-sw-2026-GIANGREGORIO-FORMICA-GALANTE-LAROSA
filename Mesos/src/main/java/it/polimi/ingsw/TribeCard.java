@@ -7,4 +7,8 @@ public abstract class TribeCard extends Card {
     public TribeCard(EraEnum era) {
         super(era);
     }
+
+    public boolean isPickable(){
+        return true;
+    }
 }
