@@ -22,4 +22,10 @@ public abstract class EventCard extends TribeCard {
     public boolean isPickable(){
         return false;
     }
+
+    @Override
+    public boolean isEventCard() {
+        return true;
+    }
+
 }

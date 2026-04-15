@@ -11,4 +11,12 @@ public abstract class TribeCard extends Card {
     public boolean isPickable(){
         return true;
     }
+
+    public boolean isEventCard() {
+        return false;
+    }
+
+    public boolean isSustenance() {
+        return false;
+    }
 }

@@ -112,22 +112,22 @@ public class Game {
      * At the end it calls rowsEndRound() from Board, with the rows update and the possible eraSwitch.
      * If it's the last round (10th) I have to resolve events also from the upperRow, already sorted
      */
-    public void endRound() throws  InvalidPlayerActionException {
+    public void endRound() throws InvalidPlayerActionException {
         List<EventCard> others = new ArrayList<>();
         List<EventCard> sustenances = new ArrayList<>();
 
         for(TribeCard card : board.getLowerRow()) {
-            if (card instanceof EventSustenance) {
-                sustenances.add((EventCard)card);
-            } else if (card instanceof EventCard) {
-                others.add((EventCard)card);
+            if (card.isSustenance()) {
+                sustenances.add((EventCard) card);
+            } else if (card.isEventCard() && !card.isSustenance()) {
+                others.add((EventCard) card);
             }
         }
         if(currentRound == 10) {
             for (TribeCard card : board.getUpperRow()) {
-                if (card instanceof EventSustenance) {
+                if (card.isSustenance()) {
                     sustenances.add((EventCard) card);
-                } else if (card instanceof EventCard) {
+                } else if (card.isEventCard() && !card.isSustenance()) {
                     others.add((EventCard) card);
                 }
             }
@@ -150,7 +150,7 @@ public class Game {
     }
 
     /**
-     * NEVER CALL THIS METHOD, already called inside getWinner() bc is private.
+     * NEVER CALL THIS METHOD, it is already called inside getWinner() bc is private.
      * PP from eventual effects of the last round events are not calculated in this method,
      * so they have to be resolved before calling calculateFinalScores() and getWinner()
      * Buildings that modify PP or in general every building which effect has to be shown at the end
