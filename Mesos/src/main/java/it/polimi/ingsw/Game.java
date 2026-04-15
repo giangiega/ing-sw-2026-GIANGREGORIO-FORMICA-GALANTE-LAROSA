@@ -94,9 +94,8 @@ public class Game {
         if (bonus > 0) {
             player.gainFood(bonus);
             for (BuildingCard c : player.getBuildingCards()) {
-                if(c.getEffect() instanceof BuildingBonusTotem){
-                    c.getEffect().applyEndTurn(player, board);
-                }
+                    c.getEffect().applyEndTurn(player, board, -1, false);
+                    //-1 makes applyEndTurn return
             }
         } else if (board.getTurnOrderTile().isLastSlot(nextSlot)) {
             if (player.getFood() > 0)
@@ -113,7 +112,7 @@ public class Game {
      * At the end it calls rowsEndRound() from Board, with the rows update and the possible eraSwitch.
      * If it's the last round (10th) I have to resolve events also from the upperRow, already sorted
      */
-    public void endRound() {
+    public void endRound() throws  InvalidPlayerActionException {
         List<EventCard> others = new ArrayList<>();
         List<EventCard> sustenances = new ArrayList<>();
 
@@ -136,11 +135,7 @@ public class Game {
 
         for(Player p : players){
             for(BuildingCard c : p.getBuildingCards()){
-                if(c.getEffect() instanceof BuildingCardUpperRow) {
-                    try{
-                        c.getEffect().applyEndTurn(p, board);
-                    }catch(InvalidPlayerActionException e){}
-                }
+                c.getEffect().applyEndTurn(p, board, c.getEffect().getChosenIndex(), c.getEffect().getChosenIsBuilding());
             }
         }
 

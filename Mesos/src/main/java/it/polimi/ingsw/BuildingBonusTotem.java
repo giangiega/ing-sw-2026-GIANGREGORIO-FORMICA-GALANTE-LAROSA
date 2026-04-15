@@ -10,7 +10,7 @@ public class BuildingBonusTotem extends BuildingEffect{
      * this method awards 1 extra food if the player totem is on the right spots
      */
     @Override
-    public void applyEndTurn(Player p, Board b){
+    public void applyEndTurn(Player p, Board b, int chosenIndex, boolean chosenIsBuilding ){
         p.gainFood(BONUS_FOOD_TOTEM);
     }
 }

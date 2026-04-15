@@ -16,7 +16,6 @@ public class BuildingCard extends Card {
      */
     public BuildingCard(EraEnum era, int baseFoodCost, int basePrestigePoints, BuildingEffect effect) {
         super(era);
-        //this.era = era; vedere che dice Alessandro
 
         this.baseFoodCost = baseFoodCost;
         this.basePrestigePoints = basePrestigePoints;
