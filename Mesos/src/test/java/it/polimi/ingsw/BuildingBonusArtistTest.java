@@ -39,7 +39,7 @@ class BuildingBonusArtistTest {
 
         int foodAfter = player.getFood();
 
-        assertEquals(foodBefore + 2, foodAfter);
+        assertEquals(foodBefore + 2, foodAfter, "The player's food should increase by 2 ");
     }
     @Test
     void applyEventCavePainting2(){
@@ -50,6 +50,6 @@ class BuildingBonusArtistTest {
         BuildingBonusArtist bonus2 = new BuildingBonusArtist();
         bonus2.applyEventCavePainting(player,board);
 
-        assertEquals(foodBefore , player.getFood());
+        assertEquals(foodBefore , player.getFood(), "Player should have the same amount of food as before ");
     }
 }
