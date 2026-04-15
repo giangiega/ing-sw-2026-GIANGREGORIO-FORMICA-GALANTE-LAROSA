@@ -13,6 +13,11 @@ public class EventSustenance extends EventCard {
 
     }
 
+    @Override
+    public boolean isSustenance() {
+        return true;
+    }
+
     /**
      * this method will scroll through the list of players and calculate , based on the possible building's effect
      * and the discount of the gatherers, the total amount of food to pay and the eventual loss of PP

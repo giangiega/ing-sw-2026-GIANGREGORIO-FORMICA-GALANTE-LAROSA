@@ -5,6 +5,12 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * @author Ric
+ * Board is the core class besides Game.
+ * It manages the initialization of the rows and their updates.
+ * It also manages the era transition.
+ */
 public class Board {
     private final GameConfig config;
     private final Deck tribeDeck;
@@ -51,8 +57,9 @@ public class Board {
     private void initializeRows() {
         for (int counter = 0; counter < config.getLowerRowSize(); ) {
             TribeCard c = tribeDeck.getFirstCard();
-            if (c instanceof EventCard)
+            if (c.isEventCard()) {
                 upperRow.add(c);
+            }
             else {
                 lowerRow.add(c);
                 counter++;
@@ -66,10 +73,6 @@ public class Board {
             buildingUpperRow.add(buildingDeckEra1.getFirstCard());
     }
 
-    // can be useful to check if the match ends (because there are no more cards)
-    public Deck getTribeDeck() {
-        return tribeDeck;
-    }
     public BuildingDeck getBuildingDeckEra1() {
         return buildingDeckEra1;
     }
@@ -95,7 +98,6 @@ public class Board {
     public List<OfferTile> getOfferTrack() {
         return Collections.unmodifiableList(offerTrack);
     }
-    // Game needs this method
     public TurnOrderTile getTurnOrderTile() {
         return turnOrderTile;
     }
@@ -118,7 +120,12 @@ public class Board {
         buildingLowerRow.remove(card);
     }
 
-    // rowsEndTurn needs this method to check every card era.
+    /**
+     * called by rowsEndRound, every time I draw a card for the rows.
+     * If the card's era attribute is a new era, applyTransition is called.
+     * applyTransition() uses the last 3 helper methods defined on Board.
+     * @param newEra
+     */
     public void checkEraSwitch(EraEnum newEra) {
       if (newEra != currentEra) {
           transitions.get(newEra).applyTransition(this);
@@ -126,14 +133,18 @@ public class Board {
       }
     }
 
-    // Game is the event resolver, so it needs another method endRound() , Board doesn't care about
+    /**
+     * called by Game inside method endRound()
+     * 1 --> clear lowerRow
+     * 2 --> move upperRow to lowerRow
+     * 3 --> fill upperRow with new cards
+     */
     public void rowsEndRound() {
-        // 1 --> clear lowerRow
         lowerRow.clear();
-        // 2 --> move upperRow to lowerRow
+
         lowerRow.addAll(upperRow);
         upperRow.clear();
-        // 3 --> fill upperRow with new cards
+
         for (int i = 0; i < config.getUpperRowSize(); i++) {
             if (!tribeDeck.isEmpty()) {
                 checkEraSwitch(tribeDeck.getFirstCard().getEra());
@@ -142,16 +153,21 @@ public class Board {
         }
     }
 
-    // I have to define helper methods for letting TransitionEra know infos about the board
-    // applyTransition has board as a parameter. This 3 methods are called by TransitionEra
-    //this first method is only used by TransitionEraIII
+
+    /**
+     * I have to define helper methods for letting TransitionEra know infos about the board
+     * applyTransition has board as a parameter. This 3 methods are called by TransitionEra
+     * this first method is only used by TransitionEraIII
+     */
     public void discardLowerRowBuildings() {
         buildingLowerRow.clear();
     }
+
     public void moveBuildingsToLowerRow() {
         buildingLowerRow.addAll(buildingUpperRow);
         buildingUpperRow.clear();
     }
+
     public void fillBuildingUpperRow(BuildingDeck deck) {
         while(!deck.isEmpty()) {
             buildingUpperRow.add(deck.getFirstCard());
