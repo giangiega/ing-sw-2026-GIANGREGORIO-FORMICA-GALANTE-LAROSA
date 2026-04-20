@@ -13,12 +13,19 @@ public class BuildingFoodSetTest {
     private Player player;
 
     private void addOneCompleteSet(Player p){
-        new Hunter(EraEnum.I, 2, true).AddToPlayerTribe(p, board);
+        new Hunter(EraEnum.I, 2, false).AddToPlayerTribe(p, board);
         new Artist(EraEnum.I, 2).AddToPlayerTribe(p, board);
         new Builder(EraEnum.I, 2, 3, 2).AddToPlayerTribe(p, board);
         new Inventor(EraEnum.I, 2, IconEnum.BOWL).AddToPlayerTribe(p, board);
         new Shaman(EraEnum.I, 2, 2).AddToPlayerTribe(p, board);
         new Gatherer(EraEnum.I, 2).AddToPlayerTribe(p, board);
+        player.updateCompletedSetsCount();//Updating set count
+    }
+
+    private BuildingCard addBuildingToPlayer(Player p){
+        BuildingCard b = new BuildingCard(EraEnum.I, 0, 0, new BuildingFoodSet());
+        player.addBuildingCard(b);
+        return b;
     }
 
     @BeforeEach
@@ -31,7 +38,7 @@ public class BuildingFoodSetTest {
                 cf.buildBuildingDeck(EraEnum.III, config));
         player = new Player("TestPlayer", ColorEnum.BLUE);
     }
-    @Test //Checking to see if the building gives food when the player acquires it
+    @Test//Checking to see if the building gives food when the player acquires it
     void firstCall_noFood(){
         int foodBefore = player.getFood();
         BuildingFoodSet b = new BuildingFoodSet();
@@ -45,25 +52,31 @@ public class BuildingFoodSetTest {
         int foodBefore = player.getFood();
         b.applyOnCardAdded(player, board);
         assertEquals(foodBefore, player.getFood(),
-                "The building shouldn'y have given the player any food since he has no completed set");
+                "The building shouldn't have given the player any food since he has no completed set");
     }
-    @Test //Checkin to see if the building give the player any food if he has just completed a set
+    @Test //Checking to see if the building give the player any food if he has just completed a set
     void secondCall_5Food(){
-        BuildingFoodSet b = new BuildingFoodSet();
-        b.applyOnCardAdded(player, board);
+        BuildingCard b = addBuildingToPlayer(player);
+        player.addCharacterCard(new Hunter(EraEnum.I, 2, false), board);
+        //This call simulates the logic: everytime a card is picked, applyOnCardAdded is called
+        //So, we are saying: "we've added the building to the deck"; no food should be given
+
         int foodBefore = player.getFood();
         addOneCompleteSet(player);
-        b.applyOnCardAdded(player, board);
+        b.getEffect().applyOnCardAdded(player, board);
+
         assertEquals(foodBefore + 5, player.getFood(),
                 "The building should have given the player 5 food");
     }
-    @Test//Checkin to see if the building give the player 10 food if he has just completed 2 sets
+    @Test//Checking to see if the building give the player 10 food if he has just completed 2 sets
     void twoCompletedSets(){
-        BuildingFoodSet b = new BuildingFoodSet();
+        BuildingCard b = addBuildingToPlayer(player);
+        player.addCharacterCard(new Hunter(EraEnum.I, 2, false), board);
+
         int foodBefore = player.getFood();
         addOneCompleteSet(player);
         addOneCompleteSet(player);
-        b.applyOnCardAdded(player, board);
+        b.getEffect().applyOnCardAdded(player, board);
         assertEquals(foodBefore + 10, player.getFood(),
                 "The building should have given the player 10 food");
     }
