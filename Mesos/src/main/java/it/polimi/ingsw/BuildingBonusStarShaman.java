@@ -3,6 +3,7 @@ package it.polimi.ingsw;
  * @author Giuse
  */
 public class BuildingBonusStarShaman extends BuildingEffect{
+    private int firstAdd = -1;
     private static final int BONUS_EXTRA_STARS = 3;
     /**
      * @param p : player who has this building card
@@ -11,7 +12,10 @@ public class BuildingBonusStarShaman extends BuildingEffect{
      */
     @Override
     public void applyEventShamanBonusStars(Player p, Board b){
-        p.setEffectiveStars(BONUS_EXTRA_STARS);
+        if(firstAdd == -1){//It should give extra stars only the first time
+            p.setEffectiveStars(BONUS_EXTRA_STARS);
+            firstAdd++;
+        }
     }
 }
 
