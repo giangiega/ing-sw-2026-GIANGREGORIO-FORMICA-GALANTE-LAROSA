@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,18 +44,18 @@ class BoardTest{
     //da testare anche per passaggio da era II a III
     @Test
     void testCheckEraSwitch(){
-        List<BuildingCard> upperBefore = board.getBuildingUpperRow();
+        List<BuildingCard> upperBefore = new ArrayList<>(board.getBuildingUpperRow());
 
         board.checkEraSwitch(EraEnum.II);
 
-        assertTrue(board.getBuildingLowerRow().containsAll(upperBefore));
+        assertTrue(board.getBuildingLowerRow().containsAll(upperBefore)); //
         assertFalse(board.getBuildingUpperRow().isEmpty());
         assertTrue(board.getBuildingDeckEra2().isEmpty());
     }
 
     @Test
     void testRowsEndRound(){
-        List<TribeCard> upperBefore = board.getUpperRow();
+        List<TribeCard> upperBefore = new ArrayList<>(board.getUpperRow());
 
         board.rowsEndRound();
 
