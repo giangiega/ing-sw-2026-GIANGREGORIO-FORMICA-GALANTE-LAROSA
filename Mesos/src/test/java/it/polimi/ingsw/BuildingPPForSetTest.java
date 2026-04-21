@@ -13,12 +13,18 @@ public class BuildingPPForSetTest {
     private BuildingPPForSet effect;
 
     private void addOneCompleteSet(Player p) {
-        new Hunter(EraEnum.I, 0, false).AddToPlayerTribe(p, board);
-        new Artist(EraEnum.I, 0).AddToPlayerTribe(p, board);
-        new Builder(EraEnum.I, 0, 0, 0).AddToPlayerTribe(p, board);
-        new Inventor(EraEnum.I, 0, IconEnum.values()[0]).AddToPlayerTribe(p, board);
-        new Shaman(EraEnum.I, 0, 1).AddToPlayerTribe(p, board);
-        new Gatherer(EraEnum.I, 0).AddToPlayerTribe(p, board);
+        Hunter hunter = new Hunter(EraEnum.I, 2, false);
+        player.addCharacterCard(hunter, board);
+        Artist artist = new Artist(EraEnum.I, 2);
+        player.addCharacterCard(artist, board);
+        Builder builder = new Builder(EraEnum.I, 2, 0, 0);
+        player.addCharacterCard(builder, board);
+        Inventor inventor = new Inventor(EraEnum.I, 2, IconEnum.BOAT);
+        player.addCharacterCard(inventor, board);
+        Shaman shaman = new Shaman(EraEnum.I, 2, 1);
+        player.addCharacterCard(shaman, board);
+        Gatherer gatherer = new  Gatherer(EraEnum.I, 2);
+        player.addCharacterCard(gatherer, board);
     }
 
     @BeforeEach

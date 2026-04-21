@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.List;
 public class BuildingCardUpperRowTest {
     private final CardFactory cf = new CardFactory();
@@ -17,7 +18,7 @@ public class BuildingCardUpperRowTest {
     @BeforeEach
     void setUp() {
         config = GameConfig.create(2);
-        board  = new Board(config,
+        board = new Board(config,
                 cf.buildTribeDeck(config),
                 cf.buildBuildingDeck(EraEnum.I, config),
                 cf.buildBuildingDeck(EraEnum.II, config),
@@ -63,9 +64,9 @@ public class BuildingCardUpperRowTest {
         assertEquals(ppBefore, player.getPP(),
                 "The player should have not received any prestige points because his choice was negative");
     }
-    @Test//Checking to see if the playe pays the right amount of food for the chosen building
+    @Test//Checking to see if the player pays the right amount of food for the chosen building
     void applyEndTurn_buildingChosen_paysCorrectFood() throws Exception {
-        List<BuildingCard> upper = board.getBuildingUpperRow();
+        List<BuildingCard> upper = new ArrayList<>(board.getBuildingUpperRow());
         if (upper.isEmpty()) return;
         BuildingCard target = upper.get(0);
         int cost = target.getCost(player);
@@ -129,7 +130,7 @@ public class BuildingCardUpperRowTest {
     }
     @Test//Checking to see if the chosen character was added to the player's tribe
     void applyEndTurn_characterChosen_addedToTribe() throws Exception {
-        List<TribeCard> upper = board.getUpperRow();
+        List<TribeCard> upper = new ArrayList<>(board.getUpperRow());
         int charIndex = findFirstCharacterIndex(upper);
         if (charIndex == -1) return;
 
@@ -155,7 +156,7 @@ public class BuildingCardUpperRowTest {
     }
     @Test
     void applyEndTurn_characterChosen_noFoodPaid() throws Exception {
-        List<TribeCard> upper = board.getUpperRow();
+        List<TribeCard> upper = new ArrayList<>(board.getUpperRow());
         int charIndex = findFirstCharacterIndex(upper);
         if (charIndex == -1) return;
 
