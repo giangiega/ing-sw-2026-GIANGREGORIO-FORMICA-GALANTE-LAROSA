@@ -178,8 +178,8 @@ public class BuildingIntegrationTest {
 
         for (BuildingCard b : player.getBuildingCards())
             b.getEffect().applyEndGame(player, board);
-        assertEquals(ppBefore + 10, player.getPP(),
-                "The player should have received 10 prestige points: 2 hunters × 2 = 4 PP, 1 set × 6 = 6 PP ");
+        assertEquals(ppBefore + 12, player.getPP(),
+                "The player should have received 10 prestige points: 3 hunters × 2 = 6 PP, 1 set × 6 = 6 PP ");
     }
     @Test//BuildingSaveShamanPP + BuildingBonusDoubleShamanPP: EventShamanRitual
     void saveShamanPP_loserDoesNotLosePP() {
