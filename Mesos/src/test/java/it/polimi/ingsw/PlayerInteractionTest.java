@@ -1,4 +1,5 @@
 package it.polimi.ingsw;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -7,10 +8,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerInteractionTest {
+    Player p;
 
-    @Test
-    void testAddCharacterCard() {
-        Player p = new Player("Riccardo" , ColorEnum.BLUE);
+    @BeforeEach
+    void setUp() {
+        p = new Player("Riccardo" , ColorEnum.BLUE);
         GameConfig gc = new GameConfig2();
         CharacterCard c1 = new Artist(EraEnum.I, 2);
         CharacterCard c2 = new Artist(EraEnum.I, 2);
@@ -40,7 +42,10 @@ public class PlayerInteractionTest {
         p.addCharacterCard(c4, b); p.addCharacterCard(c5, b); p.addCharacterCard(c6, b);
         p.addCharacterCard(c7, b); p.addCharacterCard(c8, b); p.addCharacterCard(c9, b);
         p.addCharacterCard(c10, b); p.addCharacterCard(c11, b); p.addCharacterCard(c12, b);
+    }
 
+    @Test
+    void testAddCharacterCard() {
         for(CharacterEnum ce : CharacterEnum.values()) {
             assertNotNull(p.getCharacterByType(ce));
             assertEquals(2, p.getCharacterByType(ce).size());
@@ -51,5 +56,10 @@ public class PlayerInteractionTest {
         assertEquals(1, p.getDistinctInventorsIcon());
         assertEquals(5, p.getTotalStarCount());
 
+    }
+
+    @Test
+    void testCheckCompletedSet(){
+        assertEquals(2, p.getCompletedSetsCount());
     }
 }

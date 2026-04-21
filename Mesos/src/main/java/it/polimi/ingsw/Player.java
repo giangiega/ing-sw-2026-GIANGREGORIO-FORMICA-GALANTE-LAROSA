@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 /**
  * Player class with usefully attribute to handle events and buildings effect
@@ -45,6 +46,8 @@ public class Player {
 
     public void addCharacterCard(CharacterCard card, Board board){
         card.AddToPlayerTribe(this, board);
+        if(this.checkCompletedSet())
+            updateCompletedSetsCount();
         for(BuildingCard b: buildings){
             b.getEffect().applyOnCardAdded(this, board);
         }
@@ -196,6 +199,23 @@ public class Player {
 
         return totalCharactersCount;
 
+    }
+
+    /**
+     *  check if a set is completed or not
+     */
+    public boolean checkCompletedSet(){
+        int min = IntStream.of(tribe.get(CharacterEnum.ARTIST).size(),
+                tribe.get(CharacterEnum.SHAMAN).size(),
+                tribe.get(CharacterEnum.HUNTER).size(),
+                tribe.get(CharacterEnum.GATHERER).size(),
+                tribe.get(CharacterEnum.INVENTOR).size(),
+                tribe.get(CharacterEnum.SHAMAN).size()
+        ).min().getAsInt();
+        if(min > completedSetsCount)
+            return true;
+
+        return false;
     }
 }
 
