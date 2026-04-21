@@ -210,7 +210,7 @@ public class Player {
                 tribe.get(CharacterEnum.HUNTER).size(),
                 tribe.get(CharacterEnum.GATHERER).size(),
                 tribe.get(CharacterEnum.INVENTOR).size(),
-                tribe.get(CharacterEnum.SHAMAN).size()
+                tribe.get(CharacterEnum.BUILDER).size()
         ).min().getAsInt();
         if(min > completedSetsCount)
             return true;
