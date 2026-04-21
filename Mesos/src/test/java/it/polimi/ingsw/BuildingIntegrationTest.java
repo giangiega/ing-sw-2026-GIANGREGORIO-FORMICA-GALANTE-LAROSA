@@ -15,12 +15,18 @@ public class BuildingIntegrationTest {
     private Player player2;
 
     private void addOneCompleteSet(Player p) {
-        new Hunter(EraEnum.I, 2, false).AddToPlayerTribe(p, board);
-        new Artist(EraEnum.I, 2).AddToPlayerTribe(p, board);
-        new Builder(EraEnum.I, 2, 0, 0).AddToPlayerTribe(p, board);
-        new Inventor(EraEnum.I, 2, IconEnum.values()[0]).AddToPlayerTribe(p, board);
-        new Shaman(EraEnum.I, 2, 1).AddToPlayerTribe(p, board);
-        new Gatherer(EraEnum.I, 2).AddToPlayerTribe(p, board);
+        Hunter hunter = new Hunter(EraEnum.I, 2, false);
+        player.addCharacterCard(hunter, board);
+        Artist artist = new Artist(EraEnum.I, 2);
+        player.addCharacterCard(artist, board);
+        Builder builder = new Builder(EraEnum.I, 2, 0, 0);
+        player.addCharacterCard(builder, board);
+        Inventor inventor = new Inventor(EraEnum.I, 2, IconEnum.BOAT);
+        player.addCharacterCard(inventor, board);
+        Shaman shaman = new Shaman(EraEnum.I, 2, 1);
+        player.addCharacterCard(shaman, board);
+        Gatherer gatherer = new  Gatherer(EraEnum.I, 2);
+        player.addCharacterCard(gatherer, board);
     }
 
     @BeforeEach
@@ -76,9 +82,11 @@ public class BuildingIntegrationTest {
     void buildingBonusSameInventors_pairCompletedAfterAcquisition() {
         BuildingCard card = new BuildingCard(EraEnum.I, 0, 0, new BuildingBonusSameInventors());
         player.addBuildingCard(card);
-        new Inventor(EraEnum.I, 2, IconEnum.BOAT).AddToPlayerTribe(player, board);
+        Inventor inventor1 = new Inventor(EraEnum.I, 2, IconEnum.BOAT);
+        player.addCharacterCard(inventor1, board);
         int foodBefore = player.getFood();
-        new Inventor(EraEnum.I, 2, IconEnum.BOAT).AddToPlayerTribe(player, board);
+        Inventor inventor2 = new Inventor(EraEnum.I, 2, IconEnum.BOAT);
+        player.addCharacterCard(inventor1, board);
         assertEquals(foodBefore + 3, player.getFood(),
                 "BuildingFoodSet should dive the player 5 food");
     }

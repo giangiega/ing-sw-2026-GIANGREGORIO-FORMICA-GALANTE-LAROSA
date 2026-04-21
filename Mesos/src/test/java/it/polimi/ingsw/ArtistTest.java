@@ -84,5 +84,4 @@ public class ArtistTest {
                 "The number of artists in the player's artist list should be increased by two");
 
     }
-
 }
