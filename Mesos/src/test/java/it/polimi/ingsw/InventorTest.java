@@ -93,7 +93,7 @@ public class InventorTest {
 
     @Test
 //checking for error after multiple adds
-    void testAddToPlayer_multipleShamans_allAdded() {
+    void multipleAdds() {
         new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
         new Inventor(EraEnum.II, 3, IconEnum.BOAT).AddToPlayerTribe(player, board);
 
@@ -149,5 +149,47 @@ public class InventorTest {
                 "The counter should have increased by two");
         assertEquals(3, player.getCharacterByType(CharacterEnum.INVENTOR).size(),
                 "The number of inventors in the player's inventor list should be increased by 3");
+    }
+
+    @Test
+//Checking for no couples
+    void noCoupleSameInventorsUpdate() {
+        int couplesBefore = player.getCoupleSameInventors();
+        new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
+        assertEquals(couplesBefore, player.getCoupleSameInventors(),
+                "The player should have 0 couple");
+    }
+
+    @Test
+//Checking to see if coupleSameInventors gets updated
+    void coupleSameInventorsUpdate() {
+        int couplesBefore = player.getCoupleSameInventors();
+        new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
+        new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
+        assertEquals(couplesBefore + 1, player.getCoupleSameInventors(),
+                "The player should have 1 couple");
+    }
+
+    @Test
+//Checking for multiple couples
+    void multipleCouplesSameInventorsUpdate() {
+        int couplesBefore = player.getCoupleSameInventors();
+        new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
+        new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
+        new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
+        new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
+        assertEquals(couplesBefore + 2, player.getCoupleSameInventors(),
+                "The player should have 2 couple");
+    }
+
+    @Test
+//Checking for incomplete couples
+    void incompleteCoupleSameInventorsUpdate() {
+        int couplesBefore = player.getCoupleSameInventors();
+        new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
+        new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
+        new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
+        assertEquals(couplesBefore + 1, player.getCoupleSameInventors(),
+                "The player should have only 1 couple");
     }
 }
