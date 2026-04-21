@@ -61,15 +61,16 @@ public class BuildingCardUpperRow extends BuildingEffect {
             p.addBuildingCard(chosen);
             p.payFood(chosen.getCost(p));
         } else {
-            if (chosenIndex < 0 || chosenIndex >= b.getBuildingUpperRow().size()){
+            if (chosenIndex < 0 || chosenIndex >= b.getUpperRow().size()){
                 throw new InvalidPlayerActionException("Building index out of bounds");
             }
             TribeCard card = b.getUpperRow().get(chosenIndex);
-            if (card instanceof EventCard){
+            if (card.isEventCard()){
                 throw new InvalidPlayerActionException("Cannot take an EventCard");
             }
             b.removeFromUpperRow(card);
             p.addCharacterCard((CharacterCard) card, b);
         }
+        this.chosenIndex = - 1;
     }
 }
