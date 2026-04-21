@@ -59,6 +59,7 @@ public class BuildingCardUpperRow extends BuildingEffect {
             }
             b.removeFromBuildingUpperRow(chosen);
             p.addBuildingCard(chosen);
+            p.payFood(chosen.getCost(p));
         } else {
             if (chosenIndex < 0 || chosenIndex >= b.getBuildingUpperRow().size()){
                 throw new InvalidPlayerActionException("Building index out of bounds");
