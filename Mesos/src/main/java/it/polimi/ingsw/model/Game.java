@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Game {
     public List<Player> players;
-    public GameConfig config;
+    private final GameConfig config;
     public Board board;
     public int currentRound;
 

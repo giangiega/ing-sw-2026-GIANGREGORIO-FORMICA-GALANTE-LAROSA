@@ -51,4 +51,10 @@ public class TurnOrderTile {
         return pos == numPlayers - 1;
     }
 
+    public List<Player> getSlots(){
+        return List.copyOf(slots);
+    }
+    public int getNumPlayers(){
+        return numPlayers;
+    }
 }

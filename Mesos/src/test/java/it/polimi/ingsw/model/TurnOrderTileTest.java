@@ -52,5 +52,12 @@ public class TurnOrderTileTest {
         assertEquals(0, tile.getFoodBonusForSlot(2));
     }
 
+    @Test
+    void testSlots(){
+        assertEquals(3, tile.getSlots().size());
+        assertEquals(p1, tile.getSlots().get(0));
+        assertEquals(p2, tile.getSlots().get(1));
+        assertEquals(p3, tile.getSlots().get(2));
+    }
 
 }
