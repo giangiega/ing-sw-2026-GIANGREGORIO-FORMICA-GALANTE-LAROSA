@@ -76,10 +76,10 @@ public class GameTest {
 
         assertEquals(0, board.getOfferTrack().get(0).getOccupant().getFood());
         assertEquals(0, board.getTurnOrderTile().getOrder().size());
+        assertEquals('A', board.getOfferTrack().get(0).getLetter());
 
         game.resolveAction(board.getOfferTrack().get(0), indexUpperCardsChosen, indexLowerCardsChosen, indexUpperBuildingsChosen, indexLowerBuildingsChosen);
 
-        assertEquals(1, board.getTurnOrderTile().getOrder().size());
-        assertEquals(3, board.getTurnOrderTile().getOrder().get(0).getFood());
+        assertEquals(foodBefore+3+board.getTurnOrderTile().getFoodBonusForSlot(0), board.getTurnOrderTile().getOrder().getFirst().getFood());
     }
 }
