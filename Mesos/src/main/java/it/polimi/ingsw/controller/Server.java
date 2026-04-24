@@ -40,7 +40,7 @@ public class Server {
         if (invalidName || invalidColor) {
             cm.logged(false, name, color);
             return;
-        }
+        } // capire come gestire a schermo l'invalidità
 
         Player player = new Player(name, color);
         lobbyPlayers.add(player);
