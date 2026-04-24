@@ -1,4 +1,4 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.network;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.OfferTile;
