@@ -3,6 +3,8 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.OfferTile;
 import it.polimi.ingsw.model.TurnOrderTile;
+import it.polimi.ingsw.network.clientInterface.ClientOperation;
+import it.polimi.ingsw.network.serverInterface.ServerEvent;
 
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -19,18 +21,7 @@ public class ClientManagerSocket {
         this.out = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    public void logged(boolean result,  String name, ColorEnum color) {
-        JsonObject message = new JsonObject();
-        message.addProperty("op", "logged");
-        message.addProperty("result", result);
-        message.addProperty("name", name);
-        message.addProperty("totemColor", color.toString());
-        out.println(message);
-    }
+    public void sendEvent(ServerEvent serverEvent) {}
 
-    public void moveTotem(List<OfferTile> offerTrack, TurnOrderTile turnOrderTile) {
-        JsonObject message = new JsonObject();
-        message.addProperty("op", "moveTotem");
-        //continua
-    }
+
 }
