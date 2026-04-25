@@ -14,6 +14,7 @@ public class GameController {
     private final List<Player> players;
     private final Map<String, ClientManagerSocket> clientManagers;
     private Game game;
+    private TurnController turnController;
 
     public GameController(Server server, List<Player> players, Map<String, ClientManagerSocket> clientManagers) {
         this.server = server;
@@ -34,8 +35,10 @@ public class GameController {
         this.game = new Game(new ArrayList<>(players), board, config);
         game.startGame();
 
-        Player firstPlayer = game.getBoard().getTurnOrderTile().getSlots().getFirst();
-        ClientManagerSocket firstCM = clientManagers.get(firstPlayer.getName());
-
+        turnController = new TurnController(this, players.size());
+        turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
+        /*Player firstPlayer = game.getBoard().getTurnOrderTile().getSlots().getFirst();
+        ClientManagerSocket firstCM = clientManagers.get(firstPlayer.getName());*/
+        // gestirò in TurnController
     }
 }
