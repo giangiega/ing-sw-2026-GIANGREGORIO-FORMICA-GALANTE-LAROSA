@@ -31,10 +31,10 @@ public class Server {
         lobbyController.addPlayer(namePlayer, totemColor, cm);
     }
 
-    public void placeTotem(String namePlayer , TurnOrderTile ){
-        turnController.startPlacementPhase(index);
-    }
-
-
+    public void placeTotem(String PlayerName, int index){}
 
 }
+
+
+
+

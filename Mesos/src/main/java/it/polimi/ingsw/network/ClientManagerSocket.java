@@ -14,6 +14,7 @@ import java.util.List;
 public class ClientManagerSocket {
     private final Socket socket;
     private final PrintWriter out;
+    private String PlayerName;
 
     // autoFlush = true sends the message immediately after every println
     public ClientManagerSocket(Socket socket) throws IOException {
@@ -23,5 +24,11 @@ public class ClientManagerSocket {
 
     public void sendEvent(ServerEvent serverEvent) {}
 
+    public void setPlayerName(String PlayerName) {
+        this.PlayerName = PlayerName;
+    }
+    public String getPlayerName(){
+        return PlayerName;
+    }
 
 }
