@@ -4,6 +4,8 @@ import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.network.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
+import it.polimi.ingsw.network.serverInterface.EndGameEvent;
+import it.polimi.ingsw.network.serverInterface.ServerEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,4 +43,44 @@ public class GameController {
         ClientManagerSocket firstCM = clientManagers.get(firstPlayer.getName());*/
         // gestirò in TurnController
     }
+
+
+
+
+    // helper methods to access players or tiles into the previous methods
+    private void broadcastEvent(ServerEvent serverEvent) {
+        for(ClientManagerSocket cm : clientManagers.values()) {
+            cm.sendEvent(serverEvent);
+        }
+    }
+
+    private Player getPlayerByName(String name) {
+        for(Player p : players) {
+            if(p.getName().equals(name))
+                return p;
+        }
+        return null;
+    }
+
+    private OfferTile getOfferTileByLetter(char letter) {
+        for(OfferTile t : game.getBoard().getOfferTrack()) {
+            if(t.getLetter() == letter)
+                return t;
+        }
+        return null;
+    }
+
+    private OfferTile getOfferTileByPlayer(String name) {
+        for(OfferTile t : game.getBoard().getOfferTrack()) {
+            if(!t.getFreeOfferTile() && t.getOccupant() != null && t.getOccupant().getName().equals(name))
+                return t;
+        }
+        return null;
+    }
+    // EndGameEvent non è ancora stato definito
+    private void endGame() {
+        List<Player> winners = game.getWinner();
+        broadcastEvent(new EndGameEvent(/*winners*/));
+    }
+
 }
