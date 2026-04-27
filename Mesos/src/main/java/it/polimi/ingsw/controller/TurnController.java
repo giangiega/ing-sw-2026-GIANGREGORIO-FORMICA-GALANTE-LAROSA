@@ -29,6 +29,11 @@ public class TurnController {
         askNextTotemPlacement(turnOrderTile);
     }
 
+    /**
+     * Registers a placement.
+     * If all players have placed their totem, it starts the resolve phase.
+     * If not, the next player place his totem.
+     */
     public void onTotemPlaced(String playerName, TurnOrderTile turnOrderTile, List<OfferTile> offerTrack) {
         totemPlacedCurrRound.add(playerName);
         if (totemPlacedCurrRound.size() == numPlayers) {
@@ -38,14 +43,23 @@ public class TurnController {
         }
     }
 
+    /**
+     * Finds the next player who needs to place his totem.
+     * Sends a MoveTotemEvent if the totem is not already moved in the current round.
+     */
     public void askNextTotemPlacement(TurnOrderTile turnOrderTile) {
         for (Player p : turnOrderTile.getSlots()) {
             if(p != null && !totemPlacedCurrRound.contains(p.getName())) {
                 gameController.sendMoveTotem(p.getName());
+                return;
             }
         }
     }
 
+    /**
+     * Determines the order in which players will act based on the position
+     * of their totems on the OfferTrack.
+     */
     private void startResolvePhase(List<OfferTile> offerTrack) {
         resolveOrder.clear();
         idx = 0;
@@ -57,6 +71,9 @@ public class TurnController {
         askNextAction();
     }
 
+    /**
+     * Checks the index of players and calls che next action.
+     */
     public void onActionResolved() {
         idx++;
         if (idx >= resolveOrder.size()) {

@@ -24,6 +24,10 @@ public class GameController {
         this.clientManagers = clientManagers;
     }
 
+    /**
+     * Initializes decks, board and model.
+     * Creates GameConfig based on numPlayers and TurnController.
+     */
     public void startGame() {
         GameConfig config = GameConfig.create(players.size());
 
@@ -39,11 +43,12 @@ public class GameController {
 
         turnController = new TurnController(this, players.size());
         turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
-        /*Player firstPlayer = game.getBoard().getTurnOrderTile().getSlots().getFirst();
-        ClientManagerSocket firstCM = clientManagers.get(firstPlayer.getName());*/
-        // gestirò in TurnController
     }
 
+    /**
+     * Places a totem on a specific OfferTile (calls placeTotem from Game, model).
+     * Sends an event that updates the board with the totem.
+     */
     public synchronized void placeTotem(String playerName, char letter) {
         Player p = getPlayerByName(playerName);
         if(p == null)
@@ -66,6 +71,11 @@ public class GameController {
                 game.getBoard().getOfferTrack());
     }
 
+    /**
+     * Resolves the acquisition of cards and buildings for the player.
+     * unplaceTotem() is called inside resolveAction() on Game model class !!!
+     * Updates the board and sends an event that manages the pickable cards.
+     */
     public synchronized void resolveAction(String playerName,
                                            List<Integer> upperCards, List<Integer> lowerCards,
                                            List<Integer> upperBuildings, List<Integer> lowerBuildings) {
@@ -95,6 +105,11 @@ public class GameController {
         turnController.onActionResolved();
     }
 
+    /**
+     * Manages the transition between rounds.
+     * 10th round is the last.
+     * Calls endRound() in Game model.
+     */
     public void endRound() {
         try {
             game.endRound();
@@ -107,7 +122,7 @@ public class GameController {
                 game.getBoard().getTurnOrderTile()
         ));
 
-        if (game.getCurrentRound() == 10) { // check if is correct
+        if (game.getCurrentRound() == 10) { // check if it's correct
             endGame();
         } else {
             turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
