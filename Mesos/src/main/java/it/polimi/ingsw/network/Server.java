@@ -50,9 +50,21 @@ public class Server {
 
     public void fullLobby(List<Player> lobbyPlayers, Map<String, ClientManagerSocket> clientManagers) {
         gameController = new GameController(this, lobbyPlayers, clientManagers);
+        turnController = new TurnController(gameController, this.numPlayers);
         gameController.startGame();
     }
 
+    public LobbyController getLobbyController(){
+        return this.lobbyController;
+    }
+
+    public GameController getGameController(){
+        return this.gameController;
+    }
+
+    public TurnController getTurnController() {
+        return this.turnController;
+    }
 }
 
 
