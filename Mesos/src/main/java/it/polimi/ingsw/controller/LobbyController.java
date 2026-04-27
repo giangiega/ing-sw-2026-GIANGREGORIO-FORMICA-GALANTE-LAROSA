@@ -25,7 +25,7 @@ public class LobbyController {
     public synchronized void addPlayer(String name, ColorEnum color, ClientManagerSocket cm) {
         for (Player p : lobbyPlayers) {
             if (p.getName().equals(name) || p.getTotemColor().equals(color)){
-                cm.sendEvent(new LoggedEvent(false, name, color));
+                cm.sendEvent(new LoggedEvent(false, name, color, new ArrayList<>()));
                 return;
             }
 
@@ -34,7 +34,7 @@ public class LobbyController {
         Player player = new Player(name, color);
         lobbyPlayers.add(player);
         clientManagers.put(name, cm);
-        cm.sendEvent(new LoggedEvent(true, name, color));
+        cm.sendEvent(new LoggedEvent(true, name, color,new ArrayList<>()));
 
         if(lobbyPlayers.size() == numPlayers)
             server.fullLobby(lobbyPlayers, clientManagers);

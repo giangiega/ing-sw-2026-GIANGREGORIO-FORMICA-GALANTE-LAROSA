@@ -11,8 +11,7 @@ import java.util.Map;
 public interface ViewInterface {
     void showLobby(List<String> lobby);
     void showGame();
-    void updateupperRows(List<TribeCard> upperRow);
-    void updatelowerRows(List<TribeCard> lowerRow);
+    void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow);
     void updateofferTrack(List<OfferTile> offerTrack);
     void updatePlayer(String name, int food, int prestigePoints, Map<CharacterEnum,List<CharacterCard>>tribe);
     void updateTurnOrder(List<String> turnOrder);

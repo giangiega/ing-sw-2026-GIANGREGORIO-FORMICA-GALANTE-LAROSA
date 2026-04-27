@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.OfferTile;
 import it.polimi.ingsw.model.TribeCard;
 import it.polimi.ingsw.network.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
+import it.polimi.ingsw.network.ViewInterface;
 
 import java.util.List;
 
@@ -19,7 +20,9 @@ public class IsYourTurnEvent implements ServerEvent {
     }
 
     @Override
-    public void executeOp(Server server, ClientManagerSocket cm){}
+    public void updateView(ViewInterface view){
+
+    }
 
 
 }

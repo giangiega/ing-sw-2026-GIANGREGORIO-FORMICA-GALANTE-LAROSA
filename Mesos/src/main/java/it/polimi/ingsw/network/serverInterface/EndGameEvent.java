@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.serverInterface;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.network.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
+import it.polimi.ingsw.network.ViewInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class EndGameEvent implements ServerEvent {
     }
 
     @Override
-    public void executeOp(Server server, ClientManagerSocket cm) {
+    public void updateView(ViewInterface view){
 
     }
 }
