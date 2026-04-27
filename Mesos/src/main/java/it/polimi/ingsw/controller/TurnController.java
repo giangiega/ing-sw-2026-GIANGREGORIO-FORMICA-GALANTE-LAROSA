@@ -57,9 +57,24 @@ public class TurnController {
         askNextAction();
     }
 
+    public void onActionResolved() {
+        idx++;
+        if (idx >= resolveOrder.size()) {
+            gameController.endRound();
+        } else {
+            askNextAction();
+        }
+    }
+
     private void askNextAction() {
         String nextPlayerName = resolveOrder.get(idx);
         gameController.sendIsYourTurn(nextPlayerName);
+    }
+
+    public String getCurrentResolvingPlayer() {
+        if (idx < resolveOrder.size())
+            return resolveOrder.get(idx);
+        return null;
     }
 
 }

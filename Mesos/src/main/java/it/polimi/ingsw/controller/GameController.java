@@ -8,7 +8,6 @@ import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.serverInterface.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +66,53 @@ public class GameController {
                 game.getBoard().getOfferTrack());
     }
 
-    // scrivere resolveAction e endRound
+    public synchronized void resolveAction(String playerName,
+                                           List<Integer> upperCards, List<Integer> lowerCards,
+                                           List<Integer> upperBuildings, List<Integer> lowerBuildings) {
+        if (!playerName.equals(turnController.getCurrentResolvingPlayer()))
+            return;
+
+        OfferTile tile = getOfferTileByPlayer(playerName);
+        if(tile == null)
+            return;
+
+        try {
+            game.resolveAction(tile, upperCards, lowerCards, upperBuildings, lowerBuildings);
+        } catch (InvalidPlayerActionException e) {
+            sendIsYourTurn(playerName);
+            return;
+        }
+
+        Player player = getPlayerByName(playerName);
+        if(player != null)
+            clientManagers.get(playerName).sendEvent(new ValidCardsEvent(player.getTribe()));
+
+        broadcastEvent(new UpdateBoardEvent(
+                game.getBoard().getOfferTrack(),
+                game.getBoard().getTurnOrderTile()
+        ));
+
+        turnController.onActionResolved();
+    }
+
+    public void endRound() {
+        try {
+            game.endRound();
+        } catch (InvalidPlayerActionException e) {
+            System.err.println("error ath the end of the round: " + e.getMessage());
+        }
+
+        broadcastEvent(new UpdateBoardEvent(
+                game.getBoard().getOfferTrack(),
+                game.getBoard().getTurnOrderTile()
+        ));
+
+        if (game.getCurrentRound() == 10) { // check if is correct
+            endGame();
+        } else {
+            turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
+        }
+    }
 
     void sendIsYourTurn(String playerName) {
         ClientManagerSocket cms = clientManagers.get(playerName);
