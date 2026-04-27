@@ -1,10 +1,9 @@
 /**
  * @author Giuse
  */
-package it.polimi.ingsw.network.clientInterface;
-import it.polimi.ingsw.network.clientInterface.ClientViewSocket;
-import it.polimi.ingsw.network.clientInterface.ListenerClientViewSocket;
+package it.polimi.ingsw.network;
 import it.polimi.ingsw.network.ViewInterface;
+import it.polimi.ingsw.network.serverInterface.ListenerClientViewSocket;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,7 +38,7 @@ public class SocketClient {
         PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
         //Listener: Runnable::run for TUI
-        ListenerClientViewSocket listener = new ListenerClientViewSocket(in, view, Runnable :: run);
+       ListenerClientViewSocket listener = new ListenerClientViewSocket(in, view, Runnable :: run);
         Thread listenerThread = new Thread(listener, "listener-client");
         listenerThread.setDaemon(true);//thread dies with main thread
         listenerThread.start();
