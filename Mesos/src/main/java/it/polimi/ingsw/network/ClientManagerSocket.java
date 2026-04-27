@@ -11,14 +11,19 @@ import java.net.Socket;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * @author Ale
+ * this class has to send at clients the update of them view after server side checks
+ */
+
 public class ClientManagerSocket {
-    private final Socket socket;
+    private final Socket clientSocket;
     private final PrintWriter out;
     private String PlayerName;
 
     // autoFlush = true sends the message immediately after every println
     public ClientManagerSocket(Socket socket) throws IOException {
-        this.socket = socket;
+        this.clientSocket = socket;
         this.out = new PrintWriter(socket.getOutputStream(), true);
     }
 
