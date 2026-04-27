@@ -65,7 +65,7 @@ public class SocketClient {
 
         try {
             //creating view
-            ViewInterface view = new TuiView();//Quando aggiungeremo la view ed il tipo
+            ViewInterface view = null; //new TuiView();//Quando aggiungeremo la view ed il tipo
             new SocketClient(host, port).connect(view);
         }catch(IOException e){
             System.err.println("Could not connect to: " + host + ":" + port);
