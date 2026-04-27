@@ -1,5 +1,10 @@
 package it.polimi.ingsw.network;
 
+import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.controller.LobbyController;
+
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.Scanner;
 
 public class ServerApp {
@@ -8,7 +13,9 @@ public class ServerApp {
      * @param args
      * this class take the information about numPLayers to create Server, before than players login
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        String host = args[0];
+        int port = Integer.parseInt(args[1]);
         Scanner scanner = new Scanner(System.in);
         int numPlayers = 0;
 
@@ -18,6 +25,6 @@ public class ServerApp {
         }
 
         Server server = new Server(numPlayers);
-        server.startListening();
+        server.startListening(port);
     }
 }
