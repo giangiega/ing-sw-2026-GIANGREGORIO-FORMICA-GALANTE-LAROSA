@@ -53,12 +53,6 @@ public class Server {
         gameController.startGame();
     }
 
-    public void login(String namePlayer, ColorEnum totemColor, ClientManagerSocket cm) {
-        lobbyController.addPlayer(namePlayer, totemColor, cm);
-    }
-
-    public void placeTotem(String PlayerName, int index){}
-
 }
 
 

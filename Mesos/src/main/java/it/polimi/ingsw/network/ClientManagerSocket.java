@@ -27,7 +27,9 @@ public class ClientManagerSocket {
         this.out = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    public void sendEvent(ServerEvent serverEvent) {}
+    public void sendEvent(ServerEvent serverEvent) {
+        //con gson manderò in autoput sul canale di comunicazione l'evento serverEvent
+    }
 
     public void setPlayerName(String PlayerName) {
         this.PlayerName = PlayerName;
