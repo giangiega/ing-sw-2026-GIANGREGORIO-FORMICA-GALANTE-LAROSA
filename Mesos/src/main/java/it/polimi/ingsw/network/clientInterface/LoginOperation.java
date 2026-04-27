@@ -15,6 +15,6 @@ public class LoginOperation implements ClientOperation {
     }
     @Override
     public void executeOp(Server server, ClientManagerSocket cm) {
-        server.login(namePlayer,totemColor,cm);
+        server.getLobbyController().addPlayer(namePlayer,totemColor,cm);
     }
 }
