@@ -153,14 +153,13 @@ public class Game {
     }
 
     /**
-     * NEVER CALL THIS METHOD, it is already called inside getWinner() bc is private.
      * PP from eventual effects of the last round events are not calculated in this method,
      * so they have to be resolved before calling calculateFinalScores() and getWinner()
      * Buildings that modify PP or in general every building which effect has to be shown at the end
      * of the game are resolved here, before than the final score calculation.
      *
      */
-    private Map<Player,Integer> calculateFinalScores() {
+    public Map<Player,Integer> calculateFinalScores() {
         Map<Player,Integer> scores = new HashMap<>();
         for(Player p : players){
             for(BuildingCard c : p.getBuildingCards()){
@@ -183,11 +182,10 @@ public class Game {
      * this method returns a list of players bc it has to manage the case of draw between 2 players.
      * When 2 players have equals PP and food, they both win, so getWinner() has to return them both.
      * UPDATE : calculateFinalScores() is now private. At the end, only getWinner() is called.
-     * calculateFinalScores() is already called inside getWinner() , safer solution.
+     * calculateFinalScores() is not called inside getWinner() bc I need to show points at the end.
      */
-    public List<Player> getWinner() {
+    public List<Player> getWinner(Map <Player,Integer> scores) {
         Player winner = players.getFirst();
-        Map<Player,Integer> scores = calculateFinalScores();
 
         for(int i = 1; i < players.size(); i++) {
             Player curr =  players.get(i);
