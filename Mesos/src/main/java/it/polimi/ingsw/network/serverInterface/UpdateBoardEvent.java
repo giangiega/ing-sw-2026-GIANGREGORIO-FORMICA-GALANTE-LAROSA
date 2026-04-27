@@ -7,17 +7,17 @@ import it.polimi.ingsw.network.Server;
 
 import java.util.List;
 
-public class MoveTotemEvent implements ServerEvent {
+public class UpdateBoardEvent implements ServerEvent {
     private final List<OfferTile> offerTrack;
     private final TurnOrderTile turnOrderTile;
 
-    public MoveTotemEvent(List<OfferTile> offerTrack, TurnOrderTile turnOrderTile) {
+    public UpdateBoardEvent(List<OfferTile> offerTrack, TurnOrderTile turnOrderTile) {
         this.offerTrack = offerTrack;
         this.turnOrderTile = turnOrderTile;
     }
 
     @Override
-    public void executeOp(Server server, ClientManagerSocket cm){
+    public void executeOp(Server server, ClientManagerSocket cm) {
 
     }
 }

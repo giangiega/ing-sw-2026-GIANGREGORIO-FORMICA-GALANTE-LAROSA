@@ -5,8 +5,7 @@ import it.polimi.ingsw.exceptions.InvalidPlayerActionException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.network.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.network.serverInterface.EndGameEvent;
-import it.polimi.ingsw.network.serverInterface.ServerEvent;
+import it.polimi.ingsw.network.serverInterface.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,18 +56,34 @@ public class GameController {
         try {
             game.placeTotem(p, tile);
         } catch(InvalidPlayerActionException e) {
-            //
+            sendMoveTotem(playerName);
+            return;
         }
 
+        broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),
+                game.getBoard().getTurnOrderTile()));
+
+        turnController.onTotemPlaced(playerName, game.getBoard().getTurnOrderTile(),
+                game.getBoard().getOfferTrack());
     }
 
+    // scrivere resolveAction e endRound
 
-    // scrivere il costruttore di MoveTotemEvent
+    void sendIsYourTurn(String playerName) {
+        ClientManagerSocket cms = clientManagers.get(playerName);
+        if (cms != null)
+            cms.sendEvent(new IsYourTurnEvent(
+                    game.getBoard().getUpperRow(),
+                    game.getBoard().getLowerRow(),
+                    getOfferTileByPlayer(playerName)
+            ));
+    }
+
     void sendMoveTotem(String playerName) {
         ClientManagerSocket cm = clientManagers.get(playerName);
         if(cm != null) {
-            //cm.sendEvent(new MoveTotemEvent(game.getBoard().getOfferTrack(),
-            // game.getBoard().getTurnOrderTile()));
+            cm.sendEvent(new MoveTotemEvent(game.getBoard().getOfferTrack(),
+             game.getBoard().getTurnOrderTile()));
         }
     }
 
