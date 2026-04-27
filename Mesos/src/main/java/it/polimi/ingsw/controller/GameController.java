@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.enums.EraEnum;
+import it.polimi.ingsw.exceptions.InvalidPlayerActionException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.network.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
@@ -8,6 +9,7 @@ import it.polimi.ingsw.network.serverInterface.EndGameEvent;
 import it.polimi.ingsw.network.serverInterface.ServerEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,8 +46,31 @@ public class GameController {
         // gestirò in TurnController
     }
 
+    public synchronized void placeTotem(String playerName, char letter) {
+        Player p = getPlayerByName(playerName);
+        if(p == null)
+            return;
+        OfferTile tile = getOfferTileByLetter(letter);
+        if(tile == null)
+            return;
+
+        try {
+            game.placeTotem(p, tile);
+        } catch(InvalidPlayerActionException e) {
+            //
+        }
+
+    }
 
 
+    // scrivere il costruttore di MoveTotemEvent
+    void sendMoveTotem(String playerName) {
+        ClientManagerSocket cm = clientManagers.get(playerName);
+        if(cm != null) {
+            //cm.sendEvent(new MoveTotemEvent(game.getBoard().getOfferTrack(),
+            // game.getBoard().getTurnOrderTile()));
+        }
+    }
 
     // helper methods to access players or tiles into the previous methods
     private void broadcastEvent(ServerEvent serverEvent) {
@@ -77,10 +102,11 @@ public class GameController {
         }
         return null;
     }
-    // EndGameEvent non è ancora stato definito
+
     private void endGame() {
-        List<Player> winners = game.getWinner();
-        broadcastEvent(new EndGameEvent(/*winners*/));
+        Map<Player, Integer> finalScores = game.calculateFinalScores();
+        List<Player> winners = game.getWinner(finalScores);
+        broadcastEvent(new EndGameEvent(winners, finalScores));
     }
 
 }
