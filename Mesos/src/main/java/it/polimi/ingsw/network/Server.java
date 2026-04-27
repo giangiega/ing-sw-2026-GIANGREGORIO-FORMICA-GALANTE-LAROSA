@@ -24,7 +24,6 @@ public class Server {
     private LobbyController lobbyController;
     private GameController gameController;
     private final int numPlayers;
-    private TurnController turnController;
 
     public Server(int numPlayers) {
         this.numPlayers = numPlayers;
@@ -38,9 +37,15 @@ public class Server {
            while (connected < numPlayers){
                Socket clientSocket = serverSocket.accept();
                ClientManagerSocket clientManagerSocket = new ClientManagerSocket(clientSocket);
-               ListenerClientManagerSocket listenerClientManagerSocket = new ListenerClientManagerSocket(lobbyController, clientSocket, clientManagerSocket);
+               ListenerClientManagerSocket listenerClientManagerSocket = new ListenerClientManagerSocket(this, lobbyController, clientSocket, clientManagerSocket);
 
-               //ListenerClientManagerSocket.start();
+               new Thread(() -> {
+                   try{
+                       listenerClientManagerSocket.startClientListener();
+                   }catch (IOException e){
+                       throw new RuntimeException();
+                   }
+               }).start();
                connected++;
            }
         }catch (IOException e){
@@ -50,7 +55,6 @@ public class Server {
 
     public void fullLobby(List<Player> lobbyPlayers, Map<String, ClientManagerSocket> clientManagers) {
         gameController = new GameController(this, lobbyPlayers, clientManagers);
-        turnController = new TurnController(gameController, this.numPlayers);
         gameController.startGame();
     }
 
@@ -60,10 +64,6 @@ public class Server {
 
     public GameController getGameController(){
         return this.gameController;
-    }
-
-    public TurnController getTurnController() {
-        return this.turnController;
     }
 }
 

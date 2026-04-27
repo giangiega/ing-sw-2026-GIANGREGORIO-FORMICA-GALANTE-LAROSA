@@ -1,6 +1,8 @@
 package it.polimi.ingsw.network.serverInterface;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.network.ClientManagerSocket;
+import it.polimi.ingsw.network.Server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,5 +21,10 @@ public class EndGameEvent implements ServerEvent {
         for (Map.Entry<Player, Integer> entry : scores.entrySet()) {
             this.finalScores.put(entry.getKey().getName(), entry.getValue());
         }
+    }
+
+    @Override
+    public void executeOp(Server server, ClientManagerSocket cm) {
+
     }
 }
