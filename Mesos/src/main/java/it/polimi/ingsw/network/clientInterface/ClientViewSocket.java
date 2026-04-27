@@ -1,3 +1,6 @@
+/**
+ * @author Giuse
+ */
 package it.polimi.ingsw.network.clientInterface;
 import com.google.gson.Gson;
 import it.polimi.ingsw.network.clientInterface.ClientOperation;
@@ -12,6 +15,10 @@ public class ClientViewSocket {
         this.gson = GsonFactory.clientOperationGson();
     }
 
+    /**
+     * @param operation : type of operation sent
+     * This method send the operation to the server
+     */
     public void sendOperation(ClientOperation operation){
         String json = gson.toJson(operation, ClientOperation.class);
         out.println(json);

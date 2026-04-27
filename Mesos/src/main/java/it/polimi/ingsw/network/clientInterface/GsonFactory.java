@@ -1,7 +1,13 @@
+/**
+ * @author Giuse
+ */
 package it.polimi.ingsw.network.clientInterface;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import it.polimi.ingsw.network.serverInterface.EndGameEvent;
+import it.polimi.ingsw.network.serverInterface.LoggedEvent;
+import it.polimi.ingsw.network.serverInterface.ServerEvent;
 
 public class GsonFactory {
 
@@ -22,21 +28,19 @@ public class GsonFactory {
                         .registerSubtype(LoginOperation.class)
                         .registerSubtype(PlaceTotemOperation.class);
 
-        return new GsonBuilder().registerTypeAdapter(factory).create();
+        return new GsonBuilder().registerTypeAdapterFactory(factory).create();
     }
 
     /**
      * @return :new Gson instance ready to receive events
      */
-    public static Gson serverGson(){
-        RuntimeTypeAdapterFactory<Server> factory =
+    public static Gson serverEventGson(){
+        RuntimeTypeAdapterFactory<ServerEvent> factory =
                 RuntimeTypeAdapterFactory
-                        .of(ClientOperation.class, TYPE_FIELD)
-                        .registerSubtype(BuildingChoiceOperation.class)
-                        .registerSubtype(ChooseCardOperation.class)
-                        .registerSubtype(LoginOperation.class)
-                        .registerSubtype(PlaceTotemOperation.class);
+                        .of(ServerEvent.class, TYPE_FIELD)
+                        .registerSubtype(EndGameEvent.class)
+                        .registerSubtype(LoggedEvent.class);
 
-        return new GsonBuilder().registerTypeAdapter(factory).create();
+        return new GsonBuilder().registerTypeAdapterFactory(factory).create();
     }
 }

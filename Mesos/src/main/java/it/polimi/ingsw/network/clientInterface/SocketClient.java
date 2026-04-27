@@ -2,11 +2,11 @@
  * @author Giuse
  */
 package it.polimi.ingsw.network.clientInterface;
-import it.polimi.ingsw.network.ClientViewSocket;
-import it.polimi.ingsw.network.ListenerClientViewSocket;
+import it.polimi.ingsw.network.clientInterface.ClientViewSocket;
+import it.polimi.ingsw.network.clientInterface.ListenerClientViewSocket;
 import it.polimi.ingsw.network.ViewInterface;
 
-import  java.io.BufferedReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -25,12 +25,11 @@ public class SocketClient {
     }
 
     /**
-     * @return
      * @throws IOException
      * This method open the connection, starts the listener and launch the view
      * It throws the exception if the connection to the server fails
      */
-    public Socket connect() throws IOException {
+    public void connect(ViewInterface view) throws IOException {
         Socket socket = new Socket(host, port);//It waits until the server accepts the connection
 
         //New input channel
@@ -39,11 +38,8 @@ public class SocketClient {
         //New output channel to the server: auto-flush true empties the buffer as soon as it gets filled
         PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
-        //View
-        ViewInterface view = new TuiView();
-
         //Listener: Runnable::run for TUI
-        ListenerClientViewSocket listener = new ListenerClientViewSocket(in, view, Runnanble :: run);
+        ListenerClientViewSocket listener = new ListenerClientViewSocket(in, view, Runnable :: run);
         Thread listenerThread = new Thread(listener, "listener-client");
         listenerThread.setDaemon(true);//thread dies with main thread
         listenerThread.start();
@@ -68,7 +64,9 @@ public class SocketClient {
         }
 
         try {
-            new SocketClient(host, port).connect();
+            //creating view
+            ViewInterface view = new TuiView();//Quando aggiungeremo la view ed il tipo
+            new SocketClient(host, port).connect(view);
         }catch(IOException e){
             System.err.println("Could not connect to: " + host + ":" + port);
             System.err.println("Cause: " + e.getMessage());

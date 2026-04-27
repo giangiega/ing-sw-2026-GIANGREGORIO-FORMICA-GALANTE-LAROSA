@@ -8,7 +8,7 @@ import it.polimi.ingsw.network.serverInterface.ServerEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.function.Consumer;
+import java.util.function.Consumer;
 
 public class ListenerClientViewSocket implements Runnable {
 
@@ -25,7 +25,7 @@ public class ListenerClientViewSocket implements Runnable {
         this.in = in;
         this.view = view;
         this.uiDispatcher = uiDispatcher;
-        this.gson = GsonBuilder.serverEventGson();
+        this.gson = GsonFactory.serverEventGson();
     }
     @Override
     public void run() {
