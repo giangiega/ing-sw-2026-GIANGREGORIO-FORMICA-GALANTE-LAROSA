@@ -21,6 +21,7 @@ public interface ViewInterface {
     void eventResult(String eventName, EventOutcome outcomes);
     void invalidChoice(String message); // il messaggio dipenderà dal tipo di errore
     void showFinalScore(Map< String , Integer> ranking);
+    void showValidCards(List<CharacterCard> tribe);
 
 
 

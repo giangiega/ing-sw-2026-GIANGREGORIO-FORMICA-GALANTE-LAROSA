@@ -19,6 +19,7 @@ public class MoveTotemEvent implements ServerEvent {
 
     @Override
     public void updateView(ViewInterface view){
+       // view.placeTotem(freeSlots);
 
     }
 }
