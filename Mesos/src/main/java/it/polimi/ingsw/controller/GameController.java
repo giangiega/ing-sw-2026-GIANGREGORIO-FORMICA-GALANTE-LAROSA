@@ -8,7 +8,6 @@ import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.serverInterface.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +24,10 @@ public class GameController {
         this.clientManagers = clientManagers;
     }
 
+    /**
+     * Initializes decks, board and model.
+     * Creates GameConfig based on numPlayers and TurnController.
+     */
     public void startGame() {
         GameConfig config = GameConfig.create(players.size());
 
@@ -40,11 +43,12 @@ public class GameController {
 
         turnController = new TurnController(this, players.size());
         turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
-        /*Player firstPlayer = game.getBoard().getTurnOrderTile().getSlots().getFirst();
-        ClientManagerSocket firstCM = clientManagers.get(firstPlayer.getName());*/
-        // gestirò in TurnController
     }
 
+    /**
+     * Places a totem on a specific OfferTile (calls placeTotem from Game, model).
+     * Sends an event that updates the board with the totem.
+     */
     public synchronized void placeTotem(String playerName, char letter) {
         Player p = getPlayerByName(playerName);
         if(p == null)
@@ -67,7 +71,63 @@ public class GameController {
                 game.getBoard().getOfferTrack());
     }
 
-    // scrivere resolveAction e endRound
+    /**
+     * Resolves the acquisition of cards and buildings for the player.
+     * unplaceTotem() is called inside resolveAction() on Game model class !!!
+     * Updates the board and sends an event that manages the pickable cards.
+     */
+    public synchronized void resolveAction(String playerName,
+                                           List<Integer> upperCards, List<Integer> lowerCards,
+                                           List<Integer> upperBuildings, List<Integer> lowerBuildings) {
+        if (!playerName.equals(turnController.getCurrentResolvingPlayer()))
+            return;
+
+        OfferTile tile = getOfferTileByPlayer(playerName);
+        if(tile == null)
+            return;
+
+        try {
+            game.resolveAction(tile, upperCards, lowerCards, upperBuildings, lowerBuildings);
+        } catch (InvalidPlayerActionException e) {
+            sendIsYourTurn(playerName);
+            return;
+        }
+
+        Player player = getPlayerByName(playerName);
+        if(player != null)
+            clientManagers.get(playerName).sendEvent(new ValidCardsEvent(player.getTribe()));
+
+        broadcastEvent(new UpdateBoardEvent(
+                game.getBoard().getOfferTrack(),
+                game.getBoard().getTurnOrderTile()
+        ));
+
+        turnController.onActionResolved();
+    }
+
+    /**
+     * Manages the transition between rounds.
+     * 10th round is the last.
+     * Calls endRound() in Game model.
+     */
+    public void endRound() {
+        try {
+            game.endRound();
+        } catch (InvalidPlayerActionException e) {
+            System.err.println("error ath the end of the round: " + e.getMessage());
+        }
+
+        broadcastEvent(new UpdateBoardEvent(
+                game.getBoard().getOfferTrack(),
+                game.getBoard().getTurnOrderTile()
+        ));
+
+        if (game.getCurrentRound() == 10) { // check if it's correct
+            endGame();
+        } else {
+            turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
+        }
+    }
 
     void sendIsYourTurn(String playerName) {
         ClientManagerSocket cms = clientManagers.get(playerName);

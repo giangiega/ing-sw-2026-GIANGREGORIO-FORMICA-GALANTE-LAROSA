@@ -16,8 +16,8 @@ import java.util.stream.IntStream;
 public class Player {
     private final String name;
     private final ColorEnum totemColor;
-    private Map<CharacterEnum, List<CharacterCard>> tribe;
-    private List<BuildingCard> buildings;
+    private final Map<CharacterEnum, List<CharacterCard>> tribe;
+    private final List<BuildingCard> buildings;
     private int food;
     private int prestigePoints;
     private int countShamanStar;
@@ -201,7 +201,17 @@ public class Player {
         }
 
         return totalCharactersCount;
+    }
 
+    public List<CharacterCard> getTribe(){
+        List<CharacterCard> tribeList = new ArrayList<>();
+        tribe.get(CharacterEnum.HUNTER).addAll(tribeList);
+        tribe.get(CharacterEnum.GATHERER).addAll(tribeList);
+        tribe.get(CharacterEnum.SHAMAN).addAll(tribeList);
+        tribe.get(CharacterEnum.BUILDER).addAll(tribeList);
+        tribe.get(CharacterEnum.ARTIST).addAll(tribeList);
+        tribe.get(CharacterEnum.INVENTOR).addAll(tribeList);
+        return tribeList;
     }
 
     /**
