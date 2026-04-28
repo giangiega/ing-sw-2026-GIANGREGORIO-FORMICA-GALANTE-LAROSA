@@ -6,13 +6,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.polimi.ingsw.network.clientInterface.*;
-import it.polimi.ingsw.network.serverInterface.EndGameEvent;
-import it.polimi.ingsw.network.serverInterface.LoggedEvent;
-import it.polimi.ingsw.network.serverInterface.ServerEvent;
+import it.polimi.ingsw.network.serverInterface.*;
 
 public class GsonFactory {
 
-    private static final String TYPE_FIELD = "type";
+    private static final String TYPE_FIELD = "op";
 
     /**
      * @return : Gson instance ready to send operation out
@@ -40,7 +38,13 @@ public class GsonFactory {
                 RuntimeTypeAdapterFactory
                         .of(ServerEvent.class, TYPE_FIELD)
                         .registerSubtype(EndGameEvent.class)
-                        .registerSubtype(LoggedEvent.class);
+                        .registerSubtype(LoggedEvent.class)
+                        .registerSubtype(AckEvent.class)
+                        .registerSubtype(IsYourTurnEvent.class)
+                        .registerSubtype(MoveTotemEvent.class)
+                        .registerSubtype(UpdateBoardEvent.class)
+                        .registerSubtype(ValidCardsEvent.class);
+
 
         return new GsonBuilder().registerTypeAdapterFactory(factory).create();
     }
