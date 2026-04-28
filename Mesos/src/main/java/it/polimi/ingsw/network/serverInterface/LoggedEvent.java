@@ -1,11 +1,8 @@
 package it.polimi.ingsw.network.serverInterface;
 
 import it.polimi.ingsw.enums.ColorEnum;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.network.ClientManagerSocket;
-import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.network.ViewInterface;
-import java.util.ArrayList;
+import it.polimi.ingsw.userInterface.ViewInterface;
+
 import java.util.List;
 
 public class LoggedEvent implements ServerEvent {

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.network.serverInterface;
 
-import it.polimi.ingsw.network.ViewInterface;
+import it.polimi.ingsw.userInterface.ViewInterface;
 
 public class AckEvent implements ServerEvent{
 

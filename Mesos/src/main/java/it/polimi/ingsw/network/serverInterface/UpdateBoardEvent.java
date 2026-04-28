@@ -3,9 +3,7 @@ package it.polimi.ingsw.network.serverInterface;
 import it.polimi.ingsw.model.OfferTile;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.TurnOrderTile;
-import it.polimi.ingsw.network.ClientManagerSocket;
-import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.network.ViewInterface;
+import it.polimi.ingsw.userInterface.ViewInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,7 @@ public class UpdateBoardEvent implements ServerEvent {
     }
     @Override
     public void updateView(ViewInterface view){
-        view.updateofferTrack(offerTrack);
+        view.updateOfferTrack(offerTrack);
         view.updateTurnOrder(getTurnOrderNames());
     }
 }

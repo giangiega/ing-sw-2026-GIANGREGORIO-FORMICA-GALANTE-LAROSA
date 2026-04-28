@@ -3,6 +3,8 @@
  */
 package it.polimi.ingsw.network;
 
+import it.polimi.ingsw.userInterface.ViewInterface;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -2,9 +2,7 @@ package it.polimi.ingsw.network.serverInterface;
 
 import it.polimi.ingsw.model.OfferTile;
 import it.polimi.ingsw.model.TribeCard;
-import it.polimi.ingsw.network.ClientManagerSocket;
-import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.network.ViewInterface;
+import it.polimi.ingsw.userInterface.ViewInterface;
 
 import java.util.List;
 

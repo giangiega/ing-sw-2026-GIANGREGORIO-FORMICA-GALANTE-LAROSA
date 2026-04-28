@@ -1,9 +1,7 @@
 package it.polimi.ingsw.network.serverInterface;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.network.ClientManagerSocket;
-import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.network.ViewInterface;
+import it.polimi.ingsw.userInterface.ViewInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;

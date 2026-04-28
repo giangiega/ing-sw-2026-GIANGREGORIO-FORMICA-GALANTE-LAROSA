@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 
 
 import it.polimi.ingsw.network.serverInterface.ServerEvent;
+import it.polimi.ingsw.userInterface.ViewInterface;
 
 import java.io.BufferedReader;
 import java.io.IOException;
