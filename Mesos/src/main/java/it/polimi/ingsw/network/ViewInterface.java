@@ -24,6 +24,8 @@ public interface ViewInterface {
     void showValidCards(List<CharacterCard> tribe);
     void showLoginScreen();
 
+    // serve una classe che permetta ad ogni player di vedere le carte/pp/food degli altri players
+
 
 
 }

@@ -6,8 +6,8 @@ import it.polimi.ingsw.enums.ColorEnum;
 
 public class LoginOperation implements ClientOperation {
 
-    private String namePlayer;
-    private ColorEnum totemColor;
+    private final String namePlayer;
+    private final ColorEnum totemColor;
 
     public LoginOperation(String namePlayer, ColorEnum totemColor) {
         this.namePlayer = namePlayer;

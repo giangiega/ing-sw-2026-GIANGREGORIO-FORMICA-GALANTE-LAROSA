@@ -42,7 +42,6 @@ public class ListenerClientManagerSocket {
         this.clientManagerSocket = clientManagerSocket;
         this.input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         this.factory = RuntimeTypeAdapterFactory.of(ClientOperation.class, "op");
-        factory.registerSubtype(BuildingChoiceOperation.class, "buildingChoiceOperation");
         factory.registerSubtype(ChooseCardOperation.class, "chooseCardOperation");
         factory.registerSubtype(LoginOperation.class, "loginOperation");
         factory.registerSubtype(PlaceTotemOperation.class, "placeTotemOperation");
