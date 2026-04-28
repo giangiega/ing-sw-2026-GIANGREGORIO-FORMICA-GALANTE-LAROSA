@@ -21,20 +21,32 @@ public class LobbyController {
         this.server = server;
         this.numPlayers = numPlayers;
     }
-
+    /**
+     * Manages the synchronized player's login.
+     * Checks that the chosen name and totem color are valid.
+     * Sends a LoggedEvent and calls fullLobby at the end, where GameController is created,
+     */
     public synchronized void addPlayer(String name, ColorEnum color, ClientManagerSocket cm) {
+        if (lobbyPlayers.size() >= numPlayers) {
+            cm.sendEvent(new LoggedEvent(false, name, color, new ArrayList<>()));
+            return;
+        }
         for (Player p : lobbyPlayers) {
             if (p.getName().equals(name) || p.getTotemColor().equals(color)){
-                cm.sendEvent(new LoggedEvent(false, name, color));
+                cm.sendEvent(new LoggedEvent(false, name, color, new ArrayList<>()));
                 return;
             }
 
         }
-
         Player player = new Player(name, color);
         lobbyPlayers.add(player);
         clientManagers.put(name, cm);
-        cm.sendEvent(new LoggedEvent(true, name, color));
+        List<String>  playerNames = new ArrayList<>();
+        for(Player p : lobbyPlayers) {
+            playerNames.add(p.getName());
+        }
+
+        cm.sendEvent(new LoggedEvent(true, name, color,playerNames));
 
         if(lobbyPlayers.size() == numPlayers)
             server.fullLobby(lobbyPlayers, clientManagers);

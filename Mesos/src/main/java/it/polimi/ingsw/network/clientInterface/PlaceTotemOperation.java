@@ -6,7 +6,8 @@ import it.polimi.ingsw.network.Server;
 public class PlaceTotemOperation implements ClientOperation {
     private int index;
 
+    @Override
     public void executeOp(Server server, ClientManagerSocket cm) {
-       server.placeTotem(cm.getPlayerName(), index);
+       //server.getTurnController().metodo che gestisce il placement;
     }
 }
