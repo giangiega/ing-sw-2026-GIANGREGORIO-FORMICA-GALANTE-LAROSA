@@ -2,8 +2,6 @@
  * @author Giuse
  */
 package it.polimi.ingsw.network;
-import it.polimi.ingsw.network.ViewInterface;
-import it.polimi.ingsw.network.serverInterface.ListenerClientViewSocket;
 
 import java.io.BufferedReader;
 import java.io.IOException;

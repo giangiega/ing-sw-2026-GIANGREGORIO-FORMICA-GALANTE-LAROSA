@@ -1,19 +1,11 @@
 package it.polimi.ingsw.network;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
-import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.network.clientInterface.*;
-import it.polimi.ingsw.network.serverInterface.EndGameEvent;
-import it.polimi.ingsw.network.serverInterface.LoggedEvent;
-import it.polimi.ingsw.network.serverInterface.MoveTotemEvent;
-import it.polimi.ingsw.network.serverInterface.ServerEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 /**

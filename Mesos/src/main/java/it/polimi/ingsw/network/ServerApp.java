@@ -1,10 +1,6 @@
 package it.polimi.ingsw.network;
 
-import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.controller.LobbyController;
-
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.Scanner;
 
 public class ServerApp {

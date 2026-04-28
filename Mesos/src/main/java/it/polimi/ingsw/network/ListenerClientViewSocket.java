@@ -1,10 +1,11 @@
+/**
+ * @author Giuse
+ */
 package it.polimi.ingsw.network;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import it.polimi.ingsw.network.GsonFactory;
-import it.polimi.ingsw.network.ViewInterface;
+
 import it.polimi.ingsw.network.serverInterface.ServerEvent;
 
 import java.io.BufferedReader;
