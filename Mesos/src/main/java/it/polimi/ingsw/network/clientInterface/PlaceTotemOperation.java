@@ -4,10 +4,14 @@ import it.polimi.ingsw.network.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
 
 public class PlaceTotemOperation implements ClientOperation {
-    private int index;
+    private final char position;
 
+    public PlaceTotemOperation(char position) {
+        this.position = position;
+    }
     @Override
     public void executeOp(Server server, ClientManagerSocket cm) {
-       //server.getTurnController().metodo che gestisce il placement;
+        server.getGameController().placeTotem(cm.getPlayerName(), position);
+
     }
 }

@@ -6,6 +6,6 @@ public class AckEvent implements ServerEvent{
 
     @Override
     public void updateView(ViewInterface view){
-        //mostra login screen al client
+        view.showLoginScreen();
     }
 }

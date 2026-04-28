@@ -22,7 +22,6 @@ public class GsonFactory {
         RuntimeTypeAdapterFactory<ClientOperation> factory =
                 RuntimeTypeAdapterFactory
                         .of(ClientOperation.class, TYPE_FIELD)
-                        .registerSubtype(BuildingChoiceOperation.class)
                         .registerSubtype(ChooseCardOperation.class)
                         .registerSubtype(LoginOperation.class)
                         .registerSubtype(PlaceTotemOperation.class);

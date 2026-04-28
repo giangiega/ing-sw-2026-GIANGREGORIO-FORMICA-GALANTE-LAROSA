@@ -21,7 +21,8 @@ public class IsYourTurnEvent implements ServerEvent {
 
     @Override
     public void updateView(ViewInterface view){
-
+        view.updateRows(upperRow, lowerRow);
+        view.selectCard(offerTile.getCountUpperArrow(), offerTile.getCountLowerArrow());
     }
 
 

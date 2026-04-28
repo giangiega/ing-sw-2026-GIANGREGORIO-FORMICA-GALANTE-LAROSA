@@ -15,13 +15,16 @@ public interface ViewInterface {
     void updateofferTrack(List<OfferTile> offerTrack);
     void updatePlayer(String name, int food, int prestigePoints, Map<CharacterEnum,List<CharacterCard>>tribe);
     void updateTurnOrder(List<String> turnOrder);
-    void selectCard(int numberOfCards, String row);
+    void selectCard(int upperCount, int lowerCount);
     void selectBuilding(List<BuildingCard> availableBuilding);
-    void placeTotem(List<Integer> freeSlots);
+    void placeTotem(List<Character> freeSlots);
     void eventResult(String eventName, EventOutcome outcomes);
     void invalidChoice(String message); // il messaggio dipenderà dal tipo di errore
     void showFinalScore(Map< String , Integer> ranking);
     void showValidCards(List<CharacterCard> tribe);
+    void showLoginScreen();
+
+    // serve una classe che permetta ad ogni player di vedere le carte/pp/food degli altri players
 
 
 
