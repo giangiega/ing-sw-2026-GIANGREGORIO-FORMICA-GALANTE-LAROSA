@@ -42,6 +42,7 @@ public class ClientManagerSocket {
     public ClientManagerSocket(Socket clientSocket) throws IOException {
         this.out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()), true);
         this.factory = RuntimeTypeAdapterFactory.of(ServerEvent.class, "op");
+        factory.registerSubtype(EndGameEvent.class, "AckEvent");
         factory.registerSubtype(EndGameEvent.class, "endGameEvent");
         factory.registerSubtype(LoggedEvent.class, "loggedEvent");
         factory.registerSubtype(MoveTotemEvent.class, "moveTotemEvent");

@@ -7,6 +7,8 @@ import it.polimi.ingsw.controller.TurnController;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.TurnOrderTile;
+import it.polimi.ingsw.network.serverInterface.AckEvent;
+import it.polimi.ingsw.network.serverInterface.ServerEvent;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -57,6 +59,9 @@ public class Server {
                    }
                }).start();
                connected++;
+
+               ServerEvent ack = new AckEvent();
+               clientManagerSocket.sendEvent(ack);
            }
         }catch (IOException e){
             System.err.println("Server error: " + e.getMessage());
