@@ -28,8 +28,6 @@ import java.util.List;
 public class ClientManagerSocket {
     private final PrintWriter out;
     private String PlayerName;
-    private final RuntimeTypeAdapterFactory<ServerEvent> factory;
-    private final GsonBuilder gsonBuilder;
     private final Gson gson;
 
     /**
@@ -41,14 +39,7 @@ public class ClientManagerSocket {
     // autoFlush = true sends the message immediately after every println
     public ClientManagerSocket(Socket clientSocket) throws IOException {
         this.out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()), true);
-        this.factory = RuntimeTypeAdapterFactory.of(ServerEvent.class, "op");
-        factory.registerSubtype(EndGameEvent.class, "AckEvent");
-        factory.registerSubtype(EndGameEvent.class, "endGameEvent");
-        factory.registerSubtype(LoggedEvent.class, "loggedEvent");
-        factory.registerSubtype(MoveTotemEvent.class, "moveTotemEvent");
-        this.gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapterFactory(factory);
-        this.gson = gsonBuilder.create();
+        this.gson = GsonFactory.serverEventGson();
     }
 
     /**
@@ -56,7 +47,7 @@ public class ClientManagerSocket {
      * @param serverEvent
      */
     public void sendEvent(ServerEvent serverEvent) {
-        String jsonMessage = gson.toJson(serverEvent);
+        String jsonMessage = gson.toJson(serverEvent, ServerEvent.class);
         out.println(jsonMessage);
     }
 

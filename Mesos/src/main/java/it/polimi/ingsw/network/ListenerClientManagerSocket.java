@@ -26,8 +26,6 @@ public class ListenerClientManagerSocket {
     private final Server server;
     private final ClientManagerSocket clientManagerSocket;
     private final BufferedReader input;
-    private final RuntimeTypeAdapterFactory<ClientOperation> factory;
-    private final GsonBuilder builderGson;
     private final Gson gson;
 
     /**
@@ -41,14 +39,7 @@ public class ListenerClientManagerSocket {
         this.server = server;
         this.clientManagerSocket = clientManagerSocket;
         this.input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        this.factory = RuntimeTypeAdapterFactory.of(ClientOperation.class, "op");
-        factory.registerSubtype(BuildingChoiceOperation.class, "buildingChoiceOperation");
-        factory.registerSubtype(ChooseCardOperation.class, "chooseCardOperation");
-        factory.registerSubtype(LoginOperation.class, "loginOperation");
-        factory.registerSubtype(PlaceTotemOperation.class, "placeTotemOperation");
-        this.builderGson = new GsonBuilder();
-        builderGson.registerTypeAdapterFactory(factory);
-        this.gson = builderGson.create();
+        this.gson = GsonFactory.clientOperationGson();
     }
 
     /**
