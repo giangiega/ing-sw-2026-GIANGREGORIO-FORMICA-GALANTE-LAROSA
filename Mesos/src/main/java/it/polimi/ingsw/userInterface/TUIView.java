@@ -5,10 +5,7 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.network.ClientViewSocket;
 import it.polimi.ingsw.network.clientInterface.*;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class TUIView implements ViewInterface {
     private final Scanner scanner = new Scanner(System.in);
@@ -87,16 +84,20 @@ public class TUIView implements ViewInterface {
 
     }
 
+    /* capire se fare anche selectBuilding, perchè ho fatto sia ChooseCardOperation che resolveAction()
+    del model trattando insieme sia le rows che le building rows*/
+
     @Override
     public void placeTotem(List<Character> freeSlots) {
-
+        System.out.println("\nFree tiles: " + freeSlots);
+        System.out.print("Choose a tile letter: ");
+        char letter = scanner.next().toUpperCase().charAt(0);
+        sender.sendOperation(new PlaceTotemOperation(letter));
     }
 
     @Override
-    //void eventResult(String eventName, Map<Player, EventOutcome> playerEventOutcome);
-    // capire come prendere pp/food influenzati dall'evento
-    public void invalidChoice(String message) {     // il messaggio dipenderà dal tipo di errore
-
+    public void invalidChoice(String message) {
+        System.out.println("err: " + message);
     }
 
     @Override

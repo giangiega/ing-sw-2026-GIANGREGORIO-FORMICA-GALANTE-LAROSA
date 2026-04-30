@@ -20,16 +20,8 @@ public interface ViewInterface {
     void updatePlayer(String name, int food, int prestigePoints, Map<CharacterEnum,List<CharacterCard>>tribe);
     void updateTurnOrder(List<String> turnOrder);
     void selectCard(int upperCount, int lowerCount);
-
     void placeTotem(List<Character> freeSlots);
-    //void eventResult(String eventName, Map<Player, EventOutcome> playerEventOutcome);
-    // capire come prendere pp/food influenzati dall'evento
     void invalidChoice(String message);
     void showFinalScore(List<String> winners, Map< String , Integer> finalScores);
     void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe);
-
-
-
-
-
 }
