@@ -11,11 +11,14 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class TUIView implements ViewInterface {
-    private final Scanner scanner;
+    private final Scanner scanner = new Scanner(System.in);
     private ClientViewSocket sender;
 
-    public TUIView() {
-        scanner = new Scanner(System.in);
+    public TUIView() {}
+
+    @Override
+    public void init(ClientViewSocket sender) {
+        this.sender = sender;
     }
 
     @Override
@@ -54,12 +57,13 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
-    public void showOtherPlayers(/* capire parametri */) {
+    public void showGameStart() {
 
     }
 
     @Override
-    public void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow) {
+    public void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
+                           List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow) {
 
     }
 
@@ -84,11 +88,6 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
-    public void selectBuilding(List<BuildingCard> availableBuilding) {
-
-    }
-
-    @Override
     public void placeTotem(List<Character> freeSlots) {
 
     }
@@ -101,7 +100,7 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
-    public void showFinalScore(Map< String , Integer> ranking) {
+    public void showFinalScore(List<String> winners, Map< String , Integer> finalScores) {
 
     }
 

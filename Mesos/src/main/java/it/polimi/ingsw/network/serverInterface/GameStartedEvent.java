@@ -6,7 +6,7 @@ import it.polimi.ingsw.userInterface.ViewInterface;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateBoardEvent implements ServerEvent {
+public class GameStartedEvent implements ServerEvent {
     private final List<OfferTile> offerTrack;
     private final TurnOrderTile turnOrderTile;
     private final List<TribeCard> upperRow;
@@ -14,8 +14,8 @@ public class UpdateBoardEvent implements ServerEvent {
     private final List<BuildingCard> buildingUpperRow;
     private final List<BuildingCard> buildingLowerRow;
 
-    public UpdateBoardEvent(List<OfferTile> offerTrack, TurnOrderTile tile, List<TribeCard> upperRow,
-        List<TribeCard> lowerRow, List<BuildingCard> buildingUpperRow,  List<BuildingCard> buildingLowerRow) {
+    public GameStartedEvent(List<OfferTile> offerTrack, TurnOrderTile tile, List<TribeCard> upperRow,
+                            List<TribeCard> lowerRow, List<BuildingCard> buildingUpperRow,  List<BuildingCard> buildingLowerRow) {
         this.offerTrack = offerTrack;
         this.turnOrderTile = tile;
         this.upperRow = upperRow;
@@ -31,11 +31,12 @@ public class UpdateBoardEvent implements ServerEvent {
         }
         return turnOrderNames;
     }
+
     @Override
-    public void updateView(ViewInterface view){
+    public void updateView(ViewInterface view) {
+        view.showGameStart();
         view.updateOfferTrack(offerTrack);
         view.updateTurnOrder(getTurnOrderNames());
         view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
     }
-
 }

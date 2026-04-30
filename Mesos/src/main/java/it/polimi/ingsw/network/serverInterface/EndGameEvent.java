@@ -24,6 +24,6 @@ public class EndGameEvent implements ServerEvent {
 
     @Override
     public void updateView(ViewInterface view){
-        view.showFinalScore(finalScores);
+        view.showFinalScore(winnerNames, finalScores);
     }
 }

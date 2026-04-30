@@ -40,6 +40,11 @@ public class GameController {
         Board board = new Board(config, tribeDeck, bd1, bd2, bd3);
         this.game = new Game(new ArrayList<>(players), board, config);
         game.startGame();
+        broadcastEvent(new GameStartedEvent(game.getBoard().getOfferTrack(),
+                game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
+                game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
+                game.getBoard().getBuildingLowerRow()));
+        broadcastUpdatePlayers();
 
         turnController = new TurnController(this, players.size());
         turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
@@ -59,13 +64,20 @@ public class GameController {
 
         try {
             game.placeTotem(p, tile);
-        } catch(InvalidPlayerActionException e) {
-            sendMoveTotem(playerName);
+        } catch (InvalidPlayerActionException e) {
+            ClientManagerSocket cms = clientManagers.get(playerName);
+            cms.sendEvent(new InvalidChoiceEvent("Tile already occupied, choose another"));
+            cms.sendEvent(new MoveTotemEvent(
+                    game.getBoard().getOfferTrack(),
+                    game.getBoard().getTurnOrderTile()
+            ));
             return;
         }
 
         broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),
-                game.getBoard().getTurnOrderTile()));
+                game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
+                game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
+                game.getBoard().getBuildingLowerRow()));
 
         turnController.onTotemPlaced(playerName, game.getBoard().getTurnOrderTile(),
                 game.getBoard().getOfferTrack());
@@ -89,7 +101,9 @@ public class GameController {
         try {
             game.resolveAction(tile, upperCards, lowerCards, upperBuildings, lowerBuildings);
         } catch (InvalidPlayerActionException e) {
-            sendIsYourTurn(playerName);
+            ClientManagerSocket cms = clientManagers.get(playerName);
+            cms.sendEvent(new InvalidChoiceEvent("Invalid action, try again"));
+            cms.sendEvent(new IsYourTurnEvent(tile));
             return;
         }
 
@@ -97,13 +111,11 @@ public class GameController {
         if(player != null)
             clientManagers.get(playerName).sendEvent(new ValidCardsEvent(player.getTribe()));
 
-        for(Player p : players)
-            broadcastEvent(new UpdatePlayerEvent(p));
-
-        broadcastEvent(new UpdateBoardEvent(
-                game.getBoard().getOfferTrack(),
-                game.getBoard().getTurnOrderTile()
-        ));
+        broadcastUpdatePlayers();
+        broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),
+                game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
+                game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
+                game.getBoard().getBuildingLowerRow()));
 
         turnController.onActionResolved();
     }
@@ -120,13 +132,11 @@ public class GameController {
             System.err.println("error ath the end of the round: " + e.getMessage());
         }
 
-        for(Player p : players)
-            broadcastEvent(new UpdatePlayerEvent(p));
-
-        broadcastEvent(new UpdateBoardEvent(
-                game.getBoard().getOfferTrack(),
-                game.getBoard().getTurnOrderTile()
-        ));
+        broadcastUpdatePlayers();
+        broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),
+                game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
+                game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
+                game.getBoard().getBuildingLowerRow()));
 
         if (game.getCurrentRound() == 10) { // check if it's correct
             endGame();
@@ -135,14 +145,11 @@ public class GameController {
         }
     }
 
+    // next 2 methods are only used by TurnController
     void sendIsYourTurn(String playerName) {
         ClientManagerSocket cms = clientManagers.get(playerName);
         if (cms != null)
-            cms.sendEvent(new IsYourTurnEvent(
-                    game.getBoard().getUpperRow(),
-                    game.getBoard().getLowerRow(),
-                    getOfferTileByPlayer(playerName)
-            ));
+            cms.sendEvent(new IsYourTurnEvent(getOfferTileByPlayer(playerName)));
     }
 
     void sendMoveTotem(String playerName) {
@@ -158,6 +165,11 @@ public class GameController {
         for(ClientManagerSocket cm : clientManagers.values()) {
             cm.sendEvent(serverEvent);
         }
+    }
+
+    private void broadcastUpdatePlayers() {
+        for(Player p : players)
+            broadcastEvent(new UpdatePlayerEvent(p));
     }
 
     private Player getPlayerByName(String name) {

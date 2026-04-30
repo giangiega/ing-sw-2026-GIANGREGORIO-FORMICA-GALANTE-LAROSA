@@ -7,23 +7,17 @@ import it.polimi.ingsw.userInterface.ViewInterface;
 import java.util.List;
 
 public class IsYourTurnEvent implements ServerEvent {
-    private final List<TribeCard> upperRow;
-    private final List<TribeCard> lowerRow;
     private final OfferTile offerTile;
 
-    public IsYourTurnEvent(List<TribeCard> upperRow,List<TribeCard> lowerRow, OfferTile offerTile) {
-        this.upperRow = upperRow;
-        this.lowerRow = lowerRow;
+    public IsYourTurnEvent(OfferTile offerTile) {
         this.offerTile = offerTile;
     }
 
     @Override
     public void updateView(ViewInterface view){
-        view.updateRows(upperRow, lowerRow);
         view.selectCard(offerTile.getCountUpperArrow(), offerTile.getCountLowerArrow());
     }
 
-    // non sono sicuro di questo evento. UpdateBoardEvent dovrebbe gestire le rows.
 
 
 }

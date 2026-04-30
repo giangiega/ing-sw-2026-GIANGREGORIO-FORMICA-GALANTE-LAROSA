@@ -37,9 +37,10 @@ public class GsonFactory {
         RuntimeTypeAdapterFactory<ServerEvent> factory =
                 RuntimeTypeAdapterFactory
                         .of(ServerEvent.class, TYPE_FIELD)
+                        .registerSubtype(AckEvent.class)
                         .registerSubtype(EndGameEvent.class)
                         .registerSubtype(LoggedEvent.class)
-                        .registerSubtype(AckEvent.class)
+                        .registerSubtype(InvalidChoiceEvent.class)
                         .registerSubtype(IsYourTurnEvent.class)
                         .registerSubtype(MoveTotemEvent.class)
                         .registerSubtype(UpdateBoardEvent.class)

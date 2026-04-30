@@ -12,7 +12,7 @@ public class AckEvent implements ServerEvent{
     @Override
     public void updateView(ViewInterface view){
         if(isFirst)
-            view.askNumPlayers();
-        view.askLogin();
+            view.askNumPlayers();   // first player's login is called inside askNumPlayers()
+        else view.askLogin();
     }
 }

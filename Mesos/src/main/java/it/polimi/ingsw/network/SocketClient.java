@@ -3,6 +3,7 @@
  */
 package it.polimi.ingsw.network;
 
+import it.polimi.ingsw.userInterface.TUIView;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
 import java.io.BufferedReader;
@@ -37,15 +38,16 @@ public class SocketClient {
         //New output channel to the server: auto-flush true empties the buffer as soon as it gets filled
         PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
+        ClientViewSocket sender = new ClientViewSocket(out);
+        view.init(sender);
+
         //Listener: Runnable::run for TUI
        ListenerClientViewSocket listener = new ListenerClientViewSocket(in, view, Runnable :: run);
         Thread listenerThread = new Thread(listener, "listener-client");
         listenerThread.setDaemon(true);//thread dies with main thread
         listenerThread.start();
-
-        ClientViewSocket sender = new ClientViewSocket(out);
-        //Passare il sender alla view ed avviarla
     }
+
     public static void main(String[] args) {
         if (args.length < 2) {
             System.err.println("Usage: SocketClient <host> <port>");
@@ -64,7 +66,7 @@ public class SocketClient {
 
         try {
             //creating view
-            ViewInterface view = null; //new TuiView();//Quando aggiungeremo la view ed il tipo
+            ViewInterface view = new TUIView();
             new SocketClient(host, port).connect(view);
         }catch(IOException e){
             System.err.println("Could not connect to: " + host + ":" + port);
