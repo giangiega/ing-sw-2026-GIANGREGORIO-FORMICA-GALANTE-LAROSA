@@ -25,6 +25,11 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
+    public void askNumPlayers() {
+
+    }
+
+    @Override
     public void showLoginScreen() {
 
     }
@@ -82,7 +87,7 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
-    public void showValidCards(List<CharacterCard> tribe) {
+    public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {
 
     }
 }

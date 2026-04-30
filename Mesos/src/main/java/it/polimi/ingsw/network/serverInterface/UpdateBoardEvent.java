@@ -29,4 +29,6 @@ public class UpdateBoardEvent implements ServerEvent {
         view.updateOfferTrack(offerTrack);
         view.updateTurnOrder(getTurnOrderNames());
     }
+
+    // non dovrei dargli anche le rows? leggi commento in IsYourTurnEvent
 }

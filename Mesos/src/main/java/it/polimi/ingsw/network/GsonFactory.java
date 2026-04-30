@@ -13,7 +13,7 @@ public class GsonFactory {
     private static final String TYPE_FIELD = "op";
 
     /**
-     * @return : Gson instance ready to send operation out
+     * @return Gson instance ready to send operation out
      * This method sets the Gson: it serializes ClientOperation(s).
      * It gets called by ClientViewSocket to transform an object to Json
      * before writing it on the socket
@@ -22,6 +22,7 @@ public class GsonFactory {
         RuntimeTypeAdapterFactory<ClientOperation> factory =
                 RuntimeTypeAdapterFactory
                         .of(ClientOperation.class, TYPE_FIELD)
+                        .registerSubtype(NumPlayersOperation.class)
                         .registerSubtype(ChooseCardOperation.class)
                         .registerSubtype(LoginOperation.class)
                         .registerSubtype(PlaceTotemOperation.class);
@@ -42,6 +43,7 @@ public class GsonFactory {
                         .registerSubtype(IsYourTurnEvent.class)
                         .registerSubtype(MoveTotemEvent.class)
                         .registerSubtype(UpdateBoardEvent.class)
+                        .registerSubtype(UpdatePlayerEvent.class)
                         .registerSubtype(ValidCardsEvent.class);
 
 

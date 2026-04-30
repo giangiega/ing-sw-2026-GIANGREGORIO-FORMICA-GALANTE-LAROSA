@@ -97,6 +97,9 @@ public class GameController {
         if(player != null)
             clientManagers.get(playerName).sendEvent(new ValidCardsEvent(player.getTribe()));
 
+        for(Player p : players)
+            broadcastEvent(new UpdatePlayerEvent(p));
+
         broadcastEvent(new UpdateBoardEvent(
                 game.getBoard().getOfferTrack(),
                 game.getBoard().getTurnOrderTile()
@@ -116,6 +119,9 @@ public class GameController {
         } catch (InvalidPlayerActionException e) {
             System.err.println("error ath the end of the round: " + e.getMessage());
         }
+
+        for(Player p : players)
+            broadcastEvent(new UpdatePlayerEvent(p));
 
         broadcastEvent(new UpdateBoardEvent(
                 game.getBoard().getOfferTrack(),

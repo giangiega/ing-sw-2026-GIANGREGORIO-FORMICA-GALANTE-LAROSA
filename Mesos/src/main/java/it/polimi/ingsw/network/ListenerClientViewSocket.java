@@ -37,7 +37,7 @@ public class ListenerClientViewSocket implements Runnable {
             while((json = in.readLine()) != null){
                 handleMessage(json);
             }
-            handleServerClosedConnectio();//connection closed without problems
+            handleServerClosedConnection();//connection closed without problems
         } catch (IOException e){
             handleNetworkError(e);//network was shout down
         }
@@ -62,7 +62,7 @@ public class ListenerClientViewSocket implements Runnable {
     /**
      * It shows that the connection was closed without any errors
      */
-    private void handleServerClosedConnectio(){
+    private void handleServerClosedConnection(){
         System.out.println("From ListenerClientViewSocket: connection closed by the server");
         //Aggiungere messaggio di fine partita
     }

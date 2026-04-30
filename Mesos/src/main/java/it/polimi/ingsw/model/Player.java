@@ -3,10 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /**
@@ -203,15 +200,8 @@ public class Player {
         return totalCharactersCount;
     }
 
-    public List<CharacterCard> getTribe(){
-        List<CharacterCard> tribeList = new ArrayList<>();
-        tribe.get(CharacterEnum.HUNTER).addAll(tribeList);
-        tribe.get(CharacterEnum.GATHERER).addAll(tribeList);
-        tribe.get(CharacterEnum.SHAMAN).addAll(tribeList);
-        tribe.get(CharacterEnum.BUILDER).addAll(tribeList);
-        tribe.get(CharacterEnum.ARTIST).addAll(tribeList);
-        tribe.get(CharacterEnum.INVENTOR).addAll(tribeList);
-        return tribeList;
+    public Map<CharacterEnum, List<CharacterCard>> getTribe(){
+        return Collections.unmodifiableMap(tribe);
     }
 
     /**

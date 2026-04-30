@@ -21,15 +21,11 @@ import java.util.Map;
 public class Server {
     private LobbyController lobbyController;
     private GameController gameController;
-    private final int numPlayers;
 
-    /**
-     * constructor to build a server (so a game) based on numPlayers
-     * @param numPlayers
-     */
-    public Server(int numPlayers) {
-        this.numPlayers = numPlayers;
-        this.lobbyController = new LobbyController(this, numPlayers);
+    public synchronized void initLobby(int numPlayers) {
+        if (lobbyController != null)
+            return;
+        lobbyController = new LobbyController(this, numPlayers);
     }
 
     /**
@@ -40,10 +36,11 @@ public class Server {
     public void startListening(int port) {
         //when all players are connected this try close the serverSocket to refuse other eventual connections
         try(ServerSocket serverSocket = new ServerSocket(port)){
+           System.out.println("Server listening on port " + port);
            int connected = 0;
-           Socket clientSocket = null;
-           while (connected < numPlayers && (clientSocket = serverSocket.accept()) != null){
-               //Socket clientSocket = serverSocket.accept();
+
+           while (true){
+               Socket clientSocket = serverSocket.accept();
                ClientManagerSocket clientManagerSocket = new ClientManagerSocket(clientSocket);
                ListenerClientManagerSocket listenerClientManagerSocket = new ListenerClientManagerSocket(this, clientSocket, clientManagerSocket);
 
@@ -51,13 +48,12 @@ public class Server {
                    try{
                        listenerClientManagerSocket.startClientListener();
                    }catch (IOException e){
-                       throw new RuntimeException();
+                       throw new RuntimeException("Client disconnected");
                    }
                }).start();
-               connected++;
 
-               ServerEvent ack = new AckEvent();
-               clientManagerSocket.sendEvent(ack);
+               clientManagerSocket.sendEvent(new AckEvent(connected == 0));
+               connected++; // only first player receive "true" , he inserts numPlayers
            }
         }catch (IOException e){
             System.err.println("Server error: " + e.getMessage());

@@ -10,6 +10,7 @@ import java.util.Map;
 
 public interface ViewInterface {
     void showLobby(List<String> lobby);
+    void askNumPlayers();
     void showLoginScreen();
     void showOtherPlayers(/* capire parametri */);
     void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow);
@@ -23,7 +24,7 @@ public interface ViewInterface {
     // capire come prendere pp/food influenzati dall'evento
     void invalidChoice(String message); // il messaggio dipenderà dal tipo di errore
     void showFinalScore(Map< String , Integer> ranking);
-    void showValidCards(List<CharacterCard> tribe);
+    void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe);
 
 
 

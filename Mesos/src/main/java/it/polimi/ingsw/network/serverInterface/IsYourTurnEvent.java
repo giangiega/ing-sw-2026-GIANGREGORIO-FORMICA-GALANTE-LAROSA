@@ -23,5 +23,7 @@ public class IsYourTurnEvent implements ServerEvent {
         view.selectCard(offerTile.getCountUpperArrow(), offerTile.getCountLowerArrow());
     }
 
+    // non sono sicuro di questo evento. UpdateBoardEvent dovrebbe gestire le rows.
+
 
 }
