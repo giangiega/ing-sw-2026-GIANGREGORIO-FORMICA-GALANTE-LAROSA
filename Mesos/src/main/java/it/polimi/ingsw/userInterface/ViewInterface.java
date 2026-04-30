@@ -11,7 +11,7 @@ import java.util.Map;
 public interface ViewInterface {
     void showLobby(List<String> lobby);
     void askNumPlayers();
-    void showLoginScreen();
+    void askLogin();
     void showOtherPlayers(/* capire parametri */);
     void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow);
     void updateOfferTrack(List<OfferTile> offerTrack);

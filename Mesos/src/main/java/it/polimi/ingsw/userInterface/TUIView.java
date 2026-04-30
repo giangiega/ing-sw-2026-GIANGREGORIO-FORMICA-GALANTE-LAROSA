@@ -1,12 +1,11 @@
 package it.polimi.ingsw.userInterface;
 
 import it.polimi.ingsw.enums.CharacterEnum;
-import it.polimi.ingsw.model.BuildingCard;
-import it.polimi.ingsw.model.CharacterCard;
-import it.polimi.ingsw.model.OfferTile;
-import it.polimi.ingsw.model.TribeCard;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.network.ClientViewSocket;
+import it.polimi.ingsw.network.clientInterface.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -21,17 +20,37 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void showLobby(List<String> lobby) {
-
+        System.out.println("\n=== LOBBY ===");
+        System.out.println("Players connected: " + lobby);
+        System.out.println("Waiting for more players...");
     }
 
+    /**
+     * Asks numPlayers during the first login
+     */
     @Override
     public void askNumPlayers() {
-
+        int n = 0;
+        while (n < 2 || n > 5) {
+            System.out.print("You are the first player. How many players? (2-5): ");
+            if (scanner.hasNextInt()) n = scanner.nextInt();
+            else scanner.next();
+        }
+        sender.sendOperation(new NumPlayersOperation(n));
     }
 
     @Override
-    public void showLoginScreen() {
+    public void askLogin() {
+        System.out.print("Enter your name: ");
+        String name = scanner.next();
 
+        System.out.println("Available colors: " +
+                Arrays.toString(it.polimi.ingsw.enums.ColorEnum.values()));
+        System.out.print("Choose color: ");
+        String color = scanner.next().toUpperCase();
+
+        sender.sendOperation(new LoginOperation(name,
+                it.polimi.ingsw.enums.ColorEnum.valueOf(color)));
     }
 
     @Override

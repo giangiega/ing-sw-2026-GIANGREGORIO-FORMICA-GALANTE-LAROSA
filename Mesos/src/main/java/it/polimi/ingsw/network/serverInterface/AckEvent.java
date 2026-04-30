@@ -13,6 +13,6 @@ public class AckEvent implements ServerEvent{
     public void updateView(ViewInterface view){
         if(isFirst)
             view.askNumPlayers();
-        view.showLoginScreen();
+        view.askLogin();
     }
 }
