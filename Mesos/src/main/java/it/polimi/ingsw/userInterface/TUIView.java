@@ -55,13 +55,40 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void showGameStart() {
-
+        System.out.println("\n==========================================");
+        System.out.println("                 GAME STARTED               ");
+        System.out.println("==========================================");
     }
 
     @Override
     public void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
                            List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow) {
+        System.out.println("\n--- Upper Row ---");
+        for (int i = 0; i < upperRow.size(); i++)
+            System.out.printf("  [%d] %s%n", i, upperRow.get(i));
+        // serve overridare toString per tutte le carte che devono uscire a schermo
 
+        if (!buildingUpperRow.isEmpty()) {
+            System.out.println("--- Building Upper Row ---");
+            for (int i = 0; i < buildingUpperRow.size(); i++)
+                System.out.printf("  [%d] %s  (cost: %d food)%n",
+                        i,
+                        buildingUpperRow.get(i),
+                        buildingUpperRow.get(i).getCost(null));
+        }
+
+        System.out.println("--- Lower Row ---");
+        for (int i = 0; i < lowerRow.size(); i++)
+            System.out.printf("  [%d] %s%n", i, lowerRow.get(i));
+
+        if (!buildingLowerRow.isEmpty()) {
+            System.out.println("--- Building Lower Row ---");
+            for (int i = 0; i < buildingLowerRow.size(); i++)
+                System.out.printf("  [%d] %s  (cost: %d food)%n",
+                        i,
+                        buildingLowerRow.get(i),
+                        buildingLowerRow.get(i).getCost(null));
+        }
     }
 
     @Override
@@ -84,8 +111,10 @@ public class TUIView implements ViewInterface {
 
     }
 
-    /* capire se fare anche selectBuilding, perchè ho fatto sia ChooseCardOperation che resolveAction()
-    del model trattando insieme sia le rows che le building rows*/
+    @Override
+    public void selectBuilding(List<BuildingCard> availableBuildings, String row) {
+
+    }
 
     @Override
     public void placeTotem(List<Character> freeSlots) {
@@ -110,3 +139,5 @@ public class TUIView implements ViewInterface {
 
     }
 }
+
+/* valutare menù a tendina per info altri giocatori e per funzionamento carte */
