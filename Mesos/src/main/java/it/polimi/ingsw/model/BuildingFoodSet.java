@@ -17,4 +17,11 @@ public class BuildingFoodSet extends BuildingEffect {
         p.gainFood((actualSets - initialSets) * DISCOUNT_PER_SET);
         initialSets = actualSets;
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingFoodSet ";
+    }
 }

@@ -13,4 +13,11 @@ public class BuildingBonusTotem extends BuildingEffect{
     public void applyEndTurn(Player p, Board b, int chosenIndex, boolean chosenIsBuilding ){
         p.gainFood(BONUS_FOOD_TOTEM);
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingBonusTotem ";
+    }
 }

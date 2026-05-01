@@ -13,4 +13,11 @@ public class BuildingBonusDoubleShamanPP extends BuildingEffect{
     public void applyEventShamanWinner(Player p, Board b, int gainedPP, boolean win){
         if(win){p.gainPP(gainedPP);}
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingBonusDoubleShamanPP ";
+    }
 }

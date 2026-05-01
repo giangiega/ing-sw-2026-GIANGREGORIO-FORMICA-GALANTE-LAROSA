@@ -27,4 +27,12 @@ public class BuildingDiscountFood extends BuildingEffect {
     public void applyEventSustenance(Player p, Board b){
         p.gainFood((p.getCharacterByType(characterType).size() *  DISCOUNT_PER_CHARACTER));
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingDiscountFood\n" +
+                "For each character " +  this.characterType + " it gives 1 food discount\n";
+    }
 }

@@ -20,4 +20,11 @@ public class BuildingDoubleBuilderPP extends BuildingEffect{
         }
         p.gainPP(sum);
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingDoubleBuilderPP ";
+    }
 }

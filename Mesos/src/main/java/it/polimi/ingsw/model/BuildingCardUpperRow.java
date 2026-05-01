@@ -76,4 +76,11 @@ public class BuildingCardUpperRow extends BuildingEffect {
         }
         this.chosenIndex = - 1;
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingCardUpperRow ";
+    }
 }

@@ -14,5 +14,12 @@ public class BuildingPPForSet extends BuildingEffect{
     public void applyEndGame(Player p, Board b){
         p.gainPP(p.getCompletedSetsCount() * BONUS_PER_FINAL_SET);
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingPPForSet ";
+    }
 }
 

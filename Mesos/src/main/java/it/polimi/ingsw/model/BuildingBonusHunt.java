@@ -20,4 +20,11 @@ public class BuildingBonusHunt extends BuildingEffect{
         p.gainFood(huntersNumber * BONUS_FOOD_PER_HUNTER);
         p.gainPP(huntersNumber * BONUS_PP_PER_HUNTER);
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingBonusHunt ";
+    }
 }

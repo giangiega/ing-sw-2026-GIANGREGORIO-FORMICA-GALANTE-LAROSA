@@ -16,6 +16,12 @@ public class BuildingBonusStarShaman extends BuildingEffect{
             p.setEffectiveStars(BONUS_EXTRA_STARS);
             firstAdd++;
         }
+    }/**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingBonusStarShaman ";
     }
 }
 

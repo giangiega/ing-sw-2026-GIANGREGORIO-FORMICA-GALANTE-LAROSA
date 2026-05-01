@@ -42,4 +42,12 @@ public class BuildingBonusForCharacterType extends BuildingEffect{
     public void applyEndGame(Player p, Board b){
         p.gainPP(PP * p.getCharacterByType(character).size());
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingBonusForCharacterType\n" +
+                "For each character " +  this.character + " it gives " + this.PP + "\n";
+    }
 }

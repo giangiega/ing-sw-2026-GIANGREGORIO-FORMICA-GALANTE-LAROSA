@@ -67,4 +67,14 @@ public class BuildingCard extends Card {
     public void applyEffect(Player p, Board b){
         effect.applyOnCardAdded(p, b);
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return  "BuildingCard with effect: " + effect.toString() + "and" +
+                "\nEra : " + getEra() +
+                "\nFood cost : " + baseFoodCost +
+                "\nPrestige point earned : " + basePrestigePoints;
+    }
 }

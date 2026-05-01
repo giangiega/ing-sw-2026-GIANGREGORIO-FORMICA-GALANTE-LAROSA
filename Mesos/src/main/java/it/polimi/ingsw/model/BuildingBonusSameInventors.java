@@ -18,4 +18,11 @@ public class BuildingBonusSameInventors extends BuildingEffect{
         p.gainFood((realCouples - initialInventorsCouples) * SAME_INVENTORS_BONUS);
         initialInventorsCouples = realCouples;
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingBonusSameInventors ";
+    }
 }

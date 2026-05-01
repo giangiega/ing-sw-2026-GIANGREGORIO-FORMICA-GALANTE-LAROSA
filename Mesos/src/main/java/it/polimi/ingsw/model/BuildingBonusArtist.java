@@ -17,4 +17,11 @@ public class BuildingBonusArtist extends BuildingEffect{
     public void applyEventCavePainting(Player p, Board b){
         p.gainFood((p.getCharacterByType(CharacterEnum.ARTIST)).size() * BONUS_FOOD_PER_ARTIST);
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingBonusArtist ";
+    }
 }

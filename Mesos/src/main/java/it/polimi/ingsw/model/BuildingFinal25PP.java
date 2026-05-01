@@ -16,4 +16,11 @@ public class BuildingFinal25PP extends BuildingEffect{
     public void applyEndGame(Player p, Board b){
         p.gainPP(END_GAME_POINTS);
     }
+    /**
+     * This method prints out the building information
+     */
+    @Override
+    public String toString(){
+        return "BuildingFinal25PP ";
+    }
 }
