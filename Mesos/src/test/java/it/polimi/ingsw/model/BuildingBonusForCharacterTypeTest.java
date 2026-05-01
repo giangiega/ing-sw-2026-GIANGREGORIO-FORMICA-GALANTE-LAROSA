@@ -74,5 +74,26 @@ public class BuildingBonusForCharacterTypeTest {
         assertEquals(foodBefore, player.getFood(),
                 "The player shouldn't have received any food");
     }
+    @Test
+    void toStringTestValues(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusForCharacterType(3, CharacterEnum.BUILDER));
+        String result = c.toString();
+
+        assertTrue(result.contains("I"));
+        assertTrue(result.contains("3"));
+        assertTrue(result.contains("2"));
+        assertTrue(result.contains("BuildingBonusForCharacterType"));
+    }
+    @Test
+    void toStringTestMessage(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusForCharacterType(3, CharacterEnum.BUILDER));
+        String expected = "BuildingCard with effect: BuildingBonusForCharacterType\n" +
+                "For each character BUILDER it gives 3 prestige points\n" + "and" +
+                "\nEra : I" +
+                "\nFood cost : 3" +
+                "\nPrestige point earned : 2";
+
+        assertEquals(expected, c.toString());
+    }
 }
 

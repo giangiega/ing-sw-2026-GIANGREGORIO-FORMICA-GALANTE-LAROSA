@@ -56,4 +56,24 @@ class BuildingBonusTotemTest {
         assertEquals(ppBefore, player.getPP(),
                 "The player should have not received any prestige points");
     }
+    @Test
+    void toStringTestValues(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusTotem());
+        String result = c.toString();
+
+        assertTrue(result.contains("I"));
+        assertTrue(result.contains("3"));
+        assertTrue(result.contains("2"));
+        assertTrue(result.contains("BuildingBonusTotem"));
+    }
+    @Test
+    void toStringTestMessage(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusTotem());
+        String expected = "BuildingCard with effect: BuildingBonusTotem and" +
+                "\nEra : I" +
+                "\nFood cost : 3" +
+                "\nPrestige point earned : 2";
+
+        assertEquals(expected, c.toString());
+    }
 }

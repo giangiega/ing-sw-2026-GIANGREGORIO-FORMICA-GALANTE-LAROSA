@@ -69,4 +69,24 @@ public class BuildingBonusHuntTest {
         assertEquals(ppBefore + 1, player.getPP(),
                 "The player should have received 1 prestige points because he has 1 hunter");
     }
+    @Test
+    void toStringTestValues(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusHunt());
+        String result = c.toString();
+
+        assertTrue(result.contains("I"));
+        assertTrue(result.contains("3"));
+        assertTrue(result.contains("2"));
+        assertTrue(result.contains("BuildingBonusHunt"));
+    }
+    @Test
+    void toStringTestMessage(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusHunt());
+        String expected = "BuildingCard with effect: BuildingBonusHunt and" +
+                "\nEra : I" +
+                "\nFood cost : 3" +
+                "\nPrestige point earned : 2";
+
+        assertEquals(expected, c.toString());
+    }
 }

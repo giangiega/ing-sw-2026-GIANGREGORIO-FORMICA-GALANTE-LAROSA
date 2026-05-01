@@ -57,4 +57,24 @@ public class BuildingBonusStarShamanTest {
         assertEquals(ppBefore, player.getPP(),
                 "Calling other apply methods shouldn't have modified the player's prestige points");
     }
+    @Test
+    void toStringTestValues(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusStarShaman());
+        String result = c.toString();
+
+        assertTrue(result.contains("I"));
+        assertTrue(result.contains("3"));
+        assertTrue(result.contains("2"));
+        assertTrue(result.contains("BuildingBonusStarShaman"));
+    }
+    @Test
+    void toStringTestMessage(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusStarShaman());
+        String expected = "BuildingCard with effect: BuildingBonusStarShaman and" +
+                "\nEra : I" +
+                "\nFood cost : 3" +
+                "\nPrestige point earned : 2";
+
+        assertEquals(expected, c.toString());
+    }
 }

@@ -201,4 +201,24 @@ public class BuildingCardUpperRowTest {
             total += p.getCharacterByType(type).size();
         return total;
     }
+    @Test
+    void toStringTestValues(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingCardUpperRow());
+        String result = c.toString();
+
+        assertTrue(result.contains("I"));
+        assertTrue(result.contains("3"));
+        assertTrue(result.contains("2"));
+        assertTrue(result.contains("BuildingCardUpperRow"));
+    }
+    @Test
+    void toStringTestMessage(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingCardUpperRow());
+        String expected = "BuildingCard with effect: BuildingCardUpperRow and" +
+                "\nEra : I" +
+                "\nFood cost : 3" +
+                "\nPrestige point earned : 2";
+
+        assertEquals(expected, c.toString());
+    }
 }

@@ -57,4 +57,24 @@ class BuildingDoubleBuilderPPTest {
         assertEquals(foodBefore, player.getFood(),
                 "The player should have received food no food");
     }
+    @Test
+    void toStringTestValues(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingDoubleBuilderPP());
+        String result = c.toString();
+
+        assertTrue(result.contains("I"));
+        assertTrue(result.contains("3"));
+        assertTrue(result.contains("2"));
+        assertTrue(result.contains("BuildingDoubleBuilderPP"));
+    }
+    @Test
+    void toStringTestMessage(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingDoubleBuilderPP());
+        String expected = "BuildingCard with effect: BuildingDoubleBuilderPP and" +
+                "\nEra : I" +
+                "\nFood cost : 3" +
+                "\nPrestige point earned : 2";
+
+        assertEquals(expected, c.toString());
+    }
 }

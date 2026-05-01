@@ -56,4 +56,25 @@ public class BuildingDiscountFoodTest {
         assertEquals(foodBefore + 1, player.getFood(),
                 "The building should have given only 1 food because the player has 1 right character");
     }
+    @Test
+    void toStringTestValues(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingDiscountFood(CharacterEnum.BUILDER));
+        String result = c.toString();
+
+        assertTrue(result.contains("I"));
+        assertTrue(result.contains("3"));
+        assertTrue(result.contains("2"));
+        assertTrue(result.contains("BuildingDiscountFood"));
+    }
+    @Test
+    void toStringTestMessage(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingDiscountFood(CharacterEnum.BUILDER));
+        String expected = "BuildingCard with effect: BuildingDiscountFood\n" +
+                "For each character BUILDER it gives 1 food discount\n" + "and" +
+                "\nEra : I" +
+                "\nFood cost : 3" +
+                "\nPrestige point earned : 2";
+
+        assertEquals(expected, c.toString());
+    }
 }

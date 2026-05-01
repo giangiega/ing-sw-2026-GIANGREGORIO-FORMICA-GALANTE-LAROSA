@@ -110,7 +110,24 @@ public class BuildingBonusSameInventorsTest {
         assertEquals(foodBefore + 3, player.getFood(),
                 "The building should have given the player 3 food since he has completed a new couple");
     }
+    @Test
+    void toStringTestValues(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusSameInventors());
+        String result = c.toString();
 
+        assertTrue(result.contains("I"));
+        assertTrue(result.contains("3"));
+        assertTrue(result.contains("2"));
+        assertTrue(result.contains("BuildingBonusSameInventors"));
+    }
+    @Test
+    void toStringTestMessage(){
+        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusSameInventors());
+        String expected = "BuildingCard with effect: BuildingBonusSameInventors and" +
+                "\nEra : I" +
+                "\nFood cost : 3" +
+                "\nPrestige point earned : 2";
 
-
+        assertEquals(expected, c.toString());
+    }
 }
