@@ -24,19 +24,11 @@ public class GameStartedEvent implements ServerEvent {
         this.buildingLowerRow = buildingLowerRow;
     }
 
-    private List<String> getTurnOrderNames(){
-        List<String> turnOrderNames = new ArrayList<>();
-        for(Player p : turnOrderTile.getOrder()){
-            turnOrderNames.add(p.getName());
-        }
-        return turnOrderNames;
-    }
-
     @Override
     public void updateView(ViewInterface view) {
         view.showGameStart();
         view.updateOfferTrack(offerTrack);
-        view.updateTurnOrder(getTurnOrderNames());
+        view.updateTurnOrder(turnOrderTile);
         view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
     }
 }

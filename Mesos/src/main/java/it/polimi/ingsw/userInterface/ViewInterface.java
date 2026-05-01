@@ -18,9 +18,8 @@ public interface ViewInterface {
     void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow, List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow);
     void updateOfferTrack(List<OfferTile> offerTrack);
     void updatePlayer(String name, int food, int prestigePoints, Map<CharacterEnum,List<CharacterCard>>tribe);
-    void updateTurnOrder(List<String> turnOrder);
-    void selectCard(int upperCount, int lowerCount);
-    void selectBuilding(List<BuildingCard> availableBuildings, String row);
+    void updateTurnOrder(TurnOrderTile turnOrder);
+    void selectCard(int upperCount, int lowerCount, List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow);
     void placeTotem(List<Character> freeSlots);
     void invalidChoice(String message);
     void showFinalScore(List<String> winners, Map< String , Integer> finalScores);

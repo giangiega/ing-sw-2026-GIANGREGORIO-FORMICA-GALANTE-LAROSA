@@ -57,4 +57,20 @@ public class TurnOrderTile {
     public int getNumPlayers(){
         return numPlayers;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < slots.size(); i++) {
+            Player p = slots.get(i);
+            if (p != null)
+                sb.append(String.format("  %d. [%s] %s%n",
+                        i + 1, p.getTotemColor().name(), p.getName()));
+            else
+                sb.append(String.format("  %d. [ empty ]%n", i + 1));
+        }
+        return sb.toString();
+    }
+
+
 }
