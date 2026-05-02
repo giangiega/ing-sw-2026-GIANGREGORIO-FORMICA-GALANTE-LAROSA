@@ -22,4 +22,8 @@ public class Gatherer extends CharacterCard{
         player.getCharacterByType(CharacterEnum.GATHERER).add(this);
 
     }
+    @Override
+    public String toString() {
+        return "Gatherer | Era: " + getEra();
+    }
 }

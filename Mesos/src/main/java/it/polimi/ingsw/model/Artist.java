@@ -23,4 +23,9 @@ public class Artist extends CharacterCard{
 
 
     }
+
+    @Override
+    public String toString(){
+        return "Artist | Era: " + getEra();
+    }
 }

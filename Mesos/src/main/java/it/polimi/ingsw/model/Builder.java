@@ -36,4 +36,9 @@ public class Builder extends CharacterCard {
     public int getEndGamePP() {
         return endGamePP;
     }
+
+    @Override
+    public String toString() {
+        return "Builder | Food discount: -" + getWingCount() + " | End-game PP: " + getEndGamePP() + " | Era: " + getEra();
+    }
 }
