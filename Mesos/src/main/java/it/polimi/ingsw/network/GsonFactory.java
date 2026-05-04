@@ -39,6 +39,7 @@ public class GsonFactory {
                         .of(ServerEvent.class, TYPE_FIELD)
                         .registerSubtype(AckEvent.class)
                         .registerSubtype(EndGameEvent.class)
+                        .registerSubtype(GameStartedEvent.class)
                         .registerSubtype(LoggedEvent.class)
                         .registerSubtype(InvalidChoiceEvent.class)
                         .registerSubtype(IsYourTurnEvent.class)
