@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class SocketClient {
@@ -38,13 +40,16 @@ public class SocketClient {
         //New output channel to the server: auto-flush true empties the buffer as soon as it gets filled
         PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
+        //New executor: this is where the listener enqueues the operations
+        ExecutorService uiExecutor = Executors.newSingleThreadExecutor();
+
         ClientViewSocket sender = new ClientViewSocket(out);
         view.init(sender);
 
         //Listener: Runnable::run for TUI
-       ListenerClientViewSocket listener = new ListenerClientViewSocket(in, view, Runnable :: run);
+       ListenerClientViewSocket listener = new ListenerClientViewSocket(in, view, uiExecutor :: execute);
         Thread listenerThread = new Thread(listener, "listener-client");
-        listenerThread.setDaemon(false);//thread dies with main thread
+        listenerThread.setDaemon(false);//thread doesn't die with main thread
         listenerThread.start();
     }
 
