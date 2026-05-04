@@ -51,23 +51,13 @@ public class GsonFactory {
 
         RuntimeTypeAdapterFactory<TribeCard> tribeFactory =
                 RuntimeTypeAdapterFactory
-                        .of(TribeCard.class, TYPE_FIELD)
-                        .registerSubtype(CharacterCard.class)
-                        .registerSubtype(EventCard.class);
-
-        RuntimeTypeAdapterFactory<CharacterCard> characterFactory =
-                RuntimeTypeAdapterFactory
-                        .of(CharacterCard.class)
+                        .of(TribeCard.class, "typeTribeCard")
                         .registerSubtype(Hunter.class)
                         .registerSubtype(Gatherer.class)
                         .registerSubtype(Shaman.class)
                         .registerSubtype(Builder.class)
                         .registerSubtype(Artist.class)
-                        .registerSubtype(Inventor.class);
-
-        RuntimeTypeAdapterFactory<EventCard> eventFactory =
-                RuntimeTypeAdapterFactory
-                        .of(EventCard.class)
+                        .registerSubtype(Inventor.class)
                         .registerSubtype(EventCavePainting.class)
                         .registerSubtype(EventShamanRitual.class)
                         .registerSubtype(EventSustenance.class)
@@ -75,7 +65,7 @@ public class GsonFactory {
 
         RuntimeTypeAdapterFactory<BuildingEffect> buildingFactory =
                 RuntimeTypeAdapterFactory
-                        .of(BuildingEffect.class)
+                        .of(BuildingEffect.class, "typeBuilding")
                         .registerSubtype(BuildingFoodSet.class)
                         .registerSubtype(BuildingDiscountFood.class)
                         .registerSubtype(BuildingSaveShamanPP.class)
@@ -93,8 +83,6 @@ public class GsonFactory {
 
         return new GsonBuilder().registerTypeAdapterFactory(serverEventFactory)
                 .registerTypeAdapterFactory(tribeFactory)
-                .registerTypeAdapterFactory(eventFactory)
-                .registerTypeAdapterFactory(characterFactory)
                 .registerTypeAdapterFactory(buildingFactory).create();
     }
 }
