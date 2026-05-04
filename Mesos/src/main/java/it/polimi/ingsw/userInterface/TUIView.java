@@ -1,6 +1,7 @@
 package it.polimi.ingsw.userInterface;
 
 import it.polimi.ingsw.enums.CharacterEnum;
+import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.network.ClientViewSocket;
 import it.polimi.ingsw.network.clientInterface.*;
@@ -38,6 +39,7 @@ public class TUIView implements ViewInterface {
             else scanner.next();
         }
         sender.sendOperation(new NumPlayersOperation(n));
+        askLogin();
     }
 
     @Override
@@ -50,8 +52,12 @@ public class TUIView implements ViewInterface {
         System.out.print("Choose color: ");
         String color = scanner.next().toUpperCase();
 
-        sender.sendOperation(new LoginOperation(name,
-                it.polimi.ingsw.enums.ColorEnum.valueOf(color)));
+        try {
+            sender.sendOperation(new LoginOperation(name, ColorEnum.valueOf(color)));
+        } catch (IllegalArgumentException e) {
+            System.out.println("[!] Invalid color, try again.");
+            askLogin();
+        }
     }
 
     @Override

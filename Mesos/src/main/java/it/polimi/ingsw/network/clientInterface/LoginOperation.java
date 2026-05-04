@@ -1,8 +1,10 @@
 package it.polimi.ingsw.network.clientInterface;
-
 import it.polimi.ingsw.network.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.enums.ColorEnum;
+import it.polimi.ingsw.network.serverInterface.LoggedEvent;
+
+import java.util.ArrayList;
 
 public class LoginOperation implements ClientOperation {
 
@@ -15,6 +17,11 @@ public class LoginOperation implements ClientOperation {
     }
     @Override
     public void executeOp(Server server, ClientManagerSocket cm) {
+        if (server.getLobbyController() == null) {
+            cm.sendEvent(new LoggedEvent(false, namePlayer,
+                    totemColor, new ArrayList<>()));
+            return;
+        }
         server.getLobbyController().addPlayer(namePlayer,totemColor,cm);
     }
 }

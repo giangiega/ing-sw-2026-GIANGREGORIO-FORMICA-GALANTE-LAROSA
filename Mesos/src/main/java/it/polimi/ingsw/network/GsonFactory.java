@@ -5,6 +5,7 @@ package it.polimi.ingsw.network;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.network.clientInterface.*;
 import it.polimi.ingsw.network.serverInterface.*;
 

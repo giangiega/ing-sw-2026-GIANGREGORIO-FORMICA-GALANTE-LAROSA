@@ -44,7 +44,7 @@ public class SocketClient {
         //Listener: Runnable::run for TUI
        ListenerClientViewSocket listener = new ListenerClientViewSocket(in, view, Runnable :: run);
         Thread listenerThread = new Thread(listener, "listener-client");
-        listenerThread.setDaemon(true);//thread dies with main thread
+        listenerThread.setDaemon(false);//thread dies with main thread
         listenerThread.start();
     }
 

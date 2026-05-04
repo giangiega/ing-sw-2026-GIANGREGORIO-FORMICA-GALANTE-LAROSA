@@ -24,6 +24,7 @@ public class LoggedEvent implements ServerEvent {
             view.showLobby(lobbyPlayers);
         }else{
             view.invalidChoice("Name or color already used");
+            view.askLogin();
         }
 
     }
