@@ -38,5 +38,10 @@ public class EventHunt extends EventCard {
     public int getPpPerHunter() {
         return ppPerHunter;
     }
+
+    @Override
+    public String toString(){
+        return " Event - Hunt | Each Hunter gives: +1 Food, +" + getPpPerHunter() + "PP";
+    }
 }
 

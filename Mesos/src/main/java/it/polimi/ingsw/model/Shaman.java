@@ -31,4 +31,9 @@ public class Shaman extends CharacterCard{
     {
         return  StarCount ;
     }
+
+    @Override
+    public String toString(){
+        return "Shaman | Stars: " + StarCount + " | Era: " + getEra();
+    }
 }

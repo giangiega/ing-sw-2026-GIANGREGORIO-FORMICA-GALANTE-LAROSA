@@ -50,4 +50,12 @@ public class EventCavePainting extends EventCard {
     public int getMinArtist() {
         return minArtist;
     }
+
+    @Override
+    public String toString() {
+        return "EVENT - Cave Painting | If you have less then " + minArtist +
+                " Artists, You lose :  -" + lostPP +
+                " PP | If you have at least  " + minArtist +
+                " Artists, you gain: +" + gainedPP + " PP each";
+    }
 }

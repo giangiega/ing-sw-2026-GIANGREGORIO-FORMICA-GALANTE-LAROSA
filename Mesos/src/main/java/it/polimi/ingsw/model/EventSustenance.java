@@ -53,4 +53,9 @@ public class EventSustenance extends EventCard {
     public int getPpPerUnfedCharacter() {
         return ppPerUnfedCharacter;
     }
+
+    @Override
+    public String toString(){
+        return "Event - Sustenance | Pay 1 Food per Character. " + " If short: - " + getPpPerUnfedCharacter() + " PP per unfed Character";
+    }
 }
