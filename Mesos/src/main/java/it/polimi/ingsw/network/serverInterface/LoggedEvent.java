@@ -23,8 +23,13 @@ public class LoggedEvent implements ServerEvent {
         if(result){
             view.showLobby(lobbyPlayers);
         }else{
-            view.invalidChoice("Name or color already used");
-            view.askLogin();
+            if(lobbyPlayers.size() >= 2)
+                view.invalidChoice("The lobby is full");
+            else {
+                view.invalidChoice("Name or color already used");
+                view.askLogin();
+            }
+
         }
 
     }

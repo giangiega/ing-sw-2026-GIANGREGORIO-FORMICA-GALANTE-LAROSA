@@ -30,7 +30,10 @@ public class LobbyController {
     public synchronized void addPlayer(String name, ColorEnum color, ClientManagerSocket cm) {
 
         if (gameStarted || lobbyPlayers.size() >= numPlayers) {
-            cm.sendEvent(new LoggedEvent(false, name, color, new ArrayList<>()));
+            List<String> lobbyNames = new ArrayList<>();
+            for(Player p : lobbyPlayers)
+                lobbyNames.add(p.getName());
+            cm.sendEvent(new LoggedEvent(false, name, color, lobbyNames));
             return;
         }
 

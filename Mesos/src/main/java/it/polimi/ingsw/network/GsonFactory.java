@@ -35,7 +35,7 @@ public class GsonFactory {
      * @return :new Gson instance ready to receive events
      */
     public static Gson serverEventGson(){
-        RuntimeTypeAdapterFactory<ServerEvent> factory =
+        RuntimeTypeAdapterFactory<ServerEvent> serverEventFactory =
                 RuntimeTypeAdapterFactory
                         .of(ServerEvent.class, TYPE_FIELD)
                         .registerSubtype(AckEvent.class)
@@ -49,7 +49,52 @@ public class GsonFactory {
                         .registerSubtype(UpdatePlayerEvent.class)
                         .registerSubtype(ValidCardsEvent.class);
 
+        RuntimeTypeAdapterFactory<TribeCard> tribeFactory =
+                RuntimeTypeAdapterFactory
+                        .of(TribeCard.class, TYPE_FIELD)
+                        .registerSubtype(CharacterCard.class)
+                        .registerSubtype(EventCard.class);
 
-        return new GsonBuilder().registerTypeAdapterFactory(factory).create();
+        RuntimeTypeAdapterFactory<CharacterCard> characterFactory =
+                RuntimeTypeAdapterFactory
+                        .of(CharacterCard.class)
+                        .registerSubtype(Hunter.class)
+                        .registerSubtype(Gatherer.class)
+                        .registerSubtype(Shaman.class)
+                        .registerSubtype(Builder.class)
+                        .registerSubtype(Artist.class)
+                        .registerSubtype(Inventor.class);
+
+        RuntimeTypeAdapterFactory<EventCard> eventFactory =
+                RuntimeTypeAdapterFactory
+                        .of(EventCard.class)
+                        .registerSubtype(EventCavePainting.class)
+                        .registerSubtype(EventShamanRitual.class)
+                        .registerSubtype(EventSustenance.class)
+                        .registerSubtype(EventHunt.class);
+
+        RuntimeTypeAdapterFactory<BuildingEffect> buildingFactory =
+                RuntimeTypeAdapterFactory
+                        .of(BuildingEffect.class)
+                        .registerSubtype(BuildingFoodSet.class)
+                        .registerSubtype(BuildingDiscountFood.class)
+                        .registerSubtype(BuildingSaveShamanPP.class)
+                        .registerSubtype(BuildingBonusTotem.class)
+                        .registerSubtype(BuildingBonusSameInventors.class)
+                        .registerSubtype(BuildingBonusStarShaman.class)
+                        .registerSubtype(BuildingBonusDoubleShamanPP.class)
+                        .registerSubtype(BuildingBonusHunt.class)
+                        .registerSubtype(BuildingDoubleBuilderPP.class)
+                        .registerSubtype(BuildingBonusArtist.class)
+                        .registerSubtype(BuildingPPForSet.class)
+                        .registerSubtype(BuildingBonusForCharacterType.class)
+                        .registerSubtype(BuildingCardUpperRow.class)
+                        .registerSubtype(BuildingFinal25PP.class);
+
+        return new GsonBuilder().registerTypeAdapterFactory(serverEventFactory)
+                .registerTypeAdapterFactory(tribeFactory)
+                .registerTypeAdapterFactory(eventFactory)
+                .registerTypeAdapterFactory(characterFactory)
+                .registerTypeAdapterFactory(buildingFactory).create();
     }
 }
