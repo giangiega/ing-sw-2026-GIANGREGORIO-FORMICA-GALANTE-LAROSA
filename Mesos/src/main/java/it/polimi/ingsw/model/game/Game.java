@@ -76,7 +76,6 @@ public class Game {
         Player player = tile.getOccupant();
         if (player == null)
             throw new InvalidPlayerActionException("OfferTile is not occupied by any player");
-            //verificare funzionamento eccezione
         if (tile.getLetter() == 'A') {
             player.gainFood(3);
         } else {
@@ -84,11 +83,12 @@ public class Game {
                 throw new InvalidPlayerActionException("Too many upper cards chosen");
             if (lowerCards.size() + lowerBuildings.size() > tile.getCountLowerArrow())
                 throw new InvalidPlayerActionException("Too many lower cards chosen");
-            try {
+           /* try {
                 tile.playerMove(player, board, upperCards, lowerCards, upperBuildings, lowerBuildings);
             } catch (InvalidPlayerActionException e) {
                 throw new InvalidPlayerActionException("player hasn't food to take this building");
-            }
+            }*/
+            tile.playerMove(player, board, upperCards, lowerCards, upperBuildings, lowerBuildings);
         }
 
         tile.setOccupant(null);

@@ -51,6 +51,7 @@ public class GsonFactory {
                         .registerSubtype(MoveTotemEvent.class)
                         .registerSubtype(UpdateBoardEvent.class)
                         .registerSubtype(UpdatePlayerEvent.class)
+                        .registerSubtype(UpdateRoundEvent.class)
                         .registerSubtype(ValidCardsEvent.class);
 
         RuntimeTypeAdapterFactory<TribeCard> tribeFactory =

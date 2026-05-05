@@ -67,62 +67,66 @@ public class OfferTile {
      * @param indexUpperChosenBuildings: these are indexes of the upperRow's BuildingsCards chosen by the player
      * @param indexLowerChosenBuildings: these are indexes of the lowerRow's BuildingsCards chosen by the player
      */
-    public void playerMove(Player player, Board board, List<Integer> indexUpperChosenCards, List<Integer> indexLowerChosenCards, List<Integer> indexUpperChosenBuildings, List<Integer> indexLowerChosenBuildings) throws InvalidPlayerActionException {
-        if(!indexUpperChosenBuildings.isEmpty()) {
-            //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
+    public void playerMove(Player player, Board board, List<Integer> indexUpperChosenCards, List<Integer>
+            indexLowerChosenCards, List<Integer> indexUpperChosenBuildings,
+                           List<Integer> indexLowerChosenBuildings) throws InvalidPlayerActionException {
+        int totalFoodToPay = 0;
+
+        for (Integer i : indexUpperChosenBuildings) {
+            BuildingCard card = board.getBuildingUpperRow().get(i);
+            totalFoodToPay += card.getCost(player);
+        }
+        for (Integer i : indexLowerChosenBuildings) {
+            BuildingCard card = board.getBuildingLowerRow().get(i);
+            totalFoodToPay += card.getCost(player);
+        }
+        if (totalFoodToPay > player.getFood())
+            throw new InvalidPlayerActionException("Player hasn't enough food to take this building");
+
+
+        for (Integer i : indexUpperChosenCards) {
+            if (!board.getUpperRow().get(i).isPickable())
+                throw new InvalidPlayerActionException("Can't pick an EventCard");
+        }
+        for (Integer i : indexLowerChosenCards) {
+            if (!board.getLowerRow().get(i).isPickable())
+                throw new InvalidPlayerActionException("Cannot pick an EventCard");
+        }
+
+        if (!indexUpperChosenBuildings.isEmpty()) {
             indexUpperChosenBuildings.sort(Collections.reverseOrder());
             for (Integer i : indexUpperChosenBuildings) {
                 BuildingCard chosenCard = board.getBuildingUpperRow().get(i);
-                int effectiveCost = chosenCard.getCost(player);
-                if(effectiveCost <= player.getFood()) {
-                    board.removeFromBuildingUpperRow(chosenCard);
-                    player.addBuildingCard(chosenCard);
-                    player.payFood(effectiveCost);
-                }else{
-                    throw new InvalidPlayerActionException("player hasn't food to take this building");
-                }
+                int cost = chosenCard.getCost(player);
+                board.removeFromBuildingUpperRow(chosenCard);
+                player.addBuildingCard(chosenCard);
+                player.payFood(cost);
             }
         }
-        if(!indexLowerChosenBuildings.isEmpty()) {
-            //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
+        if (!indexLowerChosenBuildings.isEmpty()) {
             indexLowerChosenBuildings.sort(Collections.reverseOrder());
             for (Integer i : indexLowerChosenBuildings) {
                 BuildingCard chosenCard = board.getBuildingLowerRow().get(i);
-                int effectiveCost = chosenCard.getCost(player);
-                if(effectiveCost <= player.getFood()) {
-                    board.removeFromBuildingLowerRow(chosenCard);
-                    player.addBuildingCard(chosenCard);
-                    player.payFood(effectiveCost);
-                }else{
-                    throw new InvalidPlayerActionException("player hasn't food to take this building");
-                }
+                int cost = chosenCard.getCost(player);
+                board.removeFromBuildingLowerRow(chosenCard);
+                player.addBuildingCard(chosenCard);
+                player.payFood(cost);
             }
         }
-
-        if(!indexUpperChosenCards.isEmpty()) {
-            //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
+        if (!indexUpperChosenCards.isEmpty()) {
             indexUpperChosenCards.sort(Collections.reverseOrder());
             for (Integer i : indexUpperChosenCards) {
-                if (!board.getUpperRow().get(i).isPickable())
-                    throw new InvalidPlayerActionException("Player can't choose an EventCard");
-                else {
-                    CharacterCard chosenCard = (CharacterCard)board.getUpperRow().get(i);
-                    board.removeFromUpperRow(chosenCard);
-                    player.addCharacterCard(chosenCard, board);
-                }
+                CharacterCard chosenCard = (CharacterCard) board.getUpperRow().get(i);
+                board.removeFromUpperRow(chosenCard);
+                player.addCharacterCard(chosenCard, board);
             }
         }
-        if(!indexLowerChosenCards.isEmpty()) {
-            //I have to sort the list in descending order because when I remove an element the others shift to the left, in this way the other indices remain valid
+        if (!indexLowerChosenCards.isEmpty()) {
             indexLowerChosenCards.sort(Collections.reverseOrder());
             for (Integer i : indexLowerChosenCards) {
-                if (!board.getLowerRow().get(i).isPickable())
-                    throw new InvalidPlayerActionException("Player can't choose an EventCard");
-                else{
-                    CharacterCard chosenCard = (CharacterCard) board.getLowerRow().get(i);
-                    board.removeFromLowerRow(chosenCard);
-                    player.addCharacterCard(chosenCard, board);
-                }
+                CharacterCard chosenCard = (CharacterCard) board.getLowerRow().get(i);
+                board.removeFromLowerRow(chosenCard);
+                player.addCharacterCard(chosenCard, board);
             }
         }
     }

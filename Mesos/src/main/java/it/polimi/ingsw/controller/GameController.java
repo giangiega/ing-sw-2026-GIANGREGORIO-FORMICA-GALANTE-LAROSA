@@ -47,6 +47,7 @@ public class GameController {
         Board board = new Board(config, tribeDeck, bd1, bd2, bd3);
         this.game = new Game(new ArrayList<>(players), board, config);
         game.startGame();
+        broadcastEvent(new UpdateRoundEvent(1));
         broadcastEvent(new GameStartedEvent(game.getBoard().getOfferTrack(),
                 game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
                 game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
@@ -109,7 +110,8 @@ public class GameController {
             game.resolveAction(tile, upperCards, lowerCards, upperBuildings, lowerBuildings);
         } catch (InvalidPlayerActionException e) {
             ClientManagerSocket cms = clientManagers.get(playerName);
-            cms.sendEvent(new InvalidChoiceEvent("Player can't pick this card"));
+           // cms.sendEvent(new InvalidChoiceEvent("Player can't pick this card"));
+            cms.sendEvent(new InvalidChoiceEvent(e.getMessage()));
             cms.sendEvent(new IsYourTurnEvent(tile, game.getBoard().getUpperRow(),
                     game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
                     game.getBoard().getBuildingLowerRow()));
@@ -140,6 +142,7 @@ public class GameController {
         } catch (InvalidPlayerActionException e) {
             broadcastEvent(new InvalidChoiceEvent("Can't end round"));
         }
+        broadcastEvent(new UpdateRoundEvent(game.getCurrentRound()));
 
         broadcastUpdatePlayers();
         broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),

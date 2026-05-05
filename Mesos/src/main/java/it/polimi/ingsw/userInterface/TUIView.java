@@ -80,7 +80,7 @@ public class TUIView implements ViewInterface {
             System.out.println("  [" + i + "] " + upperRow.get(i));
 
         if (!buildingUpperRow.isEmpty()) {
-            System.out.println("  \nBuildings:");
+            System.out.println("  \nBuildings Upper Row:");
             for (int i = 0; i < buildingUpperRow.size(); i++)
                 System.out.println("  [" + (i + upperRow.size()) + "] " + buildingUpperRow.get(i));
         }
@@ -90,7 +90,7 @@ public class TUIView implements ViewInterface {
             System.out.println("  [" + i + "] " + lowerRow.get(i));
 
         if (!buildingLowerRow.isEmpty()) {
-            System.out.println("  \nBuildings:");
+            System.out.println("  \nBuildings Lower Row:");
             for (int i = 0; i < buildingLowerRow.size(); i++)
                 System.out.println("  [" + (i + lowerRow.size()) + "] " + buildingLowerRow.get(i));
         }
@@ -140,6 +140,11 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
+    public void updateRound(int currentRound) {
+        System.out.printf("\n\n ============= ROUND %2d / 10 =============\n", currentRound);
+    }
+
+    @Override
     public void selectCard(int upperCount, int lowerCount, List<TribeCard> upperRow,
                            List<TribeCard> lowerRow, List<BuildingCard> upperBuildings,
                            List<BuildingCard> lowerBuildings) {
@@ -163,7 +168,7 @@ public class TUIView implements ViewInterface {
                         upperBuildings_.add(input - (upperRow.size()));
                     count++;
                 }catch (InputMismatchException e){
-                    System.out.println("Player hasn't food to take this building");
+                    System.out.println("Error in scanner.nextInt()");
                 }
             }
         }
@@ -181,7 +186,7 @@ public class TUIView implements ViewInterface {
                         lowerBuildings_.add(input - (lowerRow.size()));
                     count++;
                 } catch (InputMismatchException e){
-                    System.out.println("Player hasn't food to take this building");
+                    System.out.println("Error in scanner.nextInt()");
                 }
             }
         }
