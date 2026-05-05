@@ -109,7 +109,7 @@ public class GameController {
             game.resolveAction(tile, upperCards, lowerCards, upperBuildings, lowerBuildings);
         } catch (InvalidPlayerActionException e) {
             ClientManagerSocket cms = clientManagers.get(playerName);
-            cms.sendEvent(new InvalidChoiceEvent("Invalid action, try again"));
+            cms.sendEvent(new InvalidChoiceEvent("Player can't pick this card"));
             cms.sendEvent(new IsYourTurnEvent(tile, game.getBoard().getUpperRow(),
                     game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
                     game.getBoard().getBuildingLowerRow()));
@@ -138,7 +138,7 @@ public class GameController {
         try {
             game.endRound();
         } catch (InvalidPlayerActionException e) {
-            System.err.println("error ath the end of the round: " + e.getMessage());
+            broadcastEvent(new InvalidChoiceEvent("Can't end round"));
         }
 
         broadcastUpdatePlayers();

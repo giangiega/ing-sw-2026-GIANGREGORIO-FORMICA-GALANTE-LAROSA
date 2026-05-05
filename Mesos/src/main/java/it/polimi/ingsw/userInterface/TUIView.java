@@ -151,15 +151,6 @@ public class TUIView implements ViewInterface {
         int count = 0;
 
         if (upperCount > 0) {
-            /*if (!upperBuildings.isEmpty()) {
-                System.out.println("Upper buildings available:");
-                for (int i = 0; i < upperBuildings.size(); i++)
-                    System.out.printf("  [%d] cost: %d food   PP: %d%n",
-                            (i + upperRow.size()),
-                            upperBuildings.get(i).getBaseFC(),
-                            upperBuildings.get(i).getBasePP());
-            }*/
-
             System.out.println("\nChoose " + upperCount + " card(s) from upper row or building upper row.");
             System.out.print("Enter " + upperCount + " index/indices: ");
 
@@ -169,7 +160,7 @@ public class TUIView implements ViewInterface {
                     if (input < upperRow.size())
                         upperCards.add(input);
                     else if (input < (upperRow.size() + upperBuildings.size()))
-                        upperBuildings_.add(input - (upperRow.size() + 1));
+                        upperBuildings_.add(input - (upperRow.size()));
                     count++;
                 }catch (InputMismatchException e){
                     System.out.println("Player hasn't food to take this building");
@@ -178,15 +169,6 @@ public class TUIView implements ViewInterface {
         }
         count = 0;
         if (lowerCount > 0) {
-            /*if (!lowerBuildings.isEmpty()) {
-                System.out.println("Lower buildings available:");
-                for (int i = 0; i < lowerBuildings.size(); i++)
-                    System.out.printf("  [%d] cost: %d food / PP: %d%n",
-                            (i + lowerRow.size()),
-                            lowerBuildings.get(i).getBaseFC(),
-                            lowerBuildings.get(i).getBasePP());
-            }*/
-
             System.out.println("\nChoose " + lowerCount + " card(s) from lower row or building lower row.");
             System.out.print("Enter " + lowerCount + " index/indices: ");
 
@@ -196,7 +178,7 @@ public class TUIView implements ViewInterface {
                     if (input < lowerRow.size())
                         lowerCards.add(input);
                     else if (input < (lowerRow.size() + lowerBuildings.size()))
-                        lowerBuildings_.add(input - (lowerRow.size() + 1));
+                        lowerBuildings_.add(input - (lowerRow.size()));
                     count++;
                 } catch (InputMismatchException e){
                     System.out.println("Player hasn't food to take this building");

@@ -1,8 +1,5 @@
 package it.polimi.ingsw.network;
 
-import java.io.IOException;
-import java.util.Scanner;
-
 public class ServerApp {
     /**
      * @author Ric
