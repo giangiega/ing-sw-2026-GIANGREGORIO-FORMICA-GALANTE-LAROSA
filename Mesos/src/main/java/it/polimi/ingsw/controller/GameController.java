@@ -103,7 +103,8 @@ public class GameController {
         } catch (InvalidPlayerActionException e) {
             ClientManagerSocket cms = clientManagers.get(playerName);
             cms.sendEvent(new InvalidChoiceEvent("Invalid action, try again"));
-            cms.sendEvent(new IsYourTurnEvent(tile, game.getBoard().getBuildingUpperRow(),
+            cms.sendEvent(new IsYourTurnEvent(tile, game.getBoard().getUpperRow(),
+                    game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
                     game.getBoard().getBuildingLowerRow()));
             return;
         }
@@ -150,8 +151,9 @@ public class GameController {
     void sendIsYourTurn(String playerName) {
         ClientManagerSocket cms = clientManagers.get(playerName);
         if (cms != null)
-            cms.sendEvent(new IsYourTurnEvent(getOfferTileByPlayer(playerName),
-                    game.getBoard().getBuildingUpperRow(), game.getBoard().getBuildingLowerRow()));
+            cms.sendEvent(new IsYourTurnEvent(getOfferTileByPlayer(playerName), game.getBoard().getUpperRow(),
+                    game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
+                    game.getBoard().getBuildingLowerRow()));
     }
 
     void sendMoveTotem(String playerName) {

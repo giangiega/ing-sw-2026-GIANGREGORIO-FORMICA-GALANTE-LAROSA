@@ -78,7 +78,11 @@ public class Game {
                 throw new InvalidPlayerActionException("Too many upper cards chosen");
             if (lowerCards.size() + lowerBuildings.size() > tile.getCountLowerArrow())
                 throw new InvalidPlayerActionException("Too many lower cards chosen");
-            tile.playerMove(player, board, upperCards, lowerCards, upperBuildings, lowerBuildings);
+            try {
+                tile.playerMove(player, board, upperCards, lowerCards, upperBuildings, lowerBuildings);
+            } catch (InvalidPlayerActionException e) {
+                throw new InvalidPlayerActionException("Not enough food");
+            }
         }
 
         tile.setOccupant(null);

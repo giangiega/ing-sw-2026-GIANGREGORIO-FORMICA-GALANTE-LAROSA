@@ -80,7 +80,7 @@ public class EventShamanRitual extends EventCard {
 
     @Override
     public String toString() {
-        return "EVENT - Shaman Ritual | Most stars: +" + gainedPP +
+        return "Event - Shaman Ritual | Most stars: +" + gainedPP +
                 " PP | Fewest stars: -" + lostPP + " PP";
     }
 }

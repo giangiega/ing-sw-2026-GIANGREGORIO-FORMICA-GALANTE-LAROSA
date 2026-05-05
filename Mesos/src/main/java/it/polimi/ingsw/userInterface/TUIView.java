@@ -2,6 +2,7 @@ package it.polimi.ingsw.userInterface;
 
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
+import it.polimi.ingsw.exceptions.InvalidPlayerActionException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.network.ClientViewSocket;
 import it.polimi.ingsw.network.clientInterface.*;
@@ -75,9 +76,9 @@ public class TUIView implements ViewInterface {
             System.out.println("  [" + i + "] " + upperRow.get(i));
 
         if (!buildingUpperRow.isEmpty()) {
-            System.out.println("  Buildings:");
+            System.out.println("  \nBuildings:");
             for (int i = 0; i < buildingUpperRow.size(); i++)
-                System.out.println("  [B" + i + "] " + buildingUpperRow.get(i));
+                System.out.println("  [" + (i + upperRow.size()) + "] " + buildingUpperRow.get(i));
         }
 
         System.out.println("\n--- Lower Row ---");
@@ -85,9 +86,9 @@ public class TUIView implements ViewInterface {
             System.out.println("  [" + i + "] " + lowerRow.get(i));
 
         if (!buildingLowerRow.isEmpty()) {
-            System.out.println("  Buildings:");
+            System.out.println("  \nBuildings:");
             for (int i = 0; i < buildingLowerRow.size(); i++)
-                System.out.println("  [B" + i + "] " + buildingLowerRow.get(i));
+                System.out.println("  [" + (i + lowerRow.size()) + "] " + buildingLowerRow.get(i));
         }
     }
 
@@ -134,136 +135,74 @@ public class TUIView implements ViewInterface {
         System.out.println("==========================================");
     }
 
-   /* @Override
-    public void selectCard(int upperCount, int lowerCount, List<BuildingCard> upperBuildings, List<BuildingCard> lowerBuildings) {
+    @Override
+    public void selectCard(int upperCount, int lowerCount, List<TribeCard> upperRow,
+                           List<TribeCard> lowerRow, List<BuildingCard> upperBuildings,
+                           List<BuildingCard> lowerBuildings) {
         List<Integer> upperCards = new ArrayList<>();
         List<Integer> lowerCards = new ArrayList<>();
         List<Integer> upperBuildings_ = new ArrayList<>();
         List<Integer> lowerBuildings_ = new ArrayList<>();
+        int input = 0;
+        int count = 0;
 
         if (upperCount > 0) {
-            System.out.println("Choose " + upperCount + " card(s) from upper row.");
-            System.out.print("Enter " + upperCount + " index/indices: ");
-            for (int i = 0; i < upperCount; i++)
-                upperCards.add(scanner.nextInt());
-
-            if (!upperBuildings.isEmpty()) {
+            /*if (!upperBuildings.isEmpty()) {
                 System.out.println("Upper buildings available:");
                 for (int i = 0; i < upperBuildings.size(); i++)
                     System.out.printf("  [%d] cost: %d food   PP: %d%n",
-                            i,
+                            (i + upperRow.size()),
                             upperBuildings.get(i).getBaseFC(),
                             upperBuildings.get(i).getBasePP());
-                System.out.println("  [-1] Skip");
-                System.out.print("Choose building index: ");
-                int idx = scanner.nextInt();
-                if (idx >= 0 && idx < upperBuildings.size())
-                    upperBuildings_.add(idx);
+            }*/
+
+            System.out.println("\nChoose " + upperCount + " card(s) from upper row or building upper row.");
+            System.out.print("Enter " + upperCount + " index/indices: ");
+
+            while (count < upperCount) {
+                try {
+                    input = scanner.nextInt();
+                    if (input < upperRow.size())
+                        upperCards.add(input);
+                    else if (input < (upperRow.size() + upperBuildings.size()))
+                        upperBuildings_.add(input - (upperRow.size() + 1));
+                    count++;
+                }catch (InputMismatchException e){
+                    System.out.println("Not enough food");
+                }
             }
         }
-
+        count = 0;
         if (lowerCount > 0) {
-            System.out.println("Choose " + lowerCount + " card(s) from lower row.");
-            System.out.print("Enter " + lowerCount + " index/indices: ");
-            for (int i = 0; i < lowerCount; i++)
-                lowerCards.add(scanner.nextInt());
-
-            if (!lowerBuildings.isEmpty()) {
+            /*if (!lowerBuildings.isEmpty()) {
                 System.out.println("Lower buildings available:");
                 for (int i = 0; i < lowerBuildings.size(); i++)
-                    System.out.printf("  [%d] cost: %d food   PP: %d%n",
-                            i,
+                    System.out.printf("  [%d] cost: %d food / PP: %d%n",
+                            (i + lowerRow.size()),
                             lowerBuildings.get(i).getBaseFC(),
                             lowerBuildings.get(i).getBasePP());
-                System.out.println("  [-1] Skip");
-                System.out.print("Choose building index: ");
-                int idx = scanner.nextInt();
-                if (idx >= 0 && idx < lowerBuildings.size())
-                    lowerBuildings_.add(idx);
+            }*/
+
+            System.out.println("\nChoose " + lowerCount + " card(s) from lower row or building lower row.");
+            System.out.print("Enter " + lowerCount + " index/indices: ");
+
+            while (count < lowerCount) {
+                try {
+                    input = scanner.nextInt();
+                    if (input < lowerRow.size())
+                        lowerCards.add(input);
+                    else if (input < (lowerRow.size() + lowerBuildings.size()))
+                        lowerBuildings_.add(input - (lowerRow.size() + 1));
+                    count++;
+                } catch (InputMismatchException e){
+                    System.out.println("Not enough food");
+                }
             }
         }
 
         sender.sendOperation(new ChooseCardOperation(
                 upperCards, lowerCards, upperBuildings_, lowerBuildings_));
-    }*/
-
-    @Override
-    public void selectCard(int upperCount, int lowerCount,
-                           List<BuildingCard> upperBuildings, List<BuildingCard> lowerBuildings) {
-        List<Integer> upperCards = new ArrayList<>();
-        List<Integer> lowerCards = new ArrayList<>();
-        List<Integer> upperBldgs = new ArrayList<>();
-        List<Integer> lowerBldgs = new ArrayList<>();
-
-        System.out.println("\n╔═══════════════════════════════╗");
-        System.out.println("║         CHOOSE CARDS          ║");
-        System.out.println("╚═══════════════════════════════╝");
-
-        // === UPPER ROW ===
-        int upperBuildOffset = upperCount;
-        int totalUpper = upperCount + upperBuildings.size();
-
-        System.out.println("UPPER ROW (indices 0 to " + (totalUpper - 1) + "):");
-        for (int i = 0; i < upperCount; i++)
-            System.out.printf("  [%d] Tribe Card%n", i);
-        for (int i = 0; i < upperBuildings.size(); i++) {
-            BuildingCard b = upperBuildings.get(i);
-            System.out.printf("  [%d] Building: %s (Cost: %d)%n", upperBuildOffset + i, b, b.getBaseFC());
-        }
-
-        System.out.print("Enter UPPER indices (space-separated, -1 to skip): ");
-        parseRowInput(scanner, upperCount, upperBuildOffset, upperBuildings.size(), upperCards, upperBldgs);
-
-        // === LOWER ROW ===
-        int lowerBuildOffset = lowerCount;
-        int totalLower = lowerCount + lowerBuildings.size();
-
-        System.out.println("\nLOWER ROW (indices 0 to " + (totalLower - 1) + "):");
-        for (int i = 0; i < lowerCount; i++)
-            System.out.printf("  [%d] Tribe Card%n", i);
-        for (int i = 0; i < lowerBuildings.size(); i++) {
-            BuildingCard b = lowerBuildings.get(i);
-            System.out.printf("  [%d] Building: %s (Cost: %d)%n", lowerBuildOffset + i, b, b.getBaseFC());
-        }
-
-        System.out.print("Enter LOWER indices (space-separated, -1 to skip): ");
-        parseRowInput(scanner, lowerCount, lowerBuildOffset, lowerBuildings.size(), lowerCards, lowerBldgs);
-
-        // Invia al server
-        sender.sendOperation(new ChooseCardOperation(upperCards, lowerCards, upperBldgs, lowerBldgs));
     }
-
-    /**
-     * Helper per parsare gli input e applicare la sottrazione dell'offset come richiesto.
-     * Tribe cards: 0 .. n-1
-     * Buildings:   n .. n+m-1 → sottraendo n ottieni l'indice corretto per la lista buildings.
-     */
-    private void parseRowInput(Scanner sc, int tribeCount, int buildOffset, int buildSize,
-                               List<Integer> tribeList, List<Integer> buildList) {
-        if (sc.hasNextLine()) sc.nextLine(); // pulisce buffer residuo
-        String line = sc.nextLine().trim();
-
-        if (line.equals("-1")) return;
-        String[] tokens = line.split("\\s+");
-
-        for (String token : tokens) {
-            try {
-                int idx = Integer.parseInt(token);
-
-                if (idx >= 0 && idx < tribeCount) {
-                    tribeList.add(idx);
-                } else if (idx >= buildOffset && idx < buildOffset + buildSize) {
-                    buildList.add(idx - buildOffset); // Applica la tua formula: x - (n)
-                } else {
-                    System.out.println("[!] Ignored invalid index: " + idx);
-                }
-            } catch (NumberFormatException e) {
-                // ignora token non numerici
-            }
-        }
-    }
-
-
 
     @Override
     public void placeTotem(List<Character> freeSlots) {

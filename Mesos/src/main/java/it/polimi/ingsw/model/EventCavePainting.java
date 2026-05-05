@@ -53,7 +53,7 @@ public class EventCavePainting extends EventCard {
 
     @Override
     public String toString() {
-        return "EVENT - Cave Painting | If you have less then " + minArtist +
+        return "Event - Cave Painting | If you have less then " + minArtist +
                 " Artists, You lose :  -" + lostPP +
                 " PP | If you have at least  " + minArtist +
                 " Artists, you gain: +" + gainedPP + " PP each";
