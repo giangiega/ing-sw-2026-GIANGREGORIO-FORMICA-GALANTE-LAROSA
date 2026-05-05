@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
+import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

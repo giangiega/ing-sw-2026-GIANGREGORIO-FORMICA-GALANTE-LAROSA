@@ -1,9 +1,11 @@
 package it.polimi.ingsw.network.serverInterface;
 
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.boardAndTiles.OfferTile;
+import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
+import it.polimi.ingsw.model.cards.buildings.BuildingCard;
+import it.polimi.ingsw.model.cards.tribe.TribeCard;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameStartedEvent implements ServerEvent {

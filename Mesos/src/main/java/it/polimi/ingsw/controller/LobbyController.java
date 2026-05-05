@@ -2,7 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.network.ClientManagerSocket;
+import it.polimi.ingsw.network.socket.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.serverInterface.LoggedEvent;
 

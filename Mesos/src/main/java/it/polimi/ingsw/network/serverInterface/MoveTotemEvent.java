@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.serverInterface;
 
-import it.polimi.ingsw.model.OfferTile;
-import it.polimi.ingsw.model.TurnOrderTile;
+import it.polimi.ingsw.model.boardAndTiles.OfferTile;
+import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
 

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 import it.polimi.ingsw.enums.ColorEnum;
+import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
+import it.polimi.ingsw.model.game.GameConfig;
+import it.polimi.ingsw.model.game.GameConfig3;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

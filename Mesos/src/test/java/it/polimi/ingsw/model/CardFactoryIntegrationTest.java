@@ -1,5 +1,14 @@
 package it.polimi.ingsw.model;
 import it.polimi.ingsw.enums.EraEnum;
+import it.polimi.ingsw.model.cards.buildings.BuildingCard;
+import it.polimi.ingsw.model.cards.buildings.BuildingDeck;
+import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
+import it.polimi.ingsw.model.cards.tribe.events.EventCard;
+import it.polimi.ingsw.model.cards.tribe.TribeCard;
+import it.polimi.ingsw.model.decks.CardFactory;
+import it.polimi.ingsw.model.decks.Deck;
+import it.polimi.ingsw.model.game.GameConfig;
+import it.polimi.ingsw.model.game.GameConfig2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -4,7 +4,8 @@ import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.network.serverInterface.AckEvent;
-import it.polimi.ingsw.network.serverInterface.ServerEvent;
+import it.polimi.ingsw.network.socket.ClientManagerSocket;
+import it.polimi.ingsw.network.socket.ListenerClientManagerSocket;
 
 import java.io.IOException;
 import java.net.ServerSocket;

@@ -1,9 +1,8 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.GameConfig;
-import it.polimi.ingsw.model.OfferTile;
+import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.TurnOrderTile;
+import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 
 import java.util.ArrayList;
 import java.util.HashSet;

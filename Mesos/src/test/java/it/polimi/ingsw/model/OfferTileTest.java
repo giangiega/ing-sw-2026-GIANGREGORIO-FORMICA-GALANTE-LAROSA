@@ -1,12 +1,8 @@
 package it.polimi.ingsw.model;
 import it.polimi.ingsw.enums.ColorEnum;
-import it.polimi.ingsw.enums.EraEnum;
-import it.polimi.ingsw.enums.IconEnum;
+import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,0 +1,36 @@
+package it.polimi.ingsw.model.cards.tribe.events;
+/**
+ * @author Daniele
+ */
+
+import it.polimi.ingsw.enums.EraEnum;
+import it.polimi.ingsw.model.boardAndTiles.Board;
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.cards.tribe.TribeCard;
+
+import java.util.List;
+
+public abstract class EventCard extends TribeCard {
+    private final boolean isFinalEvent;
+    public EventCard(EraEnum era, boolean isFinalEvent) {
+        super(era);
+        this.isFinalEvent = isFinalEvent;
+    }
+
+    public abstract void resolve(List<Player> players, Board board);
+
+    public boolean isFinalEvent(){
+        return isFinalEvent;
+    }
+
+    @Override
+    public boolean isPickable(){
+        return false;
+    }
+
+    @Override
+    public boolean isEventCard() {
+        return true;
+    }
+
+}

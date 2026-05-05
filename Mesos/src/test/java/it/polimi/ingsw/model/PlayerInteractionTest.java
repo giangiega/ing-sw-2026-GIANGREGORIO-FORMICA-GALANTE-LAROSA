@@ -3,6 +3,14 @@ import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.enums.IconEnum;
+import it.polimi.ingsw.model.boardAndTiles.Board;
+import it.polimi.ingsw.model.cards.buildings.BuildingCard;
+import it.polimi.ingsw.model.cards.buildings.BuildingDeck;
+import it.polimi.ingsw.model.cards.tribe.*;
+import it.polimi.ingsw.model.cards.tribe.characters.*;
+import it.polimi.ingsw.model.decks.Deck;
+import it.polimi.ingsw.model.game.GameConfig;
+import it.polimi.ingsw.model.game.GameConfig2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

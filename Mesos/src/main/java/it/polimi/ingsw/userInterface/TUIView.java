@@ -2,9 +2,13 @@ package it.polimi.ingsw.userInterface;
 
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
-import it.polimi.ingsw.exceptions.InvalidPlayerActionException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.network.ClientViewSocket;
+import it.polimi.ingsw.model.boardAndTiles.OfferTile;
+import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
+import it.polimi.ingsw.model.cards.buildings.BuildingCard;
+import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
+import it.polimi.ingsw.model.cards.tribe.TribeCard;
+import it.polimi.ingsw.network.socket.ClientViewSocket;
 import it.polimi.ingsw.network.clientInterface.*;
 
 import java.util.*;
@@ -168,7 +172,7 @@ public class TUIView implements ViewInterface {
                         upperBuildings_.add(input - (upperRow.size() + 1));
                     count++;
                 }catch (InputMismatchException e){
-                    System.out.println("Not enough food");
+                    System.out.println("Player hasn't food to take this building");
                 }
             }
         }
@@ -195,7 +199,7 @@ public class TUIView implements ViewInterface {
                         lowerBuildings_.add(input - (lowerRow.size() + 1));
                     count++;
                 } catch (InputMismatchException e){
-                    System.out.println("Not enough food");
+                    System.out.println("Player hasn't food to take this building");
                 }
             }
         }

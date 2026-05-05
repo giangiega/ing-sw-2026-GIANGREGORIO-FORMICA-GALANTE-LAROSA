@@ -4,6 +4,12 @@ package it.polimi.ingsw.model;
  */
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
+import it.polimi.ingsw.model.boardAndTiles.Board;
+import it.polimi.ingsw.model.cards.tribe.characters.Builder;
+import it.polimi.ingsw.model.cards.buildings.BuildingCard;
+import it.polimi.ingsw.model.cards.buildings.BuildingDoubleBuilderPP;
+import it.polimi.ingsw.model.decks.CardFactory;
+import it.polimi.ingsw.model.game.GameConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

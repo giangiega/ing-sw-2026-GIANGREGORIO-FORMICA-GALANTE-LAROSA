@@ -1,6 +1,10 @@
 package it.polimi.ingsw.model;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.exceptions.EmptyDeckException;
+import it.polimi.ingsw.model.cards.tribe.characters.Artist;
+import it.polimi.ingsw.model.cards.tribe.characters.Builder;
+import it.polimi.ingsw.model.cards.tribe.TribeCard;
+import it.polimi.ingsw.model.decks.Deck;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;

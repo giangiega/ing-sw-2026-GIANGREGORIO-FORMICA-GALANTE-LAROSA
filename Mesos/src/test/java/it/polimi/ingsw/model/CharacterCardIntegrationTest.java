@@ -6,6 +6,14 @@ import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.enums.IconEnum;
+import it.polimi.ingsw.model.boardAndTiles.Board;
+import it.polimi.ingsw.model.cards.tribe.characters.*;
+import it.polimi.ingsw.model.cards.tribe.events.EventCavePainting;
+import it.polimi.ingsw.model.cards.tribe.events.EventHunt;
+import it.polimi.ingsw.model.cards.tribe.events.EventShamanRitual;
+import it.polimi.ingsw.model.cards.tribe.events.EventSustenance;
+import it.polimi.ingsw.model.decks.CardFactory;
+import it.polimi.ingsw.model.game.GameConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

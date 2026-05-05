@@ -1,12 +1,10 @@
 package it.polimi.ingsw.network.serverInterface;
 
-import it.polimi.ingsw.model.BuildingCard;
-import it.polimi.ingsw.model.CharacterCard;
-import it.polimi.ingsw.model.OfferTile;
-import it.polimi.ingsw.model.TribeCard;
+import it.polimi.ingsw.model.cards.buildings.BuildingCard;
+import it.polimi.ingsw.model.boardAndTiles.OfferTile;
+import it.polimi.ingsw.model.cards.tribe.TribeCard;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class IsYourTurnEvent implements ServerEvent {

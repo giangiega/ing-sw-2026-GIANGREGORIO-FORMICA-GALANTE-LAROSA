@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 import it.polimi.ingsw.exceptions.EmptyDeckException;
 import it.polimi.ingsw.enums.EraEnum;
+import it.polimi.ingsw.model.cards.buildings.BuildingCard;
+import it.polimi.ingsw.model.cards.buildings.BuildingDeck;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

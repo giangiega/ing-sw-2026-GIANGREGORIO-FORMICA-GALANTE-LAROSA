@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.serverInterface;
 
 import it.polimi.ingsw.enums.CharacterEnum;
-import it.polimi.ingsw.model.CharacterCard;
+import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
 import java.util.List;
