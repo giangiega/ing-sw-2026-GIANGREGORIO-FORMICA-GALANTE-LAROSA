@@ -47,10 +47,11 @@ public class LobbyController {
         Player player = new Player(name, color);
         lobbyPlayers.add(player);
         clientManagers.put(name, cm);
+        cm.setPlayerName(name);
+
         List<String>  playerNames = new ArrayList<>();
-        for(Player p : lobbyPlayers) {
+        for(Player p : lobbyPlayers)
             playerNames.add(p.getName());
-        }
 
         cm.sendEvent(new LoggedEvent(true, name, color,playerNames));
 

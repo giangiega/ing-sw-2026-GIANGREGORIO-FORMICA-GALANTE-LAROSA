@@ -11,8 +11,6 @@ import it.polimi.ingsw.network.serverInterface.*;
 
 public class GsonFactory {
 
-    private static final String TYPE_FIELD = "op";
-
     /**
      * @return Gson instance ready to send operation out
      * This method sets the Gson: it serializes ClientOperation(s).
@@ -22,7 +20,7 @@ public class GsonFactory {
     public static Gson clientOperationGson(){
         RuntimeTypeAdapterFactory<ClientOperation> factory =
                 RuntimeTypeAdapterFactory
-                        .of(ClientOperation.class, TYPE_FIELD)
+                        .of(ClientOperation.class, "typeOp")
                         .registerSubtype(NumPlayersOperation.class)
                         .registerSubtype(ChooseCardOperation.class)
                         .registerSubtype(LoginOperation.class)
@@ -37,7 +35,7 @@ public class GsonFactory {
     public static Gson serverEventGson(){
         RuntimeTypeAdapterFactory<ServerEvent> serverEventFactory =
                 RuntimeTypeAdapterFactory
-                        .of(ServerEvent.class, TYPE_FIELD)
+                        .of(ServerEvent.class, "typeEvent")
                         .registerSubtype(AckEvent.class)
                         .registerSubtype(EndGameEvent.class)
                         .registerSubtype(GameStartedEvent.class)
@@ -63,6 +61,16 @@ public class GsonFactory {
                         .registerSubtype(EventSustenance.class)
                         .registerSubtype(EventHunt.class);
 
+        RuntimeTypeAdapterFactory<CharacterCard> characterCardFactory =
+                RuntimeTypeAdapterFactory
+                        .of(CharacterCard.class, "typeTribeCard")
+                        .registerSubtype(Hunter.class)
+                        .registerSubtype(Gatherer.class)
+                        .registerSubtype(Shaman.class)
+                        .registerSubtype(Builder.class)
+                        .registerSubtype(Artist.class)
+                        .registerSubtype(Inventor.class);
+
         RuntimeTypeAdapterFactory<BuildingEffect> buildingFactory =
                 RuntimeTypeAdapterFactory
                         .of(BuildingEffect.class, "typeBuilding")
@@ -83,6 +91,7 @@ public class GsonFactory {
 
         return new GsonBuilder().registerTypeAdapterFactory(serverEventFactory)
                 .registerTypeAdapterFactory(tribeFactory)
+                .registerTypeAdapterFactory(characterCardFactory)
                 .registerTypeAdapterFactory(buildingFactory).create();
     }
 }

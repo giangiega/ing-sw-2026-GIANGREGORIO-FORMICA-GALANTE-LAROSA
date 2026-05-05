@@ -81,7 +81,7 @@ public class TUIView implements ViewInterface {
                         + " (cost: " + buildingUpperRow.get(i).getBaseFC() + ")");
         }
 
-        System.out.println("--- Lower Row ---");
+        System.out.println("\n--- Lower Row ---");
         for (int i = 0; i < lowerRow.size(); i++)
             System.out.println("  [" + i + "] " + lowerRow.get(i));
 

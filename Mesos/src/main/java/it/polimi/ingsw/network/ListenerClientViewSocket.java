@@ -3,6 +3,7 @@
  */
 package it.polimi.ingsw.network;
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 
@@ -54,7 +55,7 @@ public class ListenerClientViewSocket implements Runnable {
             ServerEvent event = gson.fromJson(json, ServerEvent.class);
 
             uiDispatcher.accept(()-> event.updateView(view));
-        }catch (JsonSyntaxException e){
+        }catch (JsonSyntaxException | JsonIOException e){
             System.err.println("From ListenerClientViewSocket: invalid JSON, got ignored "+json);
         }
     }
