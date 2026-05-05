@@ -47,7 +47,7 @@ public class BuildingBonusForCharacterType extends BuildingEffect{
      */
     @Override
     public String toString(){
-        return "BuildingBonusForCharacterType\n" +
+        return "BuildingBonusForCharacterType " +
                 "For each character " +  this.character + " it gives " + this.PP + " prestige points\n";
     }
 }
