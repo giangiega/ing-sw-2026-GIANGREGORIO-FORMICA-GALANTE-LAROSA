@@ -32,7 +32,7 @@ public class BuildingDiscountFood extends BuildingEffect {
      */
     @Override
     public String toString(){
-        return "BuildingDiscountFood " +
-                "For each character " +  this.characterType + " it gives 1 food discount\n";
+        return "BuildingDiscountFood: " +
+                "for each character " +  this.characterType + " it gives 1 food discount ";
     }
 }
