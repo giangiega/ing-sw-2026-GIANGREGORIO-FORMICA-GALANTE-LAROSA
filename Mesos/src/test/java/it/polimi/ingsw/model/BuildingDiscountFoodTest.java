@@ -69,11 +69,11 @@ public class BuildingDiscountFoodTest {
     @Test
     void toStringTestMessage(){
         BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingDiscountFood(CharacterEnum.BUILDER));
-        String expected = "BuildingCard with effect: BuildingDiscountFood\n" +
-                "For each character BUILDER it gives 1 food discount\n" + "and" +
-                "\nEra : I" +
-                "\nFood cost : 3" +
-                "\nPrestige point earned : 2";
+        String expected = "BuildingCard with effect: BuildingDiscountFood: " +
+                "for each character BUILDER it gives 1 food discount " + "and -->" +
+                "\n\t\tEra : I" +
+                "\n\t\tFood cost : 3" +
+                "\n\t\tPrestige point earned : 2";
 
         assertEquals(expected, c.toString());
     }

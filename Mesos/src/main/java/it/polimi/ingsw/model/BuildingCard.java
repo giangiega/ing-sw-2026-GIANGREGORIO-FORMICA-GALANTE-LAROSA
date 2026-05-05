@@ -72,9 +72,9 @@ public class BuildingCard extends Card {
      */
     @Override
     public String toString(){
-        return  "BuildingCard with effect: " + effect.toString() + "and" +
-                "\nEra : " + getEra() +
-                "\nFood cost : " + baseFoodCost +
-                "\nPrestige point earned : " + basePrestigePoints;
+        return  "BuildingCard with effect: " + effect.toString() + "and -->" +
+                "\n\t\tEra : " + getEra() +
+                "\n\t\tFood cost : " + baseFoodCost +
+                "\n\t\tPrestige point earned : " + basePrestigePoints;
     }
 }
