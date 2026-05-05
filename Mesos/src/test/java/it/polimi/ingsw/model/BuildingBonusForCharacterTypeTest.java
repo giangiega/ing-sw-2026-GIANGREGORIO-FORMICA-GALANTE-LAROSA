@@ -87,11 +87,11 @@ public class BuildingBonusForCharacterTypeTest {
     @Test
     void toStringTestMessage(){
         BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusForCharacterType(3, CharacterEnum.BUILDER));
-        String expected = "BuildingCard with effect: BuildingBonusForCharacterType\n" +
-                "For each character BUILDER it gives 3 prestige points\n" + "and" +
-                "\nEra : I" +
-                "\nFood cost : 3" +
-                "\nPrestige point earned : 2";
+        String expected = "BuildingCard with effect: BuildingBonusForCharacterType: " +
+                "for each character BUILDER it gives 3 prestige points " + "and -->" +
+                "\n\t\tEra : I" +
+                "\n\t\tFood cost : 3" +
+                "\n\t\tPrestige point earned : 2";
 
         assertEquals(expected, c.toString());
     }
