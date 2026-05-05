@@ -24,7 +24,4 @@ public class IsYourTurnEvent implements ServerEvent {
         view.selectCard(offerTile.getCountUpperArrow(), offerTile.getCountLowerArrow(),
                buildingUpperRow, buildingLowerRow);
     }
-
-
-
 }
