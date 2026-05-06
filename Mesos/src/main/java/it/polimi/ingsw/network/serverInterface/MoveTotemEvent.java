@@ -28,8 +28,6 @@ public class MoveTotemEvent implements ServerEvent {
     }
     @Override
     public void updateView(ViewInterface view){
-       view.updateOfferTrack(offerTrack);
-       view.updateTurnOrder(turnOrderTile);
        view.placeTotem(getFreeSlots());
 
     }

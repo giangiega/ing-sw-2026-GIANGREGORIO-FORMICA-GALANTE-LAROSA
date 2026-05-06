@@ -147,16 +147,12 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
-    public void updatePlayer(String name, int food, int prestigePoints, Map<CharacterEnum,List<CharacterCard>> tribe) {
-        playersStatus.put(name, new int[]{food, prestigePoints});
+    public void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps) {
         System.out.println(CYAN + BOLD + "\n============= PLAYERS STATUS =============" + RESET);
-        for (Map.Entry<String, int[]> entry : playersStatus.entrySet()) {
+        for (int i = 0; i < names.size(); i++)
             System.out.printf("  %-15s  food: %2d   PP: %3d%n",
-                    entry.getKey(),
-                    entry.getValue()[0],
-                    entry.getValue()[1]);
-        }
-        System.out.println(CYAN + BOLD + "==========================================" + RESET);
+                    names.get(i), foods.get(i), pps.get(i));
+        System.out.println(CYAN + BOLD + "=========================================" + RESET);
     }
 
     @Override

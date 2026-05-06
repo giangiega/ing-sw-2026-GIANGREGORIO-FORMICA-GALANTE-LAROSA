@@ -52,7 +52,7 @@ public class GameController {
                 game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
                 game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
                 game.getBoard().getBuildingLowerRow()));
-        broadcastUpdatePlayers();
+        broadcastEvent(new UpdateAllPlayersEvent(players));
 
         turnController = new TurnController(this, players.size());
         turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
@@ -82,10 +82,8 @@ public class GameController {
             return;
         }
 
-        broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),
-                game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
-                game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
-                game.getBoard().getBuildingLowerRow()));
+        broadcastEvent(new UpdateOfferTrackEvent(game.getBoard().getOfferTrack(),
+                game.getBoard().getTurnOrderTile()));
 
         turnController.onTotemPlaced(playerName, game.getBoard().getTurnOrderTile(),
                 game.getBoard().getOfferTrack());
@@ -122,11 +120,9 @@ public class GameController {
         if(player != null)
             clientManagers.get(playerName).sendEvent(new ValidCardsEvent(player.getTribe()));
 
-        broadcastUpdatePlayers();
-        broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),
-                game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
-                game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
-                game.getBoard().getBuildingLowerRow()));
+        broadcastEvent(new UpdateAllPlayersEvent(players));
+        broadcastEvent(new UpdateRowsEvent(game.getBoard().getUpperRow(), game.getBoard().getLowerRow(),
+                game.getBoard().getBuildingUpperRow(), game.getBoard().getBuildingLowerRow()));
 
         turnController.onActionResolved();
     }
@@ -144,7 +140,7 @@ public class GameController {
         }
         broadcastEvent(new UpdateRoundEvent(game.getCurrentRound()));
 
-        broadcastUpdatePlayers();
+        broadcastEvent(new UpdateAllPlayersEvent(players));
         broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),
                 game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
                 game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
@@ -179,11 +175,6 @@ public class GameController {
         for(ClientManagerSocket cm : clientManagers.values()) {
             cm.sendEvent(serverEvent);
         }
-    }
-
-    private void broadcastUpdatePlayers() {
-        for(Player p : players)
-            broadcastEvent(new UpdatePlayerEvent(p));
     }
 
     private Player getPlayerByName(String name) {

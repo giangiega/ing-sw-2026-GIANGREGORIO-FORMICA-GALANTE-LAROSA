@@ -21,7 +21,7 @@ public interface ViewInterface {
     void showGameStart();
     void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow, List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow);
     void updateOfferTrack(List<OfferTile> offerTrack);
-    void updatePlayer(String name, int food, int prestigePoints, Map<CharacterEnum,List<CharacterCard>>tribe);
+    void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps);
     void updateRound(int currentRound);
     void updateTurnOrder(TurnOrderTile turnOrder);
     void selectCard(int upperCount, int lowerCount, int cardsUpper, int cardsLower,List<TribeCard> upperRow, List<TribeCard> lowerRow, List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow);
