@@ -40,15 +40,15 @@ public class TUIView implements ViewInterface {
         int n = 0;
 
             System.out.print("You are the first player. How many players? (2-5): ");
-            if (scanner.hasNextInt())
-                n = scanner.nextInt();
-            else scanner.next();
-        while (n < 2 || n > 5) {
-            System.out.print("err: Enter a number between 2 and 5: ");
-            n = scanner.nextInt();
-        }
-        sender.sendOperation(new NumPlayersOperation(n));
-        askLogin();
+                if (scanner.hasNextInt())
+                    n = scanner.nextInt();
+                else scanner.next();
+                while (n < 2 || n > 5) {
+                    System.out.print("err: Enter a number between 2 and 5: ");
+                    n = scanner.nextInt();
+                }
+                sender.sendOperation(new NumPlayersOperation(n));
+                askLogin();
     }
 
     @Override
@@ -167,6 +167,7 @@ public class TUIView implements ViewInterface {
                     input = scanner.nextInt();
                 } catch (InputMismatchException e) {
                     System.out.println("Error in scanner.nextInt()");
+                    System.out.print("\nChoose a correct index: ");
                     scanner.next();
                 }
                 while(input != -1 && input != 0) {
@@ -187,6 +188,7 @@ public class TUIView implements ViewInterface {
                     input = scanner.nextInt();
                 } catch (InputMismatchException e) {
                     System.out.println("Error in scanner.nextInt()");
+                    System.out.print("\nChoose a correct index: ");
                     scanner.next();
                 }
                 while(input != -1 && input != 0) {
@@ -197,6 +199,8 @@ public class TUIView implements ViewInterface {
                     lowerCount = cardsLower;
                     if(lowerCount == 0) {
                         System.out.println("\nThere's no cards to pick, round skipped");
+                        sender.sendOperation(new ChooseCardOperation(
+                                upperCards, lowerCards, upperBuildings_, lowerBuildings_));
                         return;
                     }
                 }
@@ -205,6 +209,8 @@ public class TUIView implements ViewInterface {
                 lowerCount = cardsLower;
                 if(lowerCount == 0) {
                     System.out.println("\nThere's no cards to pick, round skipped");
+                    sender.sendOperation(new ChooseCardOperation(
+                            upperCards, lowerCards, upperBuildings_, lowerBuildings_));
                     return;
                 }
             }
@@ -228,6 +234,7 @@ public class TUIView implements ViewInterface {
                     count++;
                 } catch (InputMismatchException e){
                     System.out.println("Error in scanner.nextInt()");
+                    System.out.print("\nChoose a correct index: ");
                     scanner.next();
                 }
             }
@@ -251,6 +258,7 @@ public class TUIView implements ViewInterface {
                     count++;
                 } catch (InputMismatchException e){
                     System.out.println("Error in scanner.nextInt()");
+                    System.out.print("\nChoose a correct index: ");
                     scanner.next();
                 }
             }
@@ -264,8 +272,14 @@ public class TUIView implements ViewInterface {
     public void placeTotem(List<Character> freeSlots) {
         System.out.println("\nFree tiles: " + freeSlots);
         System.out.print("Choose a tile letter: ");
-        char letter = scanner.next().toUpperCase().charAt(0);
-        sender.sendOperation(new PlaceTotemOperation(letter));
+        try {
+            char letter = scanner.next().toUpperCase().charAt(0);
+            sender.sendOperation(new PlaceTotemOperation(letter));
+
+        } catch (InputMismatchException e) {
+            System.out.println("Error in scanner.next()");
+            scanner.next();
+        }
     }
 
     @Override

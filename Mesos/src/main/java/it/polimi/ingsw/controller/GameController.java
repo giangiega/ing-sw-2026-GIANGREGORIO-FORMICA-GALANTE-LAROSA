@@ -150,7 +150,7 @@ public class GameController {
                 game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
                 game.getBoard().getBuildingLowerRow()));
 
-        if (game.getCurrentRound() == 10) { // check if it's correct
+        if (game.getCurrentRound() > 10) {
             endGame();
         } else {
             turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());

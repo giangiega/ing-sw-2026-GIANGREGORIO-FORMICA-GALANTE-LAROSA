@@ -153,8 +153,7 @@ public class Game {
             s.resolve(players, board);
 
         board.rowsEndRound();
-        if(currentRound < 10)
-            currentRound++;
+        currentRound++;
     }
 
     /**

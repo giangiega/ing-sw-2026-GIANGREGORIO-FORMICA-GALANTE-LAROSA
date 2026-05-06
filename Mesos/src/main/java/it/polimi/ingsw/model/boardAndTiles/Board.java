@@ -157,8 +157,9 @@ public class Board {
 
         for (int i = 0; i < config.getUpperRowSize(); i++) {
             if (!tribeDeck.isEmpty()) {
-                checkEraSwitch(tribeDeck.getFirstCard().getEra());
-                upperRow.add(tribeDeck.getFirstCard());
+                TribeCard card = tribeDeck.getFirstCard();
+                checkEraSwitch(card.getEra());
+                upperRow.add(card);
             }
         }
     }
