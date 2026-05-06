@@ -196,12 +196,18 @@ public class TUIView implements ViewInterface {
                 if(input == -1) {
                     lowerCount = cardsLower;
                     if(lowerCount == 0) {
-                        System.out.println("\nThere's no cards to pick");
+                        System.out.println("\nThere's no cards to pick, round skipped");
                         return;
                     }
                 }
 
-            } else lowerCount = cardsLower;
+            } else {
+                lowerCount = cardsLower;
+                if(lowerCount == 0) {
+                    System.out.println("\nThere's no cards to pick, round skipped");
+                    return;
+                }
+            }
         }
 
         if (upperCount > 0) {
@@ -211,9 +217,9 @@ public class TUIView implements ViewInterface {
             while (count < upperCount) {
                 try {
                     input = scanner.nextInt();
-                    if (input < upperRow.size())
+                    if (input < upperRow.size() && input >= 0)
                         upperCards.add(input);
-                    else if (input < (upperRow.size() + upperBuildings.size()))
+                    else if (input < (upperRow.size() + upperBuildings.size()) && input >= upperRow.size())
                         upperBuildings_.add(input - (upperRow.size()));
                     else {
                         System.out.println("Invalid index, try again");
@@ -234,9 +240,9 @@ public class TUIView implements ViewInterface {
             while (count < lowerCount) {
                 try {
                     input = scanner.nextInt();
-                    if (input < lowerRow.size())
+                    if (input < lowerRow.size() && input >= 0)
                         lowerCards.add(input);
-                    else if (input < (lowerRow.size() + lowerBuildings.size()))
+                    else if (input < (lowerRow.size() + lowerBuildings.size()) && input >= lowerRow.size())
                         lowerBuildings_.add(input - (lowerRow.size()));
                     else {
                         System.out.println("Invalid index, try again");
