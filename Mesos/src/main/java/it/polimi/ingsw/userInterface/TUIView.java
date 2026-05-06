@@ -38,10 +38,14 @@ public class TUIView implements ViewInterface {
     @Override
     public void askNumPlayers() {
         int n = 0;
-        while (n < 2 || n > 5) {
+
             System.out.print("You are the first player. How many players? (2-5): ");
-            if (scanner.hasNextInt()) n = scanner.nextInt();
+            if (scanner.hasNextInt())
+                n = scanner.nextInt();
             else scanner.next();
+        while (n < 2 || n > 5) {
+            System.out.print("err: Enter a number between 2 and 5: ");
+            n = scanner.nextInt();
         }
         sender.sendOperation(new NumPlayersOperation(n));
         askLogin();
@@ -189,8 +193,13 @@ public class TUIView implements ViewInterface {
                     System.out.println("err: Invalid input\nChoose a correct input: ");
                     input = scanner.nextInt();
                 }
-                if(input == -1)
+                if(input == -1) {
                     lowerCount = cardsLower;
+                    if(lowerCount == 0) {
+                        System.out.println("\nThere's no cards to pick");
+                        return;
+                    }
+                }
 
             } else lowerCount = cardsLower;
         }
