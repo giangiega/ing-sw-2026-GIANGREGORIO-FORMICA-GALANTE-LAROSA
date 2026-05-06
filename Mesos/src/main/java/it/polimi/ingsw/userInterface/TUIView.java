@@ -18,6 +18,16 @@ public class TUIView implements ViewInterface {
     private ClientViewSocket sender;
     private final Map<String, int[]> playersStatus = new LinkedHashMap<>();
 
+    private static final String RESET = "\033[0m";
+    private static final String CYAN = "\033[0;36m";
+    private static final String YELLOW = "\033[0;33m";
+    private static final String GREEN = "\033[0;32m";
+    private static final String RED = "\033[0;31m";
+    private static final String MAGENTA = "\033[0;35m";
+    private static final String BLUE    = "\033[0;34m";
+    private static final String BRIGHT_GRAY = "\033[0;90m";
+    private static final String BOLD = "\033[1m";
+
     public TUIView() {}
 
     @Override
@@ -27,7 +37,7 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void showLobby(List<String> lobby) {
-        System.out.println("\n=== LOBBY ===");
+        System.out.println(CYAN + BOLD + "\n=== LOBBY ===" + RESET);
         System.out.println("Players connected: " + lobby);
         System.out.println("Waiting for more players...");
     }
@@ -38,63 +48,68 @@ public class TUIView implements ViewInterface {
     @Override
     public void askNumPlayers() {
         int n = 0;
+        String string = null;
 
-            System.out.print("You are the first player. How many players? (2-5): ");
-                if (scanner.hasNextInt())
+            System.out.print(GREEN + BOLD + "You are the first player. How many players? (2-5): " + RESET);
+            if (scanner.hasNextInt())
+                n = scanner.nextInt();
+            else string = scanner.next();
+            while (n < 2 || n > 5 || string != null) {
+                System.out.print(RED + BOLD + "err: Enter a number between 2 and 5: " + RESET);
+                if (scanner.hasNextInt()) {
                     n = scanner.nextInt();
-                else scanner.next();
-                while (n < 2 || n > 5) {
-                    System.out.print("err: Enter a number between 2 and 5: ");
-                    n = scanner.nextInt();
+                    string = null;
                 }
-                sender.sendOperation(new NumPlayersOperation(n));
-                askLogin();
+                else string = scanner.next();
+            }
+            sender.sendOperation(new NumPlayersOperation(n));
+            askLogin();
     }
 
     @Override
     public void askLogin() {
-        System.out.print("Enter your name: ");
+        System.out.print(GREEN + BOLD + "Enter your name: " + RESET);
         String name = scanner.next();
 
-        System.out.println("Available colors: " +
+        System.out.println("\nAvailable colors: " +
                 Arrays.toString(it.polimi.ingsw.enums.ColorEnum.values()));
-        System.out.print("Choose color: ");
+        System.out.print(GREEN + BOLD + "Choose color: " + RESET);
         String color = scanner.next().toUpperCase();
 
         try {
             sender.sendOperation(new LoginOperation(name, ColorEnum.valueOf(color)));
         } catch (IllegalArgumentException e) {
-            System.out.println("[!] Invalid color, try again.");
+            System.out.println(RED + BOLD + "err: Invalid color, try again." + RESET);
             askLogin();
         }
     }
 
     @Override
     public void showGameStart() {
-        System.out.println("\n╔═════════════════════════════╗");
+        System.out.println(CYAN + "\n╔═════════════════════════════╗");
         System.out.println("║        GAME STARTED!        ║");
-        System.out.println("╚═════════════════════════════╝");
+        System.out.println("╚═════════════════════════════╝" + RESET);
     }
 
     @Override
     public void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
                            List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow) {
-        System.out.println("\n--- Upper Row ---");
+        System.out.println(BRIGHT_GRAY + BOLD + "\n--- Upper Row ---" + RESET);
         for (int i = 0; i < upperRow.size(); i++)
             System.out.println("  [" + i + "] " + upperRow.get(i));
 
         if (!buildingUpperRow.isEmpty()) {
-            System.out.println("  \nBuildings Upper Row:");
+            System.out.println(BRIGHT_GRAY + BOLD + "  \nBuildings Upper Row:" + RESET);
             for (int i = 0; i < buildingUpperRow.size(); i++)
                 System.out.println("  [" + (i + upperRow.size()) + "] " + buildingUpperRow.get(i));
         }
 
-        System.out.println("\n--- Lower Row ---");
+        System.out.println(BRIGHT_GRAY + BOLD + "\n--- Lower Row ---" + RESET);
         for (int i = 0; i < lowerRow.size(); i++)
             System.out.println("  [" + i + "] " + lowerRow.get(i));
 
         if (!buildingLowerRow.isEmpty()) {
-            System.out.println("  \nBuildings Lower Row:");
+            System.out.println(BRIGHT_GRAY + BOLD + "  \nBuildings Lower Row:" + RESET);
             for (int i = 0; i < buildingLowerRow.size(); i++)
                 System.out.println("  [" + (i + lowerRow.size()) + "] " + buildingLowerRow.get(i));
         }
@@ -102,7 +117,7 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void updateOfferTrack(List<OfferTile> offerTrack) {
-        System.out.println("\n--- Offer Track ---");
+        System.out.println(BRIGHT_GRAY + BOLD + "\n--- Offer Track ---" + RESET);
         for (OfferTile tile : offerTrack) {
             String occupant = tile.getFreeOfferTile() ? "free" : tile.getOccupant().getName();
 
@@ -115,7 +130,7 @@ public class TUIView implements ViewInterface {
     @Override
     public void updateTurnOrder(TurnOrderTile turnOrder) {
         StringBuilder sb = new StringBuilder();
-        sb.append("--- Turn Order ---\n");
+        sb.append(BRIGHT_GRAY + BOLD + "--- Turn Order ---\n" + RESET);
         for (int i = 0; i < turnOrder.getSlots().size(); i++) {
             Player p = turnOrder.getSlots().get(i);
             if (p != null)
@@ -133,19 +148,19 @@ public class TUIView implements ViewInterface {
     @Override
     public void updatePlayer(String name, int food, int prestigePoints, Map<CharacterEnum,List<CharacterCard>> tribe) {
         playersStatus.put(name, new int[]{food, prestigePoints});
-        System.out.println("\n============= PLAYERS STATUS =============");
+        System.out.println(CYAN + BOLD + "\n============= PLAYERS STATUS =============" + RESET);
         for (Map.Entry<String, int[]> entry : playersStatus.entrySet()) {
             System.out.printf("  %-15s  food: %2d   PP: %3d%n",
                     entry.getKey(),
                     entry.getValue()[0],
                     entry.getValue()[1]);
         }
-        System.out.println("==========================================");
+        System.out.println(CYAN + BOLD + "==========================================" + RESET);
     }
 
     @Override
     public void updateRound(int currentRound) {
-        System.out.printf("\n\n ============= ROUND %2d / 10 =============\n", currentRound);
+        System.out.printf(BLUE + BOLD + "\n\n ============= ROUND %2d / 10 =============\n" + RESET, currentRound);
     }
 
     @Override
@@ -161,17 +176,18 @@ public class TUIView implements ViewInterface {
 
         if(cardsUpper < upperCount) {
             if(!upperBuildings.isEmpty()) {
-                System.out.println("\nUpper row has not enough cards to pick.\n Do you want to pick buildings from upper row?");
-                System.out.println("\nEnter [0] to choose buildings or [-1] to skip --> ");
+                System.out.println(GREEN + BOLD + "\nUpper row has not enough cards to pick.\n Do you want to pick buildings from upper row?");
+                System.out.println("\nEnter [0] to choose buildings or [-1] to skip --> " + RESET);
                 try {
                     input = scanner.nextInt();
                 } catch (InputMismatchException e) {
-                    System.out.println("Error in scanner.nextInt()");
-                    System.out.print("\nChoose a correct index: ");
+                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work\n" + RESET);
+                    System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
                     scanner.next();
                 }
                 while(input != -1 && input != 0) {
-                    System.out.println("err: Invalid input\nChoose a correct input: ");
+                    System.out.println(RED + BOLD + "err: Invalid input: " + RESET);
+                    System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
                     input = scanner.nextInt();
                 }
                 if(input == -1)
@@ -182,23 +198,24 @@ public class TUIView implements ViewInterface {
 
         if(cardsLower < lowerCount) {
             if(!lowerBuildings.isEmpty()) {
-                System.out.println("\nLower row has not enough cards to pick.\n Do you want to pick buildings from lower row?");
-                System.out.println("\nEnter [0] to choose buildings or [-1] to skip --> ");
+                System.out.println(GREEN + BOLD + "\nLower row has not enough cards to pick.\n Do you want to pick buildings from lower row?");
+                System.out.println("\nEnter [0] to choose buildings or [-1] to skip --> " + RESET);
                 try {
                     input = scanner.nextInt();
                 } catch (InputMismatchException e) {
-                    System.out.println("Error in scanner.nextInt()");
-                    System.out.print("\nChoose a correct index: ");
+                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work\n" + RESET);
+                    System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
                     scanner.next();
                 }
                 while(input != -1 && input != 0) {
-                    System.out.println("err: Invalid input\nChoose a correct input: ");
+                    System.out.println(RED + BOLD + "err: Invalid input" + RESET);
+                    System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
                     input = scanner.nextInt();
                 }
                 if(input == -1) {
                     lowerCount = cardsLower;
                     if(lowerCount == 0) {
-                        System.out.println("\nThere's no cards to pick, round skipped");
+                        System.out.println(RED + BOLD + "\nThere are no cards to pick, round skipped" + RESET);
                         sender.sendOperation(new ChooseCardOperation(
                                 upperCards, lowerCards, upperBuildings_, lowerBuildings_));
                         return;
@@ -208,7 +225,7 @@ public class TUIView implements ViewInterface {
             } else {
                 lowerCount = cardsLower;
                 if(lowerCount == 0) {
-                    System.out.println("\nThere's no cards to pick, round skipped");
+                    System.out.println(RED + BOLD + "\nThere are no cards to pick, round skipped" + RESET);
                     sender.sendOperation(new ChooseCardOperation(
                             upperCards, lowerCards, upperBuildings_, lowerBuildings_));
                     return;
@@ -217,8 +234,8 @@ public class TUIView implements ViewInterface {
         }
 
         if (upperCount > 0) {
-            System.out.println("\nChoose " + upperCount + " card(s) from upper row or building upper row.");
-            System.out.print("Enter " + upperCount + " index/indices: ");
+            System.out.println(GREEN + BOLD + "\nChoose " + upperCount + " card(s) from upper row or building upper row.");
+            System.out.print("Enter " + upperCount + " index/indices: " + RESET);
 
             while (count < upperCount) {
                 try {
@@ -228,21 +245,22 @@ public class TUIView implements ViewInterface {
                     else if (input < (upperRow.size() + upperBuildings.size()) && input >= upperRow.size())
                         upperBuildings_.add(input - (upperRow.size()));
                     else {
-                        System.out.println("Invalid index, try again");
+                        System.out.println(RED + BOLD + "err: Invalid index, try again" + RESET);
+                        System.out.print(GREEN + BOLD + "Enter " + upperCount + " index/indices: " + RESET);
                         continue;
                     }
                     count++;
                 } catch (InputMismatchException e){
-                    System.out.println("Error in scanner.nextInt()");
-                    System.out.print("\nChoose a correct index: ");
+                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work\n" + RESET);
+                    System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
                     scanner.next();
                 }
             }
         }
         count = 0;
         if (lowerCount > 0) {
-            System.out.println("\nChoose " + lowerCount + " card(s) from lower row or building lower row.");
-            System.out.print("Enter " + lowerCount + " index/indices: ");
+            System.out.println(GREEN + BOLD + "\nChoose " + lowerCount + " card(s) from lower row or building lower row.");
+            System.out.print("Enter " + lowerCount + " index/indices: " + RESET);
 
             while (count < lowerCount) {
                 try {
@@ -252,13 +270,14 @@ public class TUIView implements ViewInterface {
                     else if (input < (lowerRow.size() + lowerBuildings.size()) && input >= lowerRow.size())
                         lowerBuildings_.add(input - (lowerRow.size()));
                     else {
-                        System.out.println("Invalid index, try again");
+                        System.out.println(RED + BOLD + "err: Invalid index, try again" + RESET);
+                        System.out.print(GREEN + BOLD + "Enter " + lowerCount + " index/indices: " + RESET);
                         continue;
                     }
                     count++;
                 } catch (InputMismatchException e){
-                    System.out.println("Error in scanner.nextInt()");
-                    System.out.print("\nChoose a correct index: ");
+                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work\n" + RESET);
+                    System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
                     scanner.next();
                 }
             }
@@ -271,25 +290,26 @@ public class TUIView implements ViewInterface {
     @Override
     public void placeTotem(List<Character> freeSlots) {
         System.out.println("\nFree tiles: " + freeSlots);
-        System.out.print("Choose a tile letter: ");
+        System.out.print(GREEN + BOLD + "Choose a tile letter: " + RESET);
         try {
             char letter = scanner.next().toUpperCase().charAt(0);
             sender.sendOperation(new PlaceTotemOperation(letter));
 
         } catch (InputMismatchException e) {
-            System.out.println("Error in scanner.next()");
+            System.out.println(RED + BOLD + "err: scanner.next() does not work\n" + RESET);
+            System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
             scanner.next();
         }
     }
 
     @Override
     public void invalidChoice(String message) {
-        System.out.println("err: " + message);
+        System.out.println(RED + BOLD + "err: " + message + RESET);
     }
 
     @Override
     public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {
-        System.out.println("\n--- Your updated tribe ---");
+        System.out.println(MAGENTA + BOLD + "\n--- Your updated tribe ---" + RESET);
         for (Map.Entry<CharacterEnum, List<CharacterCard>> entry : tribe.entrySet()) {
             if (!entry.getValue().isEmpty())
                 System.out.println("  " + entry.getKey() + ": " + entry.getValue().size());
@@ -298,13 +318,13 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void showFinalScore(List<String> winners, Map< String , Integer> finalScores) {
-        System.out.println("\n╔══════════════════════════╗");
+        System.out.println(CYAN + BOLD + "\n╔══════════════════════════╗");
         System.out.println("║       GAME OVER!         ║");
-        System.out.println("╚══════════════════════════╝");
+        System.out.println("╚══════════════════════════╝" + RESET);
 
-        System.out.println("Winner(s): " + winners);
+        System.out.println(YELLOW + BOLD + "Winner(s): " + RESET + winners);
 
-        System.out.println("\n--- Final Scores ---");
+        System.out.println(YELLOW + BOLD + "\n--- Final Scores ---" + RESET);
         finalScores.entrySet().stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .forEach(e -> System.out.printf("  %-15s %3d PP%n",
