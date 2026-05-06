@@ -145,15 +145,55 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
-    public void selectCard(int upperCount, int lowerCount, List<TribeCard> upperRow,
-                           List<TribeCard> lowerRow, List<BuildingCard> upperBuildings,
-                           List<BuildingCard> lowerBuildings) {
+    public void selectCard(int upperCount, int lowerCount, int cardsUpper, int cardsLower,
+                           List<TribeCard> upperRow, List<TribeCard> lowerRow,
+                           List<BuildingCard> upperBuildings, List<BuildingCard> lowerBuildings) {
         List<Integer> upperCards = new ArrayList<>();
         List<Integer> lowerCards = new ArrayList<>();
         List<Integer> upperBuildings_ = new ArrayList<>();
         List<Integer> lowerBuildings_ = new ArrayList<>();
         int input = 0;
         int count = 0;
+
+        if(cardsUpper < upperCount) {
+            if(!upperBuildings.isEmpty()) {
+                System.out.println("\nUpper row has not enough cards to pick.\n Do you want to pick buildings from upper row?");
+                System.out.println("\nEnter [0] to choose buildings or [-1] to skip --> ");
+                try {
+                    input = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Error in scanner.nextInt()");
+                    scanner.next();
+                }
+                while(input != -1 && input != 0) {
+                    System.out.println("err: Invalid input\nChoose a correct input: ");
+                    input = scanner.nextInt();
+                }
+                if(input == -1)
+                    upperCount = cardsUpper;
+
+            } else upperCount = cardsUpper;
+        }
+
+        if(cardsLower < lowerCount) {
+            if(!lowerBuildings.isEmpty()) {
+                System.out.println("\nLower row has not enough cards to pick.\n Do you want to pick buildings from lower row?");
+                System.out.println("\nEnter [0] to choose buildings or [-1] to skip --> ");
+                try {
+                    input = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Error in scanner.nextInt()");
+                    scanner.next();
+                }
+                while(input != -1 && input != 0) {
+                    System.out.println("err: Invalid input\nChoose a correct input: ");
+                    input = scanner.nextInt();
+                }
+                if(input == -1)
+                    lowerCount = cardsLower;
+
+            } else lowerCount = cardsLower;
+        }
 
         if (upperCount > 0) {
             System.out.println("\nChoose " + upperCount + " card(s) from upper row or building upper row.");
@@ -166,9 +206,14 @@ public class TUIView implements ViewInterface {
                         upperCards.add(input);
                     else if (input < (upperRow.size() + upperBuildings.size()))
                         upperBuildings_.add(input - (upperRow.size()));
+                    else {
+                        System.out.println("Invalid index, try again");
+                        continue;
+                    }
                     count++;
-                }catch (InputMismatchException e){
+                } catch (InputMismatchException e){
                     System.out.println("Error in scanner.nextInt()");
+                    scanner.next();
                 }
             }
         }
@@ -184,9 +229,14 @@ public class TUIView implements ViewInterface {
                         lowerCards.add(input);
                     else if (input < (lowerRow.size() + lowerBuildings.size()))
                         lowerBuildings_.add(input - (lowerRow.size()));
+                    else {
+                        System.out.println("Invalid index, try again");
+                        continue;
+                    }
                     count++;
                 } catch (InputMismatchException e){
                     System.out.println("Error in scanner.nextInt()");
+                    scanner.next();
                 }
             }
         }

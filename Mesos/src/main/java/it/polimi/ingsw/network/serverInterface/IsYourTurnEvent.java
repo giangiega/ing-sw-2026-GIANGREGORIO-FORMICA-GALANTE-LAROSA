@@ -25,7 +25,18 @@ public class IsYourTurnEvent implements ServerEvent {
 
     @Override
     public void updateView(ViewInterface view){
-        view.selectCard(offerTile.getCountUpperArrow(), offerTile.getCountLowerArrow(),
-               upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+        int cardsUpper = 0;
+        int cardsLower = 0;
+
+        for (TribeCard c : upperRow) {
+            if(!c.isEventCard())
+                cardsUpper++;
+        }
+        for (TribeCard c : lowerRow) {
+            if(!c.isEventCard())
+                cardsLower++;
+        }
+        view.selectCard(offerTile.getCountUpperArrow(), offerTile.getCountLowerArrow(), cardsUpper,
+                cardsLower, upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
     }
 }
