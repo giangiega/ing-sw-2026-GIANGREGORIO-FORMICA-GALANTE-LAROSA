@@ -138,17 +138,15 @@ public class GameController {
         } catch (InvalidPlayerActionException e) {
             broadcastEvent(new InvalidChoiceEvent("Can't end round"));
         }
-        broadcastEvent(new UpdateRoundEvent(game.getCurrentRound()));
-
-        broadcastEvent(new UpdateAllPlayersEvent(players));
-        broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),
-                game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
-                game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
-                game.getBoard().getBuildingLowerRow()));
-
         if (game.getCurrentRound() > 10) {
             endGame();
         } else {
+            broadcastEvent(new UpdateRoundEvent(game.getCurrentRound()));
+            broadcastEvent(new UpdateAllPlayersEvent(players));
+            broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),
+                    game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
+                    game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
+                    game.getBoard().getBuildingLowerRow()));
             turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
         }
     }
