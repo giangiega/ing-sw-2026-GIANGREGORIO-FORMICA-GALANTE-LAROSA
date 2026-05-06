@@ -55,7 +55,8 @@ public class TUIView implements ViewInterface {
                 n = scanner.nextInt();
             else string = scanner.next();
             while (n < 2 || n > 5 || string != null) {
-                System.out.print(RED + BOLD + "err: Enter a number between 2 and 5: " + RESET);
+                System.out.println(RED + BOLD + "err: Invalid input: " + RESET);
+                System.out.print(GREEN + BOLD + "Choose a number between 2 and 5: " + RESET);
                 if (scanner.hasNextInt()) {
                     n = scanner.nextInt();
                     string = null;
@@ -181,7 +182,7 @@ public class TUIView implements ViewInterface {
                 try {
                     input = scanner.nextInt();
                 } catch (InputMismatchException e) {
-                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work\n" + RESET);
+                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work" + RESET);
                     System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
                     scanner.next();
                 }
@@ -203,7 +204,7 @@ public class TUIView implements ViewInterface {
                 try {
                     input = scanner.nextInt();
                 } catch (InputMismatchException e) {
-                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work\n" + RESET);
+                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work" + RESET);
                     System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
                     scanner.next();
                 }
@@ -251,7 +252,7 @@ public class TUIView implements ViewInterface {
                     }
                     count++;
                 } catch (InputMismatchException e){
-                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work\n" + RESET);
+                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work" + RESET);
                     System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
                     scanner.next();
                 }
@@ -276,7 +277,7 @@ public class TUIView implements ViewInterface {
                     }
                     count++;
                 } catch (InputMismatchException e){
-                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work\n" + RESET);
+                    System.out.println(RED + BOLD + "err: scanner.nextInt() does not work" + RESET);
                     System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
                     scanner.next();
                 }
@@ -296,7 +297,7 @@ public class TUIView implements ViewInterface {
             sender.sendOperation(new PlaceTotemOperation(letter));
 
         } catch (InputMismatchException e) {
-            System.out.println(RED + BOLD + "err: scanner.next() does not work\n" + RESET);
+            System.out.println(RED + BOLD + "err: scanner.next() does not work" + RESET);
             System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
             scanner.next();
         }

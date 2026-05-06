@@ -28,8 +28,8 @@ public class UpdateBoardEvent implements ServerEvent {
 
     @Override
     public void updateView(ViewInterface view){
-        view.updateOfferTrack(offerTrack);
-        view.updateTurnOrder(turnOrderTile);
+       // view.updateOfferTrack(offerTrack);
+        // view.updateTurnOrder(turnOrderTile);
         view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
     }
 
