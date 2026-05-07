@@ -9,7 +9,8 @@ import java.rmi.RemoteException;
  * @author Ale
  */
 public class RmiClientManager implements ClientConnection {
-    RmiClient client;
+    private final RmiClient client;
+    private String playerName;
 
     public RmiClientManager(RmiClient client){
         this.client = client;
@@ -22,5 +23,15 @@ public class RmiClientManager implements ClientConnection {
         }catch (RemoteException e){
             //gestire eccezione
         }
+    }
+
+    @Override
+    public void setPlayerName(String name){
+        this.playerName = name;
+    }
+
+    @Override
+    public String getPlayerName(){
+        return this.playerName;
     }
 }

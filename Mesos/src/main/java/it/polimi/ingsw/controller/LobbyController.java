@@ -28,7 +28,7 @@ public class LobbyController {
      * Checks that the chosen name and totem color are valid.
      * Sends a LoggedEvent and calls fullLobby at the end, where GameController is created,
      */
-    public synchronized void addPlayer(String name, ColorEnum color, ClientManagerSocket cm) {
+    public synchronized void addPlayer(String name, ColorEnum color, ClientConnection cm) {
 
         if (gameStarted || lobbyPlayers.size() >= numPlayers) {
             List<String> lobbyNames = new ArrayList<>();
