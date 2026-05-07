@@ -16,7 +16,6 @@ import java.util.*;
 public class TUIView implements ViewInterface {
     private final Scanner scanner = new Scanner(System.in);
     private ClientViewSocket sender;
-    private final Map<String, int[]> playersStatus = new LinkedHashMap<>();
 
     private static final String RESET = "\033[0m";
     private static final String CYAN = "\033[0;36m";
@@ -47,22 +46,17 @@ public class TUIView implements ViewInterface {
      */
     @Override
     public void askNumPlayers() {
-        int n = 0;
-        String string = null;
-
-            System.out.print(GREEN + BOLD + "You are the first player. How many players? (2-5): " + RESET);
-            if (scanner.hasNextInt())
+        int n;
+        while (true) {
+            System.out.print(GREEN + BOLD + "How many players? (2-5): " + RESET);
+            if (scanner.hasNextInt()) {
                 n = scanner.nextInt();
-            else string = scanner.next();
-            while (n < 2 || n > 5 || string != null) {
-                System.out.println(RED + BOLD + "err: Invalid input: " + RESET);
-                System.out.print(GREEN + BOLD + "Choose a number between 2 and 5: " + RESET);
-                if (scanner.hasNextInt()) {
-                    n = scanner.nextInt();
-                    string = null;
-                }
-                else string = scanner.next();
-            }
+                if (n >= 2 && n <= 5)
+                    break;
+            } else scanner.next();
+
+            System.out.println(RED + BOLD + "err: Invalid input" + RESET);
+        }
             sender.sendOperation(new NumPlayersOperation(n));
             askLogin();
     }
@@ -135,14 +129,11 @@ public class TUIView implements ViewInterface {
         for (int i = 0; i < turnOrder.getSlots().size(); i++) {
             Player p = turnOrder.getSlots().get(i);
             if (p != null)
-                sb.append(String.format("  %d. [%s] %s%n",
-                        i + 1,
-                        p.getTotemColor().name(),
-                        p.getName()));
+                sb.append(String.format("  %d. [%s] %s%n", i + 1, p.getTotemColor().name(), p.getName()));
             else
                 sb.append(String.format("  %d. [ empty ]%n", i + 1));
         }
-        System.out.println(sb.toString());
+        System.out.println(sb);
 
     }
 

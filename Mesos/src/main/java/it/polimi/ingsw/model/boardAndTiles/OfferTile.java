@@ -86,7 +86,7 @@ public class OfferTile {
 
         for (Integer i : indexUpperChosenCards) {
             if (!board.getUpperRow().get(i).isPickable())
-                throw new InvalidPlayerActionException("Can't pick an EventCard");
+                throw new InvalidPlayerActionException("Cannot pick an EventCard");
         }
         for (Integer i : indexLowerChosenCards) {
             if (!board.getLowerRow().get(i).isPickable())

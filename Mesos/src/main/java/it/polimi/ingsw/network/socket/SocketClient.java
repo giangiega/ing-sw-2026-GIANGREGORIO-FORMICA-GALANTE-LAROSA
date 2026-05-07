@@ -70,7 +70,6 @@ public class SocketClient {
         }
 
         try {
-            //creating view
             ViewInterface view = new TUIView();
             new SocketClient(host, port).connect(view);
         }catch(IOException e){
