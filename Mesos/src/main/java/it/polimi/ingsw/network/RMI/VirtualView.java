@@ -1,4 +1,6 @@
 package it.polimi.ingsw.network.RMI;
 
-public interface VirtualView {
+import java.rmi.Remote;
+
+public interface VirtualView extends Remote {
 }

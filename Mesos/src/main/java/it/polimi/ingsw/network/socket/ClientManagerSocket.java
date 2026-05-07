@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.socket;
 import com.google.gson.Gson;
+import it.polimi.ingsw.network.ClientConnection;
 import it.polimi.ingsw.network.serverInterface.ServerEvent;
 
 import java.io.OutputStreamWriter;
@@ -13,7 +14,7 @@ import java.io.IOException;
  * ClientManagerSocket sends ServerEvent objects
  */
 
-public class ClientManagerSocket {
+public class ClientManagerSocket implements ClientConnection {
     private final PrintWriter out;
     private String PlayerName;
     private final Gson gson;

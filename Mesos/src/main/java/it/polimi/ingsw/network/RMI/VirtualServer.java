@@ -1,4 +1,7 @@
 package it.polimi.ingsw.network.RMI;
 
-public interface VirtualServer {
+import java.rmi.Remote;
+
+public interface VirtualServer extends Remote {
+
 }

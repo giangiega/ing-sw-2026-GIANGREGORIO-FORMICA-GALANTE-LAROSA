@@ -66,7 +66,7 @@ public class Server {
      * @param lobbyPlayers
      * @param clientManagers
      */
-    public void fullLobby(List<Player> lobbyPlayers, Map<String, ClientManagerSocket> clientManagers) {
+    public void fullLobby(List<Player> lobbyPlayers, Map<String, ClientConnection> clientManagers) {
         gameController = new GameController(this, lobbyPlayers, clientManagers);
         gameController.startGame();
     }

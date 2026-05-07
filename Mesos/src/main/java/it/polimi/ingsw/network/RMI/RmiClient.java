@@ -1,4 +1,7 @@
 package it.polimi.ingsw.network.RMI;
 
-public class RmiClient {
+import it.polimi.ingsw.network.ClientConnection;
+
+public class RmiClient implements VirtualView {
+
 }

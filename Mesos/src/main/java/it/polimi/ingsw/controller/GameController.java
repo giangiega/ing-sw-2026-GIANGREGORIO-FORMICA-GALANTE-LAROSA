@@ -10,6 +10,7 @@ import it.polimi.ingsw.model.decks.CardFactory;
 import it.polimi.ingsw.model.decks.Deck;
 import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.game.GameConfig;
+import it.polimi.ingsw.network.ClientConnection;
 import it.polimi.ingsw.network.socket.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.serverInterface.*;
@@ -21,11 +22,11 @@ import java.util.Map;
 public class GameController {
     private final Server server;
     private final List<Player> players;
-    private final Map<String, ClientManagerSocket> clientManagers;
+    private final Map<String, ClientConnection> clientManagers;
     private Game game;
     private TurnController turnController;
 
-    public GameController(Server server, List<Player> players, Map<String, ClientManagerSocket> clientManagers) {
+    public GameController(Server server, List<Player> players, Map<String, ClientConnection> clientManagers) {
         this.server = server;
         this.players = players;
         this.clientManagers = clientManagers;
@@ -73,7 +74,7 @@ public class GameController {
         try {
             game.placeTotem(p, tile);
         } catch (InvalidPlayerActionException e) {
-            ClientManagerSocket cms = clientManagers.get(playerName);
+            ClientConnection cms = clientManagers.get(playerName);
             cms.sendEvent(new InvalidChoiceEvent("Tile already occupied, choose another"));
             cms.sendEvent(new MoveTotemEvent(
                     game.getBoard().getOfferTrack(),
@@ -107,7 +108,7 @@ public class GameController {
         try {
             game.resolveAction(tile, upperCards, lowerCards, upperBuildings, lowerBuildings);
         } catch (InvalidPlayerActionException e) {
-            ClientManagerSocket cms = clientManagers.get(playerName);
+            ClientConnection cms = clientManagers.get(playerName);
             cms.sendEvent(new InvalidChoiceEvent(e.getMessage()));
             cms.sendEvent(new IsYourTurnEvent(tile, game.getBoard().getUpperRow(),
                     game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
@@ -152,7 +153,7 @@ public class GameController {
 
     // next 2 methods are only used by TurnController
     void sendIsYourTurn(String playerName) {
-        ClientManagerSocket cms = clientManagers.get(playerName);
+        ClientConnection cms = clientManagers.get(playerName);
         if (cms != null)
             cms.sendEvent(new IsYourTurnEvent(getOfferTileByPlayer(playerName), game.getBoard().getUpperRow(),
                     game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
@@ -160,7 +161,7 @@ public class GameController {
     }
 
     void sendMoveTotem(String playerName) {
-        ClientManagerSocket cm = clientManagers.get(playerName);
+        ClientConnection cm = clientManagers.get(playerName);
         if(cm != null) {
             cm.sendEvent(new MoveTotemEvent(game.getBoard().getOfferTrack(),
              game.getBoard().getTurnOrderTile()));
@@ -169,7 +170,7 @@ public class GameController {
 
     // helper methods to access players or tiles into the previous methods
     private void broadcastEvent(ServerEvent serverEvent) {
-        for(ClientManagerSocket cm : clientManagers.values()) {
+        for(ClientConnection cm : clientManagers.values()) {
             cm.sendEvent(serverEvent);
         }
     }
