@@ -281,8 +281,13 @@ public class TUIView implements ViewInterface {
         System.out.print(GREEN + BOLD + "Choose a tile letter: " + RESET);
         try {
             char letter = scanner.next().toUpperCase().charAt(0);
+            while(!freeSlots.contains(letter)) {
+                System.out.println(RED + BOLD + "err: Tile already occupied or invalid, choose another" + RESET);
+                System.out.println("\nFree tiles: " + freeSlots);
+                System.out.print(GREEN + BOLD + "Choose a tile letter: " + RESET);
+                letter = scanner.next().toUpperCase().charAt(0);
+            }
             sender.sendOperation(new PlaceTotemOperation(letter));
-
         } catch (InputMismatchException e) {
             System.out.println(RED + BOLD + "err: scanner.next() does not work" + RESET);
             System.out.print(GREEN + BOLD + "Choose a correct index: " + RESET);
