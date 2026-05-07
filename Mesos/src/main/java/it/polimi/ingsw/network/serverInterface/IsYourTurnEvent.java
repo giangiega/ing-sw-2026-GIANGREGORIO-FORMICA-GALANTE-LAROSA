@@ -3,8 +3,10 @@ package it.polimi.ingsw.network.serverInterface;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.cards.tribe.TribeCard;
+import it.polimi.ingsw.network.RMI.VirtualView;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class IsYourTurnEvent implements ServerEvent {
@@ -38,5 +40,10 @@ public class IsYourTurnEvent implements ServerEvent {
         }
         view.selectCard(offerTile.getCountUpperArrow(), offerTile.getCountLowerArrow(), cardsUpper,
                 cardsLower, upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+    }
+
+    @Override
+    public void updateViewRmi(VirtualView view) throws RemoteException {
+
     }
 }

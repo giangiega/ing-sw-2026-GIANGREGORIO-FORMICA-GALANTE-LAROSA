@@ -1,8 +1,10 @@
 package it.polimi.ingsw.network.serverInterface;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.network.RMI.VirtualView;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,5 +27,10 @@ public class EndGameEvent implements ServerEvent {
     @Override
     public void updateView(ViewInterface view){
         view.showFinalScore(winnerNames, finalScores);
+    }
+
+    @Override
+    public void updateViewRmi(VirtualView view) throws RemoteException {
+
     }
 }

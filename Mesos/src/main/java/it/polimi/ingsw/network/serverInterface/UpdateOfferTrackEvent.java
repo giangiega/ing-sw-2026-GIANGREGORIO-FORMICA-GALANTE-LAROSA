@@ -2,8 +2,10 @@ package it.polimi.ingsw.network.serverInterface;
 
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
+import it.polimi.ingsw.network.RMI.VirtualView;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class UpdateOfferTrackEvent implements ServerEvent {
@@ -21,4 +23,8 @@ public class UpdateOfferTrackEvent implements ServerEvent {
         view.updateTurnOrder(turnOrderTile);
     }
 
+    @Override
+    public void updateViewRmi(VirtualView view) throws RemoteException {
+
+    }
 }

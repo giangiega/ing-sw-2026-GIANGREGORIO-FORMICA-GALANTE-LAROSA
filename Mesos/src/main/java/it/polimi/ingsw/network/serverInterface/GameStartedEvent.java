@@ -4,8 +4,10 @@ import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.cards.tribe.TribeCard;
+import it.polimi.ingsw.network.RMI.VirtualView;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class GameStartedEvent implements ServerEvent {
@@ -32,5 +34,10 @@ public class GameStartedEvent implements ServerEvent {
         view.updateOfferTrack(offerTrack);
         view.updateTurnOrder(turnOrderTile);
         view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+    }
+
+    @Override
+    public void updateViewRmi(VirtualView view) throws RemoteException {
+
     }
 }

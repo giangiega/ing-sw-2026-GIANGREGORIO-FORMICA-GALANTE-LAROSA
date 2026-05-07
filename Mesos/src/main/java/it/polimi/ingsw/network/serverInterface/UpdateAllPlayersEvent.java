@@ -1,8 +1,10 @@
 package it.polimi.ingsw.network.serverInterface;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.network.RMI.VirtualView;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class UpdateAllPlayersEvent implements ServerEvent {
@@ -19,5 +21,10 @@ public class UpdateAllPlayersEvent implements ServerEvent {
     @Override
     public void updateView(ViewInterface view) {
         view.updateAllPlayers(names, foods, pps);
+    }
+
+    @Override
+    public void updateViewRmi(VirtualView view) throws RemoteException {
+
     }
 }

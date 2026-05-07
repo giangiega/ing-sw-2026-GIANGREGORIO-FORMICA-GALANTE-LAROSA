@@ -1,8 +1,10 @@
 package it.polimi.ingsw.network.serverInterface;
 
 import it.polimi.ingsw.enums.ColorEnum;
+import it.polimi.ingsw.network.RMI.VirtualView;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class LoggedEvent implements ServerEvent {
@@ -31,6 +33,10 @@ public class LoggedEvent implements ServerEvent {
             }
 
         }
+    }
+
+    @Override
+    public void updateViewRmi(VirtualView view) throws RemoteException {
 
     }
 }

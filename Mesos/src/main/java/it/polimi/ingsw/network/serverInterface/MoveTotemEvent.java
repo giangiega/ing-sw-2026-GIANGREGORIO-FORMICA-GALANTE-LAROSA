@@ -2,9 +2,11 @@ package it.polimi.ingsw.network.serverInterface;
 
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
+import it.polimi.ingsw.network.RMI.VirtualView;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,11 @@ public class MoveTotemEvent implements ServerEvent {
     @Override
     public void updateView(ViewInterface view){
        view.placeTotem(getFreeSlots());
+
+    }
+
+    @Override
+    public void updateViewRmi(VirtualView view) throws RemoteException {
 
     }
 }
