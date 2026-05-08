@@ -20,14 +20,12 @@ import java.util.List;
 import java.util.Map;
 
 public class GameController {
-    private final Server server;
     private final List<Player> players;
     private final Map<String, ClientConnection> clientManagers;
     private Game game;
     private TurnController turnController;
 
-    public GameController(Server server, List<Player> players, Map<String, ClientConnection> clientManagers) {
-        this.server = server;
+    public GameController(List<Player> players, Map<String, ClientConnection> clientManagers) {
         this.players = players;
         this.clientManagers = clientManagers;
     }

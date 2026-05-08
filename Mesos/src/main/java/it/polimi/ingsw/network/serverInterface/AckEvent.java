@@ -21,6 +21,10 @@ public class AckEvent implements ServerEvent{
 
     @Override
     public void updateViewRmi(VirtualView view) throws RemoteException {
+        if(isFirst){
+            //al client viene mostrato login tramite un metodo remoto del client
+        }else{
 
+        }
     }
 }

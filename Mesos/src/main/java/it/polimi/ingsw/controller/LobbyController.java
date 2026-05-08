@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.network.ClientConnection;
+import it.polimi.ingsw.network.ServerClass;
 import it.polimi.ingsw.network.socket.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.serverInterface.LoggedEvent;
@@ -13,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 
 public class LobbyController {
-    private final Server server;
+    private final ServerClass server;
     private final int numPlayers;
     private final List<Player> lobbyPlayers = new ArrayList<>();
     private final Map<String, ClientConnection> clientManagers = new HashMap<>();
     private boolean gameStarted = false;
 
-    public LobbyController(Server server, int numPlayers) {
+    public LobbyController(ServerClass server, int numPlayers) {
         this.server = server;
         this.numPlayers = numPlayers;
     }

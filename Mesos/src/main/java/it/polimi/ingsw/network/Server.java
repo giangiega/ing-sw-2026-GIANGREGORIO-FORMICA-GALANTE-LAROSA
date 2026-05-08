@@ -19,7 +19,7 @@ import java.util.Map;
  * for the game
  */
 
-public class Server {
+public class Server extends ServerClass{
     private LobbyController lobbyController;
     private GameController gameController;
 
@@ -66,15 +66,18 @@ public class Server {
      * @param lobbyPlayers
      * @param clientManagers
      */
+    @Override
     public void fullLobby(List<Player> lobbyPlayers, Map<String, ClientConnection> clientManagers) {
-        gameController = new GameController(this, lobbyPlayers, clientManagers);
+        gameController = new GameController(lobbyPlayers, clientManagers);
         gameController.startGame();
     }
 
+    @Override
     public LobbyController getLobbyController(){
         return this.lobbyController;
     }
 
+    @Override
     public GameController getGameController(){
         return this.gameController;
     }
