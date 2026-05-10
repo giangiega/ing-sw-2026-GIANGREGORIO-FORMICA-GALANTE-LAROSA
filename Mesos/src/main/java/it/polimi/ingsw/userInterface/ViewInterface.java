@@ -6,15 +6,17 @@ import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.model.cards.tribe.TribeCard;
+import it.polimi.ingsw.network.ClientSender;
 import it.polimi.ingsw.network.socket.ClientViewSocket;
 
 import java.util.List;
 import java.util.Map;
-
+import java.util.function.Consumer;
 
 
 public interface ViewInterface {
-    void init(ClientViewSocket sender);
+    Consumer<Runnable> getUIDispatcher();
+    void init(ClientSender sender);
     void showLobby(List<String> lobby);
     void askNumPlayers();
     void askLogin();

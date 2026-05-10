@@ -10,29 +10,26 @@ public class ServerApp {
      * @author Ric
      * @param args
      * this class take the information about numPLayers to create Server, before than players login
+     * UPDATE : it creates both RMI and Socket Servers so players can choose both at the same time
      */
     public static void main(String[] args) {
-        int port = Integer.parseInt(args[0]);
-        Scanner scanner = new Scanner(System.in);
+        int socketPort = Integer.parseInt(args[0]);
+        int rmiPort    = Integer.parseInt(args[1]);
 
-        System.out.print("Choose network protocol: \n[0] Socket\n[1] RMI: \n");
-        String protocol = scanner.nextLine().trim().toLowerCase();
+        new Thread(() -> {
+            new Server().startListening(socketPort);
+        }, "socket-server").start();
 
-        while(!protocol.equals("0") && !protocol.equals("1")){
-            System.err.print("Invalid protocol\n");
-            System.out.print("Choose protocol: \n[0] Socket\n[1] RMI: \n");
-            protocol = scanner.nextLine().trim().toLowerCase();
-        }
-
-        if (protocol.equals("0")) {
-                new Server().startListening(port);
-        } else if (protocol.equals("1")) {
+        new Thread(() -> {
             try {
-                new RmiServer().startListening(port);
-            }catch (RemoteException e){
-                System.err.println("Server error: " + e.getMessage());
+                new RmiServer().startListening(rmiPort);
+            } catch (RemoteException e) {
+                System.err.println("RMI server error: " + e.getMessage());
             }
-        }
+        }, "rmi-server").start();
+
+        System.out.println("Socket server on port " + socketPort);
+        System.out.println("RMI server on port " + rmiPort);
     }
 }
 

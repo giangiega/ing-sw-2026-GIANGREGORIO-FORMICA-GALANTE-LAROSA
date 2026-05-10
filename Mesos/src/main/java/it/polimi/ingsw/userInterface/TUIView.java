@@ -8,14 +8,18 @@ import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.model.cards.tribe.TribeCard;
+import it.polimi.ingsw.network.ClientSender;
 import it.polimi.ingsw.network.socket.ClientViewSocket;
 import it.polimi.ingsw.network.clientInterface.*;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class TUIView implements ViewInterface {
     private final Scanner scanner = new Scanner(System.in);
-    private ClientViewSocket sender;
+    private ClientSender sender;
 
     private static final String RESET = "\033[0m";
     private static final String CYAN = "\033[0;36m";
@@ -27,10 +31,17 @@ public class TUIView implements ViewInterface {
     private static final String BRIGHT_GRAY = "\033[0;90m";
     private static final String BOLD = "\033[1m";
 
+    private final ExecutorService uiExecutor = Executors.newSingleThreadExecutor();
+
     public TUIView() {}
 
     @Override
-    public void init(ClientViewSocket sender) {
+    public Consumer<Runnable> getUIDispatcher() {
+       return uiExecutor::execute;
+    }
+
+    @Override
+    public void init(ClientSender sender) {
         this.sender = sender;
     }
 
@@ -48,7 +59,8 @@ public class TUIView implements ViewInterface {
     public void askNumPlayers() {
         int n;
         while (true) {
-            System.out.print(GREEN + BOLD + "How many players? (2-5): " + RESET);
+            System.out.println(RED + BOLD + "----- MESOS LOGIN -----" + RESET);
+            System.out.print(GREEN + BOLD + "Enter the number of players (2-5): " + RESET);
             if (scanner.hasNextInt()) {
                 n = scanner.nextInt();
                 if (n >= 2 && n <= 5)
@@ -66,7 +78,7 @@ public class TUIView implements ViewInterface {
         System.out.print(GREEN + BOLD + "Enter your name: " + RESET);
         String name = scanner.next();
 
-        System.out.println("\nAvailable colors: " +
+        System.out.println("Available colors: " +
                 Arrays.toString(it.polimi.ingsw.enums.ColorEnum.values()));
         System.out.print(GREEN + BOLD + "Choose color: " + RESET);
         String color = scanner.next().toUpperCase();

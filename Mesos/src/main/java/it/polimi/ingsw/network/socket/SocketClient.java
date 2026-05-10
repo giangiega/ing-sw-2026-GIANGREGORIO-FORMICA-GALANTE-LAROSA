@@ -40,42 +40,13 @@ public class SocketClient {
         //New output channel to the server: auto-flush true empties the buffer as soon as it gets filled
         PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
-        //New executor: this is where the listener enqueues the operations
-        ExecutorService uiExecutor = Executors.newSingleThreadExecutor();
-
         ClientViewSocket sender = new ClientViewSocket(out);
         view.init(sender);
 
-        //Listener: Runnable::run for TUI
-       ListenerClientViewSocket listener = new ListenerClientViewSocket(in, view, uiExecutor :: execute);
+        //Listener: Runnable::run for TUI , uses a view method for the dispatcher
+       ListenerClientViewSocket listener = new ListenerClientViewSocket(in, view, view.getUIDispatcher());
         Thread listenerThread = new Thread(listener, "listener-client");
         listenerThread.setDaemon(false);//thread doesn't die with main thread
         listenerThread.start();
-    }
-
-    public static void main(String[] args) {
-        if (args.length < 2) {
-            System.err.println("Usage: SocketClient <host> <port>");
-            System.exit(1);
-        }
-
-        String host = args[0];
-        int port;
-        try{
-            port = Integer.parseInt(args[1]);
-        }catch(NumberFormatException e){
-            System.err.println("Invalid port number: " + args[1]);
-            System.exit(1);
-            return;
-        }
-
-        try {
-            ViewInterface view = new TUIView();
-            new SocketClient(host, port).connect(view);
-        }catch(IOException e){
-            System.err.println("Could not connect to: " + host + ":" + port);
-            System.err.println("Cause: " + e.getMessage());
-            System.exit(1);
-        }
     }
 }

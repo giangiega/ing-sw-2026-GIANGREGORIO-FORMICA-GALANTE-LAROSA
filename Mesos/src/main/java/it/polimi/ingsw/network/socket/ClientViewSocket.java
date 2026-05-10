@@ -3,9 +3,10 @@
  */
 package it.polimi.ingsw.network.socket;
 import com.google.gson.Gson;
+import it.polimi.ingsw.network.ClientSender;
 import it.polimi.ingsw.network.clientInterface.ClientOperation;
 import java.io.PrintWriter;
-public class ClientViewSocket {
+public class ClientViewSocket implements ClientSender {
 
     private final PrintWriter out;
     private final Gson gson;
@@ -19,6 +20,7 @@ public class ClientViewSocket {
      * @param operation : operation to serialize and send to the server
      * This method serialize the client operation and sent it to the server
      */
+    @Override
     public void sendOperation(ClientOperation operation){
         String json = gson.toJson(operation, ClientOperation.class);
         out.println(json);
