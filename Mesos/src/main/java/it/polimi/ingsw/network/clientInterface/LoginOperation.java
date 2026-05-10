@@ -1,4 +1,5 @@
 package it.polimi.ingsw.network.clientInterface;
+import it.polimi.ingsw.network.RMI.VirtualServer;
 import it.polimi.ingsw.network.socket.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.enums.ColorEnum;
@@ -23,5 +24,9 @@ public class LoginOperation implements ClientOperation {
             return;
         }
         server.getLobbyController().addPlayer(namePlayer,totemColor,cm);
+    }
+    @Override
+    public void sendViaRmi(VirtualServer server) {
+
     }
 }

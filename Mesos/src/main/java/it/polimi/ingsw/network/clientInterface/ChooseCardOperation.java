@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.clientInterface;
 
+import it.polimi.ingsw.network.RMI.VirtualServer;
 import it.polimi.ingsw.network.socket.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
 
@@ -22,5 +23,9 @@ public class ChooseCardOperation implements ClientOperation {
     @Override
     public void executeOp(Server server, ClientManagerSocket cm) {
         server.getGameController().resolveAction(cm.getPlayerName(),upperCards,lowerCards,upperBuildings,lowerBuildings);
+    }
+    @Override
+    public void sendViaRmi(VirtualServer server) {
+
     }
 }
