@@ -1,6 +1,7 @@
 package it.polimi.ingsw.userInterface;
 
 import it.polimi.ingsw.enums.*;
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
@@ -285,21 +286,94 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void updateOfferTrack(List<OfferTile> offerTrack) {
+        Platform.runLater(() -> {
+            offerTrackPane.getChildren().clear();
+            for (OfferTile tile : offerTrack) {
+                offerTrackPane.getChildren().add(buildOfferTileView(tile));
+            }
+        });
 
+    }
+    private VBox buildOfferTileView(OfferTile tile) {
+        String arrows = "↑" + tile.getCountUpperArrow() + "  ↓" + tile.getCountLowerArrow();
+        Label infoLabel = new Label("[" + tile.getLetter() + "]  " + arrows);
+        infoLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12; -fx-font-weight: bold;");
+
+        String occupantText = tile.getFreeOfferTile()
+                ? "— libera —"
+                : tile.getOccupant().getName();
+        Label occupantLabel = new Label(occupantText);
+        occupantLabel.setStyle(
+                tile.getFreeOfferTile()
+                        ? "-fx-text-fill: #888; -fx-font-size: 11;"
+                        : "-fx-text-fill: #e8c46a; -fx-font-size: 11; -fx-font-weight: bold;"
+        );
+
+        VBox tileBox = new VBox(2, infoLabel, occupantLabel);
+        tileBox.setPadding(new Insets(6, 10, 6, 10));
+        tileBox.setStyle(
+                tile.getFreeOfferTile()
+                        ? "-fx-background-color: #3d2010; -fx-background-radius: 6;"
+                        : "-fx-background-color: #5a2d0c; -fx-background-radius: 6;"
+        );
+        return tileBox;
+    }
+
+    private ImageView icon(String name) {
+        var url = getClass().getResource("/images/icons/" + name + ".png");
+        ImageView iv = new ImageView(new Image(url.toExternalForm()));
+        iv.setFitWidth(20);
+        iv.setFitHeight(20);
+        iv.setPreserveRatio(true);
+        return iv;
     }
 
     @Override
     public void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps) {
+        Platform.runLater(() -> {
+            playersStatus.getChildren().clear();
+            for (int i = 0; i < names.size(); i++) {
+                Label nameLabel = new Label(names.get(i));
+                nameLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
 
+                Label foodCount = new Label(" " + foods.get(i));
+                foodCount.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
+
+                Label ppCount = new Label(" " + pps.get(i));
+                ppCount.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
+
+                HBox playerBox = new HBox(4,
+                        nameLabel,
+                        icon("food"), foodCount,
+                        icon("pp"), ppCount
+                );
+                playerBox.setAlignment(Pos.CENTER_LEFT);
+                playersStatus.getChildren().add(playerBox);
+            }
+        });
     }
 
     @Override
     public void updateRound(int currentRound) {
+        Platform.runLater(() -> {
+            roundLabel.setText("Round " + currentRound);
+        });
 
     }
 
     @Override
     public void updateTurnOrder(TurnOrderTile turnOrder) {
+        Platform.runLater(() -> {
+            turnOrderPane.getChildren().clear();
+
+            List<Player> order = turnOrder.getOrder();
+            for (int i = 0; i < order.size(); i++) {
+                Player p = order.get(i);
+                Label slot = new Label((i + 1) + ". " + p.getName());
+                slot.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 11;");
+                turnOrderPane.getChildren().add(slot);
+            }
+        });
 
     }
 
