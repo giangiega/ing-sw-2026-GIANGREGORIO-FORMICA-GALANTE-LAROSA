@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.clientInterface;
 
+import it.polimi.ingsw.network.RMI.RmiClient;
 import it.polimi.ingsw.network.RMI.VirtualServer;
 import it.polimi.ingsw.network.socket.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
@@ -16,7 +17,7 @@ public class PlaceTotemOperation implements ClientOperation {
 
     }
     @Override
-    public void sendViaRmi(VirtualServer server) {
+    public void sendViaRmi(VirtualServer server, RmiClient client) {
 
     }
 }

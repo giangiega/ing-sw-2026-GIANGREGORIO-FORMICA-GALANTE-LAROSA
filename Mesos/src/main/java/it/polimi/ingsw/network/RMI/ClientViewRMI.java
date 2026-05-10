@@ -12,13 +12,15 @@ import java.rmi.RemoteException;
 public class ClientViewRMI implements ClientSender {
 
     private final VirtualServer server;
+    private final RmiClient client;
 
     /**
      * @param server the remote server stub obtained from the RMI registry
      * Constructor of this class
      */
-    public ClientViewRMI(VirtualServer server) {
+    public ClientViewRMI(VirtualServer server, RmiClient client) {
         this.server = server;
+        this.client = client;
     }
 
     /**
@@ -29,7 +31,7 @@ public class ClientViewRMI implements ClientSender {
     @Override
     public void sendOperation(ClientOperation operation) {
         try {
-            operation.sendViaRmi(server);
+            operation.sendViaRmi(server, client);
         } catch (RemoteException e) {
             System.err.println("[ClientViewRMI] Failed to send "
                     + operation.getClass().getSimpleName() + ": " + e.getMessage());

@@ -57,7 +57,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             VirtualServer server = (VirtualServer) registry.lookup(SERVER_NAME);
 
             // Inject the sender: from this point the view can call sendOperation()
-            ClientViewRMI sender = new ClientViewRMI(server);
+            ClientViewRMI sender = new ClientViewRMI(server, this);
             view.init(sender);
 
             // Store for callbacks
