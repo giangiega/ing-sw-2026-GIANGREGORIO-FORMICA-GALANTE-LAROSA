@@ -1,5 +1,4 @@
 package it.polimi.ingsw.userInterface;
-
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.*;

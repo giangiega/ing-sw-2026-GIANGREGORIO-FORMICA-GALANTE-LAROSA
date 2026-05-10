@@ -55,6 +55,7 @@ public class CardFactory {
             JsonObject card = el.getAsJsonObject();
             if (!isValidForConfig(card, config)) continue;
             CharacterCard c = createCharacterCard(card);
+            c.setImage(card.get("image").getAsString());
             addToEra(c, EraEnum.valueOf(card.get("era").getAsString()), eraI, eraII, eraIII);
         }
 
@@ -62,6 +63,8 @@ public class CardFactory {
         for (JsonElement el : events) {
             JsonObject card = el.getAsJsonObject();
             EventCard e = createEventCard(card);
+            e.setImage(card.get("image").getAsString());
+
             if (e.isFinalEvent()) {
                 finalEvents.add(e);
             } else {
@@ -188,7 +191,10 @@ public class CardFactory {
         for (JsonElement el : buildings) {
             JsonObject card = el.getAsJsonObject();
             if (EraEnum.valueOf(card.get("era").getAsString()) != era) continue;
-            cards.add(createBuildingCard(card));
+           // cards.add(createBuildingCard(card));
+            BuildingCard b = createBuildingCard(card);
+            b.setImage(card.get("image").getAsString());
+            cards.add(b);
         }
 
         Collections.shuffle(cards);

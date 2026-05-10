@@ -17,7 +17,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -28,6 +27,19 @@ import java.util.function.Consumer;
 public class GUIView implements ViewInterface {
     private Stage primaryStage;
     private ClientSender sender;
+
+    private static final double CARD_W = 75;
+    private static final double CARD_H = 110;
+
+    private HBox upperRowPane;
+    private HBox lowerRowPane;
+    private HBox buildingUpperPane;
+    private HBox buildingLowerPane;
+    private VBox offerTrackPane;
+    private HBox playersStatus;
+    private Label roundLabel;
+    private HBox turnOrderPane;
+    private HBox actionBar;
 
     /**
      * CountDownLatch saves GUI from race condition between main Thread and JavaFX Thread
@@ -47,6 +59,8 @@ public class GUIView implements ViewInterface {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+
+
     }
 
     private void buildStage() {
@@ -208,14 +222,64 @@ public class GUIView implements ViewInterface {
         });
     }
 
+    /**
+     * @author Daniele
+     * this method will build the board only at the beginning of the game
+     */
     @Override
     public void showGameStart() {
+        Platform.runLater(() -> {
+
+            roundLabel = new Label("Round 1");
+            roundLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14; -fx-font-weight: bold;");
+            turnOrderPane = new HBox(6);
+            playersStatus = new  HBox(20);
+            HBox topBar = new HBox(20, roundLabel,turnOrderPane,new Region(), playersStatus);
+            topBar.setStyle("-fx-background-color: #1a0e08; -fx-padding: 8 12;");
+            topBar.setHgrow(topBar.getChildren().get(2),  Priority.ALWAYS);
+
+            upperRowPane = new HBox(8);
+            lowerRowPane = new HBox(8);
+            buildingLowerPane = new HBox(8);
+            buildingUpperPane = new HBox(8);
+            VBox cardRows = new VBox(upperRowPane,lowerRowPane,buildingLowerPane,buildingUpperPane);
+
+
+            offerTrackPane = new VBox(8);
+            offerTrackPane.setPrefWidth(170);
+
+            actionBar = new HBox(10);
+            actionBar.setVisible(false); // dobbiamo usarla solo durante il turno del giocatore
+
+            HBox center = new HBox(12, cardRows, offerTrackPane);
+            HBox.setHgrow(cardRows, Priority.ALWAYS);
+
+            VBox base = new VBox(8, topBar, center , actionBar);
+            base.setStyle("-fx-background-color: #2c1810;");
+            //provare anche questo colore "-fx-background-color: #2c1810 -- #B53B1F;"
+            primaryStage.setScene(new Scene(base, 960, 540));
+        });
 
     }
 
+    /**
+     * @author Daniele
+     * @param upperRow
+     * @param lowerRow
+     * @param buildingUpperRow
+     * @param buildingLowerRow
+     * this method will update the cardrows every time the board change
+     */
     @Override
     public void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
                            List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow) {
+        Platform.runLater(() -> {
+            renderTribeRow(upperRowPane, upperRow, false);
+            renderTribeRow(lowerRowPane, lowerRow, false);
+            renderBuildingRow(buildingUpperPane, buildingUpperRow, false);
+            renderBuildingRow(buildingLowerPane, buildingLowerRow, false);
+
+        });
 
     }
 
@@ -266,4 +330,48 @@ public class GUIView implements ViewInterface {
 
     }
 
+    /**
+     * @author daniele
+     * The following 3 methods are used to render the card face , with the addition of a hand that follows the mouse movement
+     * @param image
+     * @return
+     */
+    private ImageView cardImage(String image){
+        String path = "/images/cards/"+image+"_front.png";
+        var url = getClass().getResource(path);
+        if (url == null) {
+            System.err.println("Immagine non trovata: " + path);
+            return new ImageView();
+        }
+        ImageView iv = new ImageView(new Image(url.toExternalForm()));
+        iv.setFitWidth(CARD_W);
+        iv.setFitHeight(CARD_H);
+        iv.setPreserveRatio(true);
+        return iv;
+    }
+
+    private void renderTribeRow(HBox pane, List<TribeCard> cards, boolean clickable) {
+        pane.getChildren().clear();
+        for (TribeCard card : cards) {
+            ImageView iv = cardImage(card.getImage());
+            if (clickable) {
+                iv.setStyle("-fx-cursor: hand;");
+                iv.setOnMouseEntered(e -> iv.setOpacity(0.7));
+                iv.setOnMouseExited(e  -> iv.setOpacity(1.0));
+            }
+            pane.getChildren().add(iv);
+        }
+    }
+    private void renderBuildingRow(HBox pane, List<BuildingCard> cards, boolean clickable) {
+        pane.getChildren().clear();
+        for (BuildingCard card : cards) {
+            ImageView iv = cardImage(card.getImage());
+            if (clickable) {
+                iv.setStyle("-fx-cursor: hand;");
+                iv.setOnMouseEntered(e -> iv.setOpacity(0.7));
+                iv.setOnMouseExited(e -> iv.setOpacity(1.0));
+            }
+            pane.getChildren().add(iv);
+        }
+    }
 }
