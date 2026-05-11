@@ -43,7 +43,20 @@ public class IsYourTurnEvent implements ServerEvent {
     }
 
     @Override
-    public void updateViewRmi(VirtualView view) throws RemoteException {
+    public void updateViewRmi(VirtualView client) throws RemoteException {
+        int cardsUpper = 0;
+        int cardsLower = 0;
 
+        for (TribeCard c : upperRow) {
+            if(!c.isEventCard())
+                cardsUpper++;
+        }
+        for (TribeCard c : lowerRow) {
+            if(!c.isEventCard())
+                cardsLower++;
+        }
+
+        client.onSelectCard(offerTile.getCountUpperArrow(), offerTile.getCountLowerArrow(), cardsUpper,
+                cardsLower, upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
     }
 }

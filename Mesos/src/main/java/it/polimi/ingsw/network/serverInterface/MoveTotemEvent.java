@@ -35,7 +35,7 @@ public class MoveTotemEvent implements ServerEvent {
     }
 
     @Override
-    public void updateViewRmi(VirtualView view) throws RemoteException {
-
+    public void updateViewRmi(VirtualView client) throws RemoteException {
+        client.onMoveTotem(getFreeSlots());
     }
 }

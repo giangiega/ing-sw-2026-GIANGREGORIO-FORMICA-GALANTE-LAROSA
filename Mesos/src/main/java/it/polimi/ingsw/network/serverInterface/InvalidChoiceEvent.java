@@ -18,7 +18,7 @@ public class InvalidChoiceEvent implements ServerEvent {
     }
 
     @Override
-    public void updateViewRmi(VirtualView view) throws RemoteException {
-
+    public void updateViewRmi(VirtualView client) throws RemoteException {
+        client.onInvalidChoice(message);
     }
 }

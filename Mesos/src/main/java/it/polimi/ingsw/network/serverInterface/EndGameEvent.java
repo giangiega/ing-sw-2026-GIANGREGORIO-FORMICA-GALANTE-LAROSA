@@ -30,7 +30,7 @@ public class EndGameEvent implements ServerEvent {
     }
 
     @Override
-    public void updateViewRmi(VirtualView view) throws RemoteException {
-
+    public void updateViewRmi(VirtualView client) throws RemoteException {
+        client.onEndGame(winnerNames, finalScores);
     }
 }

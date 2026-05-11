@@ -30,13 +30,11 @@ public class UpdateBoardEvent implements ServerEvent {
 
     @Override
     public void updateView(ViewInterface view){
-       // view.updateOfferTrack(offerTrack);
-        // view.updateTurnOrder(turnOrderTile);
         view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
     }
 
     @Override
-    public void updateViewRmi(VirtualView view) throws RemoteException {
-
+    public void updateViewRmi(VirtualView client) throws RemoteException {
+        client.onUpdateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
     }
 }

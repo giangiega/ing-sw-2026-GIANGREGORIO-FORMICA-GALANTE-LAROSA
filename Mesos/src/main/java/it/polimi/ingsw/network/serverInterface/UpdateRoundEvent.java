@@ -18,7 +18,7 @@ public class UpdateRoundEvent implements ServerEvent {
     }
 
     @Override
-    public void updateViewRmi(VirtualView view) throws RemoteException {
-
+    public void updateViewRmi(VirtualView client) throws RemoteException {
+        client.onUpdateRound(currentRound);
     }
 }

@@ -24,7 +24,7 @@ public class UpdateOfferTrackEvent implements ServerEvent {
     }
 
     @Override
-    public void updateViewRmi(VirtualView view) throws RemoteException {
-
+    public void updateViewRmi(VirtualView client) throws RemoteException {
+        client.onUpdateOfferTrack(offerTrack, turnOrderTile);
     }
 }

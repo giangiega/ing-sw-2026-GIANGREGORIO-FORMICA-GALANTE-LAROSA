@@ -24,7 +24,7 @@ public class UpdateAllPlayersEvent implements ServerEvent {
     }
 
     @Override
-    public void updateViewRmi(VirtualView view) throws RemoteException {
-
+    public void updateViewRmi(VirtualView client) throws RemoteException {
+        client.onUpdateAllPlayers(names, foods, pps);
     }
 }

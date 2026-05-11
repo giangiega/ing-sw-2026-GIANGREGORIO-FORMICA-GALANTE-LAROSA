@@ -37,7 +37,7 @@ public class GameStartedEvent implements ServerEvent {
     }
 
     @Override
-    public void updateViewRmi(VirtualView view) throws RemoteException {
-
+    public void updateViewRmi(VirtualView client) throws RemoteException {
+        client.onGameStarted(offerTrack, turnOrderTile, upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
     }
 }

@@ -36,7 +36,8 @@ public class RmiServer extends ServerClass implements VirtualServer {
 
     @Override
     public void fullLobby(List<Player> lobbyPlayers, Map<String, ClientConnection> clientManagers){
-
+        gameController = new GameController(lobbyPlayers, clientManagers);
+        gameController.startGame();
     }
 
     @Override

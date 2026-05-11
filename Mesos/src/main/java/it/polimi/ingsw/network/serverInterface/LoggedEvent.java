@@ -36,7 +36,7 @@ public class LoggedEvent implements ServerEvent {
     }
 
     @Override
-    public void updateViewRmi(VirtualView view) throws RemoteException {
-
+    public void updateViewRmi(VirtualView client) throws RemoteException {
+        client.onLogged(result, name, color, lobbyPlayers);
     }
 }
