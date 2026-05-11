@@ -5,7 +5,6 @@ import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.network.ClientConnection;
-import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.ServerClass;
 import it.polimi.ingsw.network.serverInterface.AckEvent;
 import it.polimi.ingsw.network.serverInterface.LoggedEvent;
@@ -25,7 +24,7 @@ import java.util.Map;
 public class RmiServer extends ServerClass implements VirtualServer {
     private GameController gameController;
     private LobbyController lobbyController;
-    private Map<VirtualView, RmiClientManager> clientManagerMap = new HashMap<>();
+    private final Map<VirtualView, RmiClientManager> clientManagerMap = new HashMap<>();
     int connected = 0;
 
     @Override
@@ -75,7 +74,7 @@ public class RmiServer extends ServerClass implements VirtualServer {
     }
 
     @Override
-    public void login(String name, ColorEnum totemColor, RmiClient client) throws RemoteException{
+    public void login(String name, ColorEnum totemColor, VirtualView client) throws RemoteException{
         RmiClientManager cm = clientManagerMap.get(client);
 
         if (lobbyController == null) {
@@ -88,13 +87,13 @@ public class RmiServer extends ServerClass implements VirtualServer {
     }
 
     @Override
-    public void placeTotem(RmiClient client, char position) throws RemoteException {
+    public void placeTotem(VirtualView client, char position) throws RemoteException {
         RmiClientManager cm = clientManagerMap.get(client);
         gameController.placeTotem(cm.getPlayerName(), position);
     }
 
     @Override
-    public void chooseCard(RmiClient client, List<Integer> upperCards, List<Integer> lowerCards,
+    public void chooseCard(VirtualView client, List<Integer> upperCards, List<Integer> lowerCards,
                            List<Integer> upperBuildings, List<Integer> lowerBuildings) throws RemoteException {
         RmiClientManager cm = clientManagerMap.get(client);
         gameController.resolveAction(cm.getPlayerName(), upperCards, lowerCards, upperBuildings, lowerBuildings);

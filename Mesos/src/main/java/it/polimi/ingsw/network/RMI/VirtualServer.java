@@ -15,8 +15,8 @@ public interface VirtualServer extends Remote {
     public void initLobby(int numPlayers) throws RemoteException;
     public void connect(VirtualView view) throws RemoteException;
     public void numPlayerChoice(int numPlayers) throws RemoteException;
-    public void login(String name, ColorEnum color, RmiClient client) throws RemoteException;
-    public void placeTotem(RmiClient client, char position) throws RemoteException;
-    public void chooseCard(RmiClient client, List<Integer> upperCards, List<Integer> lowerCards,
+    public void login(String name, ColorEnum color, VirtualView client) throws RemoteException;
+    public void placeTotem(VirtualView client, char position) throws RemoteException;
+    public void chooseCard(VirtualView client, List<Integer> upperCards, List<Integer> lowerCards,
                     List<Integer> upperBuildings, List<Integer> lowerBuildings) throws RemoteException;
 }
