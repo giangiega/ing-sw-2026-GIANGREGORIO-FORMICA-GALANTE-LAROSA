@@ -1,9 +1,22 @@
 package it.polimi.ingsw.network.RMI;
 
+import it.polimi.ingsw.enums.ColorEnum;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
+/**
+ * @author Ale
+ * this interface contains the remote methods that will be calld by the client to do a
+ * "client operation"
+ */
 public interface VirtualServer extends Remote {
     public void initLobby(int numPlayers) throws RemoteException;
     public void connect(RmiClient view) throws RemoteException;
+    public void numPlayerChoice(int numPlayers) throws RemoteException;
+    public void login(String name, ColorEnum color, RmiClient client) throws RemoteException;
+    public void placeTotem(RmiClient client, char position) throws RemoteException;
+    public void chooseCard(RmiClient client, List<Integer> upperCards, List<Integer> lowerCards,
+                    List<Integer> upperBuildings, List<Integer> lowerBuildings) throws RemoteException;
 }
