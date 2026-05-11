@@ -9,6 +9,11 @@
 
 # Ignore images
 src/main/resources/images/
+src/main/resources/images/cards/
+src/main/resources/images/icon/
+src/main/resources/images/screen/
+src/main/resources/images/tiles
+
 
 # Ignore game assets
 assets/*

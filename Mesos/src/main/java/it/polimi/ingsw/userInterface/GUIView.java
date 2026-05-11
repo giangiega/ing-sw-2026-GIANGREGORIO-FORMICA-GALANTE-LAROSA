@@ -36,10 +36,10 @@ public class GUIView implements ViewInterface {
     private HBox lowerRowPane;
     private HBox buildingUpperPane;
     private HBox buildingLowerPane;
-    private VBox offerTrackPane;
-    private HBox playersStatus;
+    private HBox offerTrackPane;
+    private VBox playersStatus;
     private Label roundLabel;
-    private HBox turnOrderPane;
+    private VBox turnOrderPane;
     private HBox actionBar;
 
     /**
@@ -67,8 +67,8 @@ public class GUIView implements ViewInterface {
     private void buildStage() {
         primaryStage = new Stage();
         primaryStage.setTitle("Mesos");
-        primaryStage.setWidth(960);
-        primaryStage.setHeight(540);
+        primaryStage.setWidth(1280);
+        primaryStage.setHeight(720);
         primaryStage.setResizable(false);
         primaryStage.show();
     }
@@ -94,10 +94,10 @@ public class GUIView implements ViewInterface {
     }
 
     private void showLoginScene(boolean isFirst) {
-        var bgUrl = getClass().getResource("/images/login/login_screen.png");
+        var bgUrl = getClass().getResource("/images/screen/login_screen.png");
         ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
-        background.setFitWidth(960);
-        background.setFitHeight(540);
+        background.setFitWidth(1260);
+        background.setFitHeight(720);
         background.setPreserveRatio(false);
 
         // --- Form ---
@@ -223,45 +223,94 @@ public class GUIView implements ViewInterface {
         });
     }
 
-    /**
-     * @author Daniele
-     * this method will build the board only at the beginning of the game
-     */
-    @Override
-    public void showGameStart() {
-        Platform.runLater(() -> {
+   @Override
+   public void showGameStart() {
+       Platform.runLater(() -> {
+           // ── BACKGROUND ──────────────────────────────────────────
+           var bgUrl = getClass().getResource("/images/screen/background.png");
+           ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
+           background.setFitWidth(1280);
+           background.setFitHeight(720);
+           background.setPreserveRatio(false);
 
-            roundLabel = new Label("Round 1");
-            roundLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14; -fx-font-weight: bold;");
-            turnOrderPane = new HBox(6);
-            playersStatus = new  HBox(20);
-            HBox topBar = new HBox(20, roundLabel,turnOrderPane,new Region(), playersStatus);
-            topBar.setStyle("-fx-background-color: #1a0e08; -fx-padding: 8 12;");
-            topBar.setHgrow(topBar.getChildren().get(2),  Priority.ALWAYS);
+           // ── PANNELLO DESTRO (fisso) ──────────────────────────────
+           roundLabel = new Label("Round 1");
+           roundLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 15; -fx-font-weight: bold;");
 
-            upperRowPane = new HBox(8);
-            lowerRowPane = new HBox(8);
-            buildingLowerPane = new HBox(8);
-            buildingUpperPane = new HBox(8);
-            VBox cardRows = new VBox(upperRowPane,lowerRowPane,buildingLowerPane,buildingUpperPane);
+           Label eraLabel = new Label("Era I");
+           eraLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 13;");
+           // 1. CAMBIAMO I TIPI DI PANE
+           // Turn Order: ora VBox per essere verticale
+           turnOrderPane = new VBox(8);
+           turnOrderPane.setPadding(new Insets(10));
+           turnOrderPane.setStyle("-fx-background-color: rgba(20,10,5,0.40); -fx-background-radius: 8;");
 
+           // Offer Track: ora HBox per essere orizzontale
+           offerTrackPane = new HBox(10);
+           offerTrackPane.setPadding(new Insets(10));
+           offerTrackPane.setStyle("-fx-background-color: rgba(20,10,5,0.60); -fx-background-radius: 8;");
 
-            offerTrackPane = new VBox(8);
-            offerTrackPane.setPrefWidth(170);
+           // Righe carte (già dichiarate nel tuo codice)
+           upperRowPane = new HBox(8);
+           lowerRowPane = new HBox(8);
+           buildingUpperPane = new HBox(8);
+           buildingLowerPane = new HBox(8);
 
-            actionBar = new HBox(10);
-            actionBar.setVisible(false); // dobbiamo usarla solo durante il turno del giocatore
+           // 2. ASSEMBLLAGGIO RIGHE
+           // Riga Superiore: Tribe Upper + Building Upper
+           HBox topRow = new HBox(15, upperRowPane, buildingUpperPane);
+           topRow.setAlignment(Pos.CENTER_LEFT);
 
-            HBox center = new HBox(12, cardRows, offerTrackPane);
-            HBox.setHgrow(cardRows, Priority.ALWAYS);
+           // Riga Centrale: Turn Order (Sinistra) + Offer Track (Centro)
+           // Creiamo una piccola VBox per il Turn Order con la sua etichetta
+           VBox turnOrderSection = new VBox(5,
+                   new Label("ORDINE:") {{ setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 10;"); }},
+                   turnOrderPane
+           );
+           HBox middleRow = new HBox(15, turnOrderSection, offerTrackPane);
+           middleRow.setAlignment(Pos.CENTER_LEFT);
 
-            VBox base = new VBox(8, topBar, center , actionBar);
-            base.setStyle("-fx-background-color: #2c1810;");
-            //provare anche questo colore "-fx-background-color: #2c1810 -- #B53B1F;"
-            primaryStage.setScene(new Scene(base, 960, 540));
-        });
+           // Riga Inferiore: Tribe Lower + Building Lower
+           HBox bottomRow = new HBox(15, lowerRowPane, buildingLowerPane);
+           bottomRow.setAlignment(Pos.CENTER_LEFT);
 
-    }
+           // 3. AREA CARTE TOTALE
+           VBox cardArea = new VBox(20, topRow, middleRow, bottomRow);
+           cardArea.setPadding(new Insets(20));
+
+           ScrollPane cardScroll = new ScrollPane(cardArea);
+           cardScroll.setFitToWidth(true);
+           cardScroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+           HBox.setHgrow(cardScroll, Priority.ALWAYS);
+
+           // 4. PANNELLO DESTRO (Senza TurnOrder, solo Status)
+           playersStatus = new VBox(10);
+           ScrollPane playersScroll = new ScrollPane(playersStatus);
+           playersScroll.setFitToWidth(true);
+           playersScroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+
+           VBox rightPanel = new VBox(14,
+                   eraLabel, roundLabel,
+                   new Separator(),
+                   new Label("GIOCATORI:") {{ setStyle("-fx-text-fill: #f5e6c8; -fx-font-weight: bold;"); }},
+                   playersScroll
+           );
+           rightPanel.setPadding(new Insets(16));
+           rightPanel.setPrefWidth(280);
+           rightPanel.setStyle("-fx-background-color: rgba(20,10,5,0.75);");
+
+           actionBar = new HBox(10);
+           actionBar.setPadding(new Insets(8, 16, 8, 16));
+           actionBar.setStyle("-fx-background-color: rgba(180,40,20,0.85);");
+           actionBar.setVisible(false);
+
+           HBox mainArea = new HBox(cardScroll, rightPanel);
+           VBox rootLayout = new VBox(mainArea, actionBar);
+           VBox.setVgrow(mainArea, Priority.ALWAYS);
+           StackPane sceneRoot = new StackPane(background, rootLayout);
+           primaryStage.setScene(new Scene(sceneRoot, 1280, 720));
+       });
+   }
 
     /**
      * @author Daniele
@@ -275,6 +324,7 @@ public class GUIView implements ViewInterface {
     public void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
                            List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow) {
         Platform.runLater(() -> {
+            if(upperRowPane == null) return; // quando la board non è pronta
             renderTribeRow(upperRowPane, upperRow, false);
             renderTribeRow(lowerRowPane, lowerRow, false);
             renderBuildingRow(buildingUpperPane, buildingUpperRow, false);
@@ -287,6 +337,8 @@ public class GUIView implements ViewInterface {
     @Override
     public void updateOfferTrack(List<OfferTile> offerTrack) {
         Platform.runLater(() -> {
+            if(offerTrackPane == null) return; // quando la board non è pronta
+
             offerTrackPane.getChildren().clear();
             for (OfferTile tile : offerTrack) {
                 offerTrackPane.getChildren().add(buildOfferTileView(tile));
@@ -320,7 +372,14 @@ public class GUIView implements ViewInterface {
     }
 
     private ImageView icon(String name) {
-        var url = getClass().getResource("/images/icons/" + name + ".png");
+        String path = "/images/icon/" + name + ".png";
+        var url = getClass().getResource(path);
+
+        if (url == null) {
+            System.err.println("Icona non trovata: " + path);
+            return new ImageView(); // Ritorna un'ImageView vuota
+        }
+
         ImageView iv = new ImageView(new Image(url.toExternalForm()));
         iv.setFitWidth(20);
         iv.setFitHeight(20);
@@ -331,10 +390,12 @@ public class GUIView implements ViewInterface {
     @Override
     public void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps) {
         Platform.runLater(() -> {
+            if(playersStatus == null) return; // quando la board non è pronta
+
             playersStatus.getChildren().clear();
             for (int i = 0; i < names.size(); i++) {
                 Label nameLabel = new Label(names.get(i));
-                nameLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
+                nameLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 13; -fx-font-weight: bold;");
 
                 Label foodCount = new Label(" " + foods.get(i));
                 foodCount.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
@@ -342,12 +403,13 @@ public class GUIView implements ViewInterface {
                 Label ppCount = new Label(" " + pps.get(i));
                 ppCount.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
 
-                HBox playerBox = new HBox(4,
-                        nameLabel,
-                        icon("food"), foodCount,
-                        icon("pp"), ppCount
-                );
-                playerBox.setAlignment(Pos.CENTER_LEFT);
+                HBox stats = new HBox(6, icon("food"), foodCount, icon("PP"), ppCount);
+                stats.setAlignment(Pos.CENTER_LEFT);
+
+                VBox playerBox = new VBox(4, nameLabel, stats);
+                playerBox.setPadding(new Insets(8));
+                playerBox.setStyle("-fx-background-color: rgba(255,255,255,0.08); -fx-background-radius: 6;");
+
                 playersStatus.getChildren().add(playerBox);
             }
         });
@@ -356,6 +418,8 @@ public class GUIView implements ViewInterface {
     @Override
     public void updateRound(int currentRound) {
         Platform.runLater(() -> {
+            if(roundLabel == null) return; // quando la board non è pronta
+
             roundLabel.setText("Round " + currentRound);
         });
 
@@ -364,6 +428,8 @@ public class GUIView implements ViewInterface {
     @Override
     public void updateTurnOrder(TurnOrderTile turnOrder) {
         Platform.runLater(() -> {
+            if(turnOrderPane == null) return; // quando la board non è pronta
+
             turnOrderPane.getChildren().clear();
 
             List<Player> order = turnOrder.getOrder();
