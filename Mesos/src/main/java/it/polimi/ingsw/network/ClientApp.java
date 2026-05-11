@@ -23,7 +23,7 @@ public class ClientApp {
 
         String host = args[0];
         int socketPort = Integer.parseInt(args[1]);
-        int rmiPort = Integer.parseInt(args[1]);
+        int rmiPort = Integer.parseInt(args[2]);
 
 
         System.out.println(GREEN + BOLD + "Choose a network protocol:" + RESET);

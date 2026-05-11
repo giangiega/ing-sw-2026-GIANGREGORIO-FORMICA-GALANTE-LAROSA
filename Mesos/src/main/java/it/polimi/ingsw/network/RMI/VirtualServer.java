@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface VirtualServer extends Remote {
     public void initLobby(int numPlayers) throws RemoteException;
-    public void connect(RmiClient view) throws RemoteException;
+    public void connect(VirtualView view) throws RemoteException;
     public void numPlayerChoice(int numPlayers) throws RemoteException;
     public void login(String name, ColorEnum color, RmiClient client) throws RemoteException;
     public void placeTotem(RmiClient client, char position) throws RemoteException;

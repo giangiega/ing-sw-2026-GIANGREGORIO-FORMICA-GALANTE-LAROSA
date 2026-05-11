@@ -15,6 +15,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ import java.util.Map;
 public class RmiServer extends ServerClass implements VirtualServer {
     private GameController gameController;
     private LobbyController lobbyController;
-    private Map<RmiClient, RmiClientManager> clientManagerMap;
+    private Map<VirtualView, RmiClientManager> clientManagerMap = new HashMap<>();
     int connected = 0;
 
     @Override
@@ -60,11 +61,11 @@ public class RmiServer extends ServerClass implements VirtualServer {
     }
 
     @Override
-    public void connect(RmiClient client) throws RemoteException{
+    public void connect(VirtualView client) throws RemoteException{
         RmiClientManager cm = new RmiClientManager(client);
         clientManagerMap.put(client, cm);
-        connected++;
         cm.sendEvent(new AckEvent(connected == 0));
+        connected++;
     }
 
     @Override

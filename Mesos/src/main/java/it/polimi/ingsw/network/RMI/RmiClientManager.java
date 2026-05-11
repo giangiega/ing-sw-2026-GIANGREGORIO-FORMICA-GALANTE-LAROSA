@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Ale
  */
 public class RmiClientManager implements ClientConnection {
-    private final RmiClient client;
+    private final VirtualView client;
     private String playerName;
 
     private final BlockingQueue<ServerEvent> eventQueue;
@@ -23,7 +23,7 @@ public class RmiClientManager implements ClientConnection {
      * it is queued and sent by the thread dedicated to that client.
      * @param client
      */
-    public RmiClientManager(RmiClient client){
+    public RmiClientManager(VirtualView client){
         this.client = client;
         this.eventQueue = new LinkedBlockingQueue<>();
 
