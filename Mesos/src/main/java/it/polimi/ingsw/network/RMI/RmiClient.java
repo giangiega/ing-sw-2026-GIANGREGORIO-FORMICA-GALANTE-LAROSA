@@ -142,6 +142,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         view.selectCard(upperCount, lowerCount, cardsUpper, cardsLower,
                 upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
     }
+
     /**
      * @param freeSlots
      * @throws RemoteException
@@ -150,6 +151,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onMoveTotem(List<Character> freeSlots) throws RemoteException {
         view.placeTotem(freeSlots);
     }
+
     /**
      * @param upperRow
      * @param lowerRow
@@ -196,6 +198,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onUpdateRound(int currentRound) throws RemoteException {
         view.updateRound(currentRound);
     }
+
     /**
      * @param upperRow
      * @param lowerRow
@@ -209,6 +212,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                              List<BuildingCard> buildingLowerRow) throws RemoteException {
         view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
     }
+
     /**
      * @param tribe
      * @throws RemoteException
@@ -226,6 +230,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onInvalidChoice(String message) throws RemoteException {
         view.invalidChoice(message);
     }
+
     /**
      * @param winners
      * @param finalScores

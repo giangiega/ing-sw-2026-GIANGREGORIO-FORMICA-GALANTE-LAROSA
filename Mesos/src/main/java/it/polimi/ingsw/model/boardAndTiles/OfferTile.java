@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * OfferTile class
  * @author Ale
  */
-public class OfferTile {
+public class OfferTile implements Serializable {
     private final char letter;
     private final int upperArrow;
     private final int lowerArrow;

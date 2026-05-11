@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.boardAndTiles.Board;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -13,7 +14,7 @@ import java.util.stream.IntStream;
  * Player class with usefully attribute to handle events and buildings effect
  * @author Ale
  */
-public class Player {
+public class Player implements Serializable {
     private final String name;
     private final ColorEnum totemColor;
     private final Map<CharacterEnum, List<CharacterCard>> tribe;

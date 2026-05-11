@@ -6,6 +6,7 @@ import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.network.serverInterface.LoggedEvent;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public class LoginOperation implements ClientOperation {
@@ -26,8 +27,16 @@ public class LoginOperation implements ClientOperation {
         }
         server.getLobbyController().addPlayer(namePlayer,totemColor,cm);
     }
-    @Override
-    public void sendViaRmi(VirtualServer server, RmiClient client) {
 
+    /**
+     * @author Giuse
+     * @param server : RMI server
+     * @param client : RMI client
+     * @throws RemoteException
+     * This method send the "operation" login thanks to the RMI protocol
+     */
+    @Override
+    public void sendViaRmi(VirtualServer server, RmiClient client) throws RemoteException {
+        server.login(namePlayer, totemColor, client);
     }
 }

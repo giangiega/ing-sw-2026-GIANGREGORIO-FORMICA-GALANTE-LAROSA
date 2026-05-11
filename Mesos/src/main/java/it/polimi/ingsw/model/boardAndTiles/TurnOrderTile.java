@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.boardAndTiles;
 
 import it.polimi.ingsw.model.Player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * TurnOrderTile class
  * @author Ale
  */
-public class TurnOrderTile {
+public class TurnOrderTile implements Serializable {
     private final int numPlayers;
     private final int[] foodBonus;
     private final List<Player> slots;

@@ -4,10 +4,12 @@ import it.polimi.ingsw.exceptions.InvalidPlayerActionException;
 import it.polimi.ingsw.model.boardAndTiles.Board;
 import it.polimi.ingsw.model.Player;
 
+import java.io.Serializable;
+
 /**
  * @author Giuse
  */
-public abstract class BuildingEffect {
+public abstract class BuildingEffect implements Serializable {
     /**
      * @param p : player who has this building card
      * @param b : state of the board

@@ -5,6 +5,7 @@ import it.polimi.ingsw.network.RMI.VirtualServer;
 import it.polimi.ingsw.network.socket.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class ChooseCardOperation implements ClientOperation {
@@ -25,8 +26,15 @@ public class ChooseCardOperation implements ClientOperation {
     public void executeOp(Server server, ClientManagerSocket cm) {
         server.getGameController().resolveAction(cm.getPlayerName(),upperCards,lowerCards,upperBuildings,lowerBuildings);
     }
+    /**
+     * @author Giuse
+     * @param server : RMI server
+     * @param client : RMI client
+     * @throws RemoteException
+     * This method send the "operation" chooseCard thanks to the RMI protocol
+     */
     @Override
-    public void sendViaRmi(VirtualServer server, RmiClient client) {
-
+    public void sendViaRmi(VirtualServer server, RmiClient client) throws RemoteException {
+        server.chooseCard(client, upperCards, lowerCards, upperBuildings, lowerBuildings);
     }
 }

@@ -5,6 +5,8 @@ import it.polimi.ingsw.network.RMI.VirtualServer;
 import it.polimi.ingsw.network.socket.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
 
+import java.rmi.RemoteException;
+
 public class NumPlayersOperation implements ClientOperation {
     private final int numPlayers;
 
@@ -17,8 +19,15 @@ public class NumPlayersOperation implements ClientOperation {
         if (numPlayers < 2 || numPlayers > 5) return;
         server.initLobby(numPlayers);
     }
+    /**
+     * @author Giuse
+     * @param server : RMI server
+     * @param client : RMI client
+     * @throws RemoteException
+     * This method send the "operation" numPlaterChoice thanks to the RMI protocol
+     */
     @Override
-    public void sendViaRmi(VirtualServer server, RmiClient client) {
-
+    public void sendViaRmi(VirtualServer server, RmiClient client) throws RemoteException {
+        server.numPlayerChoice(numPlayers);
     }
 }
