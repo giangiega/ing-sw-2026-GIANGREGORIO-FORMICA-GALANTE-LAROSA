@@ -14,14 +14,13 @@ import java.util.List;
 import java.util.Map;
 
 public class LobbyController {
-    private final ServerClass server;
+    private ServerClass server;
     private final int numPlayers;
     private final List<Player> lobbyPlayers = new ArrayList<>();
     private final Map<String, ClientConnection> clientManagers = new HashMap<>();
     private boolean gameStarted = false;
 
-    public LobbyController(ServerClass server, int numPlayers) {
-        this.server = server;
+    public LobbyController(int numPlayers) {
         this.numPlayers = numPlayers;
     }
     /**
@@ -62,6 +61,12 @@ public class LobbyController {
             server.fullLobby(lobbyPlayers, clientManagers);
         }
 
+    }
+
+    public void setServer(ServerClass server){
+        if(this.server != null)
+            return;
+        this.server = server;
     }
 
 }

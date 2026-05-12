@@ -1,10 +1,6 @@
 package it.polimi.ingsw.network.RMI;
 
-import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.enums.ColorEnum;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.network.ClientConnection;
 import it.polimi.ingsw.network.ServerClass;
 import it.polimi.ingsw.network.serverInterface.AckEvent;
 import it.polimi.ingsw.network.serverInterface.LoggedEvent;
@@ -22,32 +18,11 @@ import java.util.Map;
  * @author Ale
  */
 public class RmiServer extends ServerClass implements VirtualServer {
-    private GameController gameController;
-    private LobbyController lobbyController;
     private final Map<VirtualView, RmiClientManager> clientManagerMap = new HashMap<>();
-    int connected = 0;
 
-    @Override
-    public synchronized void initLobby(int numPlayers) throws RemoteException {
-        if (lobbyController != null)
-            return;
-        lobbyController = new LobbyController(this, numPlayers);
-    }
-
-    @Override
-    public void fullLobby(List<Player> lobbyPlayers, Map<String, ClientConnection> clientManagers){
-        gameController = new GameController(lobbyPlayers, clientManagers);
-        gameController.startGame();
-    }
-
-    @Override
-    public GameController getGameController(){
-        return this.gameController;
-    }
-
-    @Override
-    public LobbyController getLobbyController(){
-        return this.lobbyController;
+    public synchronized void initLobbyRmi(int numPlayers) throws RemoteException {
+        this.initLobby(numPlayers);
+        getLobbyController().setServer(this);
     }
 
     public void startListening(int port) throws RemoteException {
@@ -76,7 +51,7 @@ public class RmiServer extends ServerClass implements VirtualServer {
     @Override
     public void numPlayerChoice(int numPlayers) throws RemoteException{
         if (numPlayers < 2 || numPlayers > 5) return;
-        this.initLobby(numPlayers);
+        this.initLobbyRmi(numPlayers);
     }
 
     @Override

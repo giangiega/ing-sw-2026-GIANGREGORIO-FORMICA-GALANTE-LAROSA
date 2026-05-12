@@ -11,6 +11,6 @@ public class LobbyControllerTest {
     @BeforeEach
     void setUp(){
         this.server = new Server();
-        this.lobbyController = new LobbyController(server, 2);
+        this.lobbyController = new LobbyController(2);
     }
 }

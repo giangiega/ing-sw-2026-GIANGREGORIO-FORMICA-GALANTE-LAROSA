@@ -2,7 +2,6 @@ package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.network.serverInterface.AckEvent;
 import it.polimi.ingsw.network.socket.ClientManagerSocket;
 import it.polimi.ingsw.network.socket.ListenerClientManagerSocket;
@@ -10,8 +9,6 @@ import it.polimi.ingsw.network.socket.ListenerClientManagerSocket;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Ale
@@ -20,13 +17,10 @@ import java.util.Map;
  */
 
 public class Server extends ServerClass{
-    private LobbyController lobbyController;
-    private GameController gameController;
 
-    public synchronized void initLobby(int numPlayers) {
-        if (lobbyController != null)
-            return;
-        lobbyController = new LobbyController(this, numPlayers);
+    public synchronized void initLobbySocket(int numPlayers) {
+        this.initLobby(numPlayers);
+        getLobbyController().setServer(this);
     }
 
     /**
@@ -38,7 +32,6 @@ public class Server extends ServerClass{
         //when all players are connected this try close the serverSocket to refuse other eventual connections
         try(ServerSocket serverSocket = new ServerSocket(port)){
            System.out.println("Server listening on port " + port);
-           int connected = 0;
 
            while (true){
                Socket clientSocket = serverSocket.accept();
@@ -59,17 +52,6 @@ public class Server extends ServerClass{
         }catch (IOException e){
             System.err.println("Server error: " + e.getMessage());
         }
-    }
-
-    /**
-     * check if the lobby is completed to start the game
-     * @param lobbyPlayers
-     * @param clientManagers
-     */
-    @Override
-    public void fullLobby(List<Player> lobbyPlayers, Map<String, ClientConnection> clientManagers) {
-        gameController = new GameController(lobbyPlayers, clientManagers);
-        gameController.startGame();
     }
 
     @Override
