@@ -285,7 +285,7 @@ public class GUIView implements ViewInterface {
             VBox cardArea = new VBox(16,
                     topRow,
                     middleRow,
-                    buildingRow
+                    lowerRowPane
             );
             cardArea.setAlignment(Pos.CENTER);
             cardArea.setPadding(new Insets(20));
