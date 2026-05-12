@@ -237,7 +237,7 @@ public class GUIView implements ViewInterface {
             background.setPreserveRatio(false);
 
             // RIGHE CARTE
-            upperRowPane = new HBox(10);
+            upperRowPane = new HBox(12);
             upperRowPane.setAlignment(Pos.CENTER);
 
             lowerRowPane = new HBox(10);
@@ -625,6 +625,7 @@ public class GUIView implements ViewInterface {
 
     private void renderTribeRow(HBox pane, List<TribeCard> cards, boolean clickable) {
         pane.getChildren().clear();
+        System.out.println(cards.size());
         for (TribeCard card : cards) {
             ImageView iv = cardImage(card.getImage());
             if (clickable) {
