@@ -17,7 +17,7 @@ public class NumPlayersOperation implements ClientOperation {
     @Override
     public void executeOp(Server server, ClientManagerSocket cm) {
         if (numPlayers < 2 || numPlayers > 5) return;
-        server.initLobby(numPlayers);
+        server.initLobbySocket(numPlayers);
     }
     /**
      * @author Giuse
