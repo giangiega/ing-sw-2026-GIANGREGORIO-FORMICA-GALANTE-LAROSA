@@ -10,7 +10,7 @@ import java.io.IOException;
 
 /**
  * @author Ale
- * this class has to send at clients the update of them view after server side checks,
+ * this class (a manager for each client) has to send at clients the update of them view after server side checks,
  * ClientManagerSocket sends ServerEvent objects
  */
 
