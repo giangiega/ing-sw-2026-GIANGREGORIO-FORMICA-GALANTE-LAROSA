@@ -59,8 +59,14 @@ public class RmiServer extends ServerClass implements VirtualServer {
         System.out.println("Server listening on port " + port);
     }
 
+    /**
+     * RmiClient calls this method to "complete" (add him to server's client list)
+     * the connection with server
+     * @param client
+     * @throws RemoteException
+     */
     @Override
-    public void connect(VirtualView client) throws RemoteException{
+    public synchronized void connect(VirtualView client) throws RemoteException{
         RmiClientManager cm = new RmiClientManager(client);
         clientManagerMap.put(client, cm);
         cm.sendEvent(new AckEvent(connected == 0));
