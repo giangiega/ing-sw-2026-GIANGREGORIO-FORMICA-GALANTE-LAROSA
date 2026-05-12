@@ -479,19 +479,100 @@ public class GUIView implements ViewInterface {
     @Override
     public void updateTurnOrder(TurnOrderTile turnOrder) {
         Platform.runLater(() -> {
-            if(turnOrderPane == null) return; // quando la board non è pronta
-
+            if (turnOrderPane == null) return;
             turnOrderPane.getChildren().clear();
 
             List<Player> order = turnOrder.getOrder();
+            int numPlayers = order.size();
+
+            // Dimensioni di visualizzazione della tessera
+            double tileW = 100;
+            double tileH = 180;
+
+            // Carica immagine tessera
+            String tilePath = "/images/tiles/turnOrderTile_" + numPlayers + ".png";
+            var tileUrl = getClass().getResource(tilePath);
+            if (tileUrl == null) {
+                System.err.println("TurnOrder tile non trovata: " + tilePath);
+                return;
+            }
+            ImageView tileImg = new ImageView(new Image(tileUrl.toExternalForm()));
+            tileImg.setFitWidth(tileW);
+            tileImg.setFitHeight(tileH);
+            tileImg.setPreserveRatio(false);
+
+            // --- LOOKUP TABLE DELLE COORDINATE Y ---
+            // Questi valori rappresentano il "centro" in pixel (su un'altezza di 180)
+            // di ogni riquadro bianco per le varie tessere.
+            // Potresti doverli ritoccare di 2-3 pixel per la perfezione assoluta.
+            double[] yCoordinates;
+            switch (numPlayers) {
+                case 2:
+                    yCoordinates = new double[]{ 50, 85 };
+                    break;
+                case 3:
+                    yCoordinates = new double[]{ 43, 78, 111 };
+                    break;
+                case 4:
+                    yCoordinates = new double[]{ 36, 70, 103, 136 };
+                    break;
+                case 5:
+                    yCoordinates = new double[]{ 26, 57, 90, 122, 154 };
+                    break;
+                default:
+                    yCoordinates = new double[numPlayers]; // Fallback di sicurezza
+            }
+
+            Pane overlay = new Pane();
+            overlay.setPrefSize(tileW, tileH);
+
+            // Usiamo un Pane anche per i nomi, così li allineiamo alle stesse coordinate Y
+            Pane namesPane = new Pane();
+            namesPane.setPrefWidth(80); // Regola la larghezza in base alla lunghezza dei nomi
+            namesPane.setPrefHeight(tileH);
+
             for (int i = 0; i < order.size(); i++) {
                 Player p = order.get(i);
-                Label slot = new Label((i + 1) + ". " + p.getName());
-                slot.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 11;");
-                turnOrderPane.getChildren().add(slot);
-            }
-        });
+                String totemPath = "/images/icon/" + p.getTotemColor().name().toLowerCase() + ".png";
+                var totemUrl = getClass().getResource(totemPath);
 
+                if (totemUrl != null) {
+                    ImageView totem = new ImageView(new Image(totemUrl.toExternalForm()));
+                    double totemSize = 30
+                            ;
+                    totem.setFitWidth(totemSize);
+                    totem.setFitHeight(totemSize);
+                    totem.setPreserveRatio(true);
+
+                    double offsetSinistro = 10; // Il valore che hai trovato corretto
+                    double slotCenterY = yCoordinates[i]; // Prende la Y esatta dall'array
+
+                    totem.setLayoutX(offsetSinistro);
+                    totem.setLayoutY(slotCenterY - (totemSize / 2));
+                    overlay.getChildren().add(totem);
+                } else {
+                    System.err.println("Totem non trovato: " + totemPath);
+                }
+
+                // Nomi giocatori
+                Label nameLabel = new Label((i + 1) + ". " + p.getName());
+                nameLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
+
+                // Allinea il testo verticalmente allo stesso centro del totem
+                // Sottraiamo circa 8 pixel (metà dell'altezza del font) per centrarlo
+                nameLabel.setLayoutY(yCoordinates[i] - 8);
+                namesPane.getChildren().add(nameLabel);
+            }
+
+            StackPane tileWithTotems = new StackPane(tileImg, overlay);
+            tileWithTotems.setPrefSize(tileW, tileH);
+
+            // Composizione finale
+            HBox fullTurnOrder = new HBox(10, namesPane, tileWithTotems);
+            fullTurnOrder.setAlignment(Pos.CENTER_LEFT);
+
+            turnOrderPane.getChildren().add(fullTurnOrder);
+        });
     }
 
     @Override
@@ -515,6 +596,7 @@ public class GUIView implements ViewInterface {
     public void showFinalScore(List<String> winners, Map< String , Integer> finalScores) {
 
     }
+
 
     @Override
     public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {
