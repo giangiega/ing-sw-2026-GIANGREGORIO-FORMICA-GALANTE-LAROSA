@@ -13,12 +13,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Ale
  */
 public class RmiServer extends ServerClass implements VirtualServer {
-    private final Map<VirtualView, RmiClientManager> clientManagerMap = new HashMap<>();
+    private final Map<VirtualView, RmiClientManager> clientManagerMap = new ConcurrentHashMap<>();
 
     public synchronized void initLobbyRmi(int numPlayers) throws RemoteException {
         this.initLobby(numPlayers);

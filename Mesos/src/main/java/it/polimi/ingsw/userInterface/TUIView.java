@@ -8,7 +8,6 @@ import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.model.cards.tribe.TribeCard;
 import it.polimi.ingsw.network.ClientSender;
-import it.polimi.ingsw.network.socket.ClientViewSocket;
 import it.polimi.ingsw.network.clientInterface.*;
 
 import java.util.*;
@@ -336,5 +335,3 @@ public class TUIView implements ViewInterface {
 
     }
 }
-
-/* valutare menù a tendina per info altri giocatori e per funzionamento carte */
