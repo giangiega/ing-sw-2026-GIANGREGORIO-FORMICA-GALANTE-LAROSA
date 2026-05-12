@@ -187,11 +187,11 @@ public class GUIView implements ViewInterface {
 
         // Validazione
         if (name.isEmpty()) {
-            errorLabel.setText("Inserisci il tuo nome.");
+            errorLabel.setText("Insert your name.");
             return;
         }
         if (selectedColor == null) {
-            errorLabel.setText("Seleziona un colore.");
+            errorLabel.setText("Choose a color.");
             return;
         }
 
@@ -202,7 +202,7 @@ public class GUIView implements ViewInterface {
                 num = Integer.parseInt(numText);
                 if (num < 2 || num > 5) throw new NumberFormatException();
             } catch (NumberFormatException ex) {
-                errorLabel.setText("Inserisci un numero tra 2 e 5.");
+                errorLabel.setText("Insert a number between to 2 and 5.");
                 return;
             }
             sender.sendOperation(new NumPlayersOperation(num));
@@ -217,7 +217,7 @@ public class GUIView implements ViewInterface {
     public void showLobby(List<String> lobby) {
         Platform.runLater(() -> {
             // Per ora: mostra un testo di attesa
-            Label waiting = new Label("In attesa degli altri giocatori...\nConnessi: " + lobby);
+            Label waiting = new Label("Waiting for other players...\nConnected: " + lobby);
             waiting.setStyle("-fx-font-size: 18; -fx-text-fill: white;");
             StackPane root = new StackPane(waiting);
             root.setStyle("-fx-background-color: #2c1810;");
@@ -237,10 +237,10 @@ public class GUIView implements ViewInterface {
             background.setPreserveRatio(false);
 
             // RIGHE CARTE
-            upperRowPane    = new HBox(10);
+            upperRowPane = new HBox(10);
             upperRowPane.setAlignment(Pos.CENTER);
 
-            lowerRowPane    = new HBox(10);
+            lowerRowPane = new HBox(10);
             lowerRowPane.setAlignment(Pos.CENTER);
 
             buildingUpperPane = new HBox(10);
@@ -263,7 +263,7 @@ public class GUIView implements ViewInterface {
                             "-fx-background-radius: 8;"
             );
 
-            Label turnOrderTitle = new Label("ORDINE DI TURNO");
+            Label turnOrderTitle = new Label("TURN ORDER");
             turnOrderTitle.setStyle(
                     "-fx-text-fill: #e8c46a; -fx-font-size: 11; -fx-font-weight: bold;"
             );
@@ -395,12 +395,12 @@ public class GUIView implements ViewInterface {
             tileImg.setFitHeight(120);
             tileImg.setPreserveRatio(true);
         } else {
-            System.err.println("Tile non trovata: " + tilePath);
+            System.err.println("Tile not found: " + tilePath);
             tileImg = new ImageView();
         }
 
         Label occupantLabel = new Label(
-                tile.getFreeOfferTile() ? "libera" : tile.getOccupant().getName()
+                tile.getFreeOfferTile() ? "free" : tile.getOccupant().getName()
         );
         occupantLabel.setStyle(
                 tile.getFreeOfferTile()
@@ -427,7 +427,7 @@ public class GUIView implements ViewInterface {
         var url = getClass().getResource(path);
 
         if (url == null) {
-            System.err.println("Icona non trovata: " + path);
+            System.err.println("Icon not found: " + path);
             return new ImageView(); // Ritorna un'ImageView vuota
         }
 
@@ -531,7 +531,7 @@ public class GUIView implements ViewInterface {
         String path = "/images/cards/"+image+"_front.png";
         var url = getClass().getResource(path);
         if (url == null) {
-            System.err.println("Immagine non trovata: " + path);
+            System.err.println("Image not found: " + path);
             return new ImageView();
         }
         ImageView iv = new ImageView(new Image(url.toExternalForm()));
