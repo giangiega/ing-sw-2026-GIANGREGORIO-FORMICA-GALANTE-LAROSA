@@ -96,13 +96,14 @@ public class GUIView implements ViewInterface {
     private void showLoginScene(boolean isFirst) {
         var bgUrl = getClass().getResource("/images/screen/login_screen.png");
         ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
-        background.setFitWidth(1260);
+        background.setFitWidth(1280);
         background.setFitHeight(720);
         background.setPreserveRatio(false);
 
         // --- Form ---
         VBox form = new VBox(12);
         form.setAlignment(Pos.CENTER);
+        form.setFillWidth(true);
         form.setPadding(new Insets(20));
         form.setMaxWidth(300);
         form.setStyle(
@@ -112,41 +113,47 @@ public class GUIView implements ViewInterface {
 
         VBox numBox = new VBox(6);
         numBox.setVisible(isFirst);
-        numBox.setManaged(isFirst); // se non visibile, non occupa spazio
-        Label numLabel = new Label("Numero di giocatori (2–5):");
+        numBox.setManaged(isFirst);
+        numBox.setAlignment(Pos.CENTER);
+        Label numLabel = new Label("Number of players (2–5):");
         numLabel.setStyle("-fx-text-fill: #f5e6c8;");
         TextField numField = new TextField();
         numField.setPromptText("es. 3");
-        numField.setMaxWidth(200);
+        numField.setMaxWidth(50);
         numBox.getChildren().addAll(numLabel, numField);
 
-        // --- Nome ---
-        Label nameLabel = new Label("Il tuo nome:");
+        // Name
+        Label nameLabel = new Label("Name:");
+        nameLabel.setMaxWidth(200);
+        nameLabel.setAlignment(Pos.CENTER_LEFT);
         nameLabel.setStyle("-fx-text-fill: #f5e6c8;");
         TextField nameField = new TextField();
-        nameField.setPromptText("es. Marco");
+        nameField.setPromptText("es. Matteo");
         nameField.setMaxWidth(200);
 
-        // --- Colore: uno RadioButton per ogni ColorEnum ---
-        Label colorLabel = new Label("Scegli il colore del tuo totem:");
+        // ColorEnum
+        Label colorLabel = new Label("Choose your totem color:");
         colorLabel.setStyle("-fx-text-fill: #f5e6c8;");
         ToggleGroup colorGroup = new ToggleGroup();
         VBox colorBox = new VBox(4);
+        colorBox.setAlignment(Pos.CENTER_LEFT);
         for (ColorEnum c : ColorEnum.values()) {
             RadioButton rb = new RadioButton(c.name());
             rb.setToggleGroup(colorGroup);
-            rb.setUserData(c);      // salviamo l'enum sul bottone
+            rb.setUserData(c);
             rb.setStyle("-fx-text-fill: #f5e6c8;");
             colorBox.getChildren().add(rb);
         }
+        HBox centeredColorBox = new HBox(colorBox);
+        centeredColorBox.setAlignment(Pos.CENTER);
 
-        // --- Messaggio di errore ---
+        // error
         Label errorLabel = new Label();
         errorLabel.setStyle("-fx-text-fill: #ff6b6b; -fx-font-size: 12;");
         errorLabel.setWrapText(true);
 
-        // --- Bottone Accedi ---
-        Button confirmBtn = new Button("Accedi");
+        // login button
+        Button confirmBtn = new Button("Login");
         confirmBtn.setStyle(
                 "-fx-background-color: #c0392b; -fx-text-fill: white;" +
                         "-fx-font-size: 14; -fx-padding: 8 24; -fx-background-radius: 6;"
@@ -155,24 +162,19 @@ public class GUIView implements ViewInterface {
                 isFirst, numField, nameField, colorGroup, errorLabel
         ));
 
-        form.getChildren().addAll(numBox,
-                nameLabel, nameField,
-                colorLabel, colorBox,
-                errorLabel, confirmBtn
-        );
+        form.getChildren().addAll(numBox, nameLabel, nameField, colorLabel,
+                centeredColorBox, errorLabel, confirmBtn);
 
         Region spacer = new Region();
-        spacer.setPrefHeight(243); // 45% di 540
+        spacer.setPrefHeight(288);
 
-// --- VBox verticale: spacer sopra, form sotto ---
         VBox verticalLayout = new VBox();
         verticalLayout.setAlignment(Pos.TOP_CENTER);
         verticalLayout.getChildren().addAll(spacer, form);
 
-// --- StackPane: sfondo + layout sovrapposti ---
         StackPane root = new StackPane(background, verticalLayout);
 
-        Scene scene = new Scene(root, 960, 540);
+        Scene scene = new Scene(root, 1280, 720);
         primaryStage.setScene(scene);
 
     }

@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.model.cards.tribe.TribeCard;
 import it.polimi.ingsw.network.ClientSender;
-import it.polimi.ingsw.network.socket.ClientViewSocket;
 
 import java.util.List;
 import java.util.Map;
