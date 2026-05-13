@@ -50,6 +50,9 @@ public class GUIView implements ViewInterface {
     private final List<Integer> selectedLowerIndices = new ArrayList<>();
     private final List<Integer> selectedBuildingUpperIndices = new ArrayList<>();
     private final List<Integer> selectedBuildingLowerIndices = new ArrayList<>();
+    private int totalPlayers = 0;
+    private Label loginErrorLabel;
+    private String pendingLoginError = null;
 
     /**
      * CountDownLatch saves GUI from race condition between main Thread and JavaFX Thread
@@ -160,9 +163,18 @@ public class GUIView implements ViewInterface {
         centeredColorBox.setAlignment(Pos.CENTER);
 
         // error
-        Label errorLabel = new Label();
-        errorLabel.setStyle("-fx-text-fill: #ff6b6b; -fx-font-size: 12;");
-        errorLabel.setWrapText(true);
+        loginErrorLabel = new Label();
+        loginErrorLabel.setStyle("-fx-text-fill: #ff6b6b; -fx-font-size: 12;");
+        loginErrorLabel.setWrapText(true);
+        if (pendingLoginError != null) {
+            loginErrorLabel.setText("⚠  " + pendingLoginError);
+            loginErrorLabel.setVisible(true);
+            loginErrorLabel.setManaged(true);
+            pendingLoginError = null; // consumato
+        } else {
+            loginErrorLabel.setVisible(false);
+            loginErrorLabel.setManaged(false);
+        }
 
         // login button
         Button confirmBtn = new Button("Login");
@@ -171,11 +183,11 @@ public class GUIView implements ViewInterface {
                         "-fx-font-size: 14; -fx-padding: 8 24; -fx-background-radius: 6;"
         );
         confirmBtn.setOnAction(e -> handleLogin(
-                isFirst, numField, nameField, colorGroup, errorLabel
+                isFirst, numField, nameField, colorGroup, loginErrorLabel
         ));
 
         form.getChildren().addAll(numBox, nameLabel, nameField, colorLabel,
-                centeredColorBox, errorLabel, confirmBtn);
+                centeredColorBox, loginErrorLabel, confirmBtn);
 
         Region spacer = new Region();
         spacer.setPrefHeight(288);
@@ -489,6 +501,7 @@ public class GUIView implements ViewInterface {
         Platform.runLater(() -> {
             if(playersStatus == null) return; // quando la board non è pronta
 
+            if(totalPlayers == 0) totalPlayers = names.size();
             playersStatus.getChildren().clear();
             for (int i = 0; i < names.size(); i++) {
                 Label nameLabel = new Label(names.get(i));
@@ -529,79 +542,73 @@ public class GUIView implements ViewInterface {
             turnOrderPane.getChildren().clear();
 
             List<Player> order = turnOrder.getOrder();
-            int numPlayers = order.size();
+            int numSlots = totalPlayers > 0 ? totalPlayers : order.size();
+            if (numSlots == 0) return;
 
-            // Dimensioni di visualizzazione della tessera
             double tileW = 100;
             double tileH = 180;
 
-            // Carica immagine tessera
-            String tilePath = "/images/tiles/turnOrderTile_" + numPlayers + ".png";
+            // immagine sempre la stessa per tutta la partita
+            String tilePath = "/images/tiles/turnOrderTile_" + numSlots + ".png";
             var tileUrl = getClass().getResource(tilePath);
             if (tileUrl == null) {
                 System.err.println("TurnOrder tile non trovata: " + tilePath);
                 return;
             }
+
             ImageView tileImg = new ImageView(new Image(tileUrl.toExternalForm()));
             tileImg.setFitWidth(tileW);
             tileImg.setFitHeight(tileH);
             tileImg.setPreserveRatio(false);
 
+            // coordinate Y degli slot calibrate sull'immagine
+            double[] yCoordinates = switch (numSlots) {
+                case 2 -> new double[]{ 50, 85 };
+                case 3 -> new double[]{ 43, 78, 111 };
+                case 4 -> new double[]{ 36, 70, 103, 136 };
+                case 5 -> new double[]{ 26, 57, 90, 122, 154 };
+                default -> new double[numSlots];
+            };
 
-            double[] yCoordinates;
-            switch (numPlayers) {
-                case 2:
-                    yCoordinates = new double[]{ 50, 85 };
-                    break;
-                case 3:
-                    yCoordinates = new double[]{ 43, 78, 111 };
-                    break;
-                case 4:
-                    yCoordinates = new double[]{ 36, 70, 103, 136 };
-                    break;
-                case 5:
-                    yCoordinates = new double[]{ 26, 57, 90, 122, 154 };
-                    break;
-                default:
-                    yCoordinates = new double[numPlayers]; // Fallback di sicurezza
-            }
-
-            Pane overlay = new Pane();
-            overlay.setPrefSize(tileW, tileH);
-
+            Pane overlay  = new Pane();
             Pane namesPane = new Pane();
+            overlay.setPrefSize(tileW, tileH);
             namesPane.setPrefWidth(80);
             namesPane.setPrefHeight(tileH);
 
-            for (int i = 0; i < order.size(); i++) {
-                Player p = order.get(i);
-                String totemPath = "/images/icon/" + p.getTotemColor().name().toLowerCase() + ".png";
-                var totemUrl = getClass().getResource(totemPath);
+            // itera su TUTTI gli slot — non solo i giocatori già tornati
+            for (int slot = 0; slot < numSlots; slot++) {
+                double slotY = yCoordinates[slot];
 
-                if (totemUrl != null) {
-                    ImageView totem = new ImageView(new Image(totemUrl.toExternalForm()));
-                    double totemSize = 30
-                            ;
-                    totem.setFitWidth(totemSize);
-                    totem.setFitHeight(totemSize);
-                    totem.setPreserveRatio(true);
+                if (slot < order.size()) {
+                    // slot occupato: mostra totem + nome
+                    Player p = order.get(slot);
+                    String totemPath = "/images/icon/" + p.getTotemColor().name().toLowerCase() + ".png";
+                    var totemUrl = getClass().getResource(totemPath);
 
-                    double offsetSinistro = 10;
-                    double slotCenterY = yCoordinates[i];
+                    if (totemUrl != null) {
+                        ImageView totem = new ImageView(new Image(totemUrl.toExternalForm()));
+                        double totemSize = 30;
+                        totem.setFitWidth(totemSize);
+                        totem.setFitHeight(totemSize);
+                        totem.setPreserveRatio(true);
+                        totem.setLayoutX(10);
+                        totem.setLayoutY(slotY - totemSize / 2);
+                        overlay.getChildren().add(totem);
+                    }
 
-                    totem.setLayoutX(offsetSinistro);
-                    totem.setLayoutY(slotCenterY - (totemSize / 2));
-                    overlay.getChildren().add(totem);
+                    Label nameLabel = new Label((slot + 1) + ". " + p.getName());
+                    nameLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
+                    nameLabel.setLayoutY(slotY - 8);
+                    namesPane.getChildren().add(nameLabel);
+
                 } else {
-                    System.err.println("Totem non trovato: " + totemPath);
+                    // slot vuoto: trattino placeholder
+                    Label empty = new Label((slot + 1) + ". —");
+                    empty.setStyle("-fx-text-fill: #555; -fx-font-size: 12;");
+                    empty.setLayoutY(slotY - 8);
+                    namesPane.getChildren().add(empty);
                 }
-
-                Label nameLabel = new Label((i + 1) + ". " + p.getName());
-                nameLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
-
-
-                nameLabel.setLayoutY(yCoordinates[i] - 8);
-                namesPane.getChildren().add(nameLabel);
             }
 
             StackPane tileWithTotems = new StackPane(tileImg, overlay);
@@ -609,7 +616,6 @@ public class GUIView implements ViewInterface {
 
             HBox fullTurnOrder = new HBox(10, namesPane, tileWithTotems);
             fullTurnOrder.setAlignment(Pos.CENTER_LEFT);
-
             turnOrderPane.getChildren().add(fullTurnOrder);
         });
     }
@@ -731,7 +737,7 @@ public class GUIView implements ViewInterface {
             if (offerTrackPane == null) return;
 
             actionBar.getChildren().clear();
-            Label msg = new Label("Choose an offer tile to place your totem");
+            Label msg = new Label("Choose an offer tile to place your totem ");
             msg.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
             actionBar.getChildren().add(msg);
             actionBar.setVisible(true);
@@ -782,7 +788,26 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void invalidChoice(String message) {
+        System.out.println("invalidChoice chiamato: " + message);
+
         Platform.runLater(() -> {
+            System.out.println("actionBar: " + actionBar);
+            System.out.println("loginErrorLabel: " + loginErrorLabel);
+            if (actionBar == null){
+                pendingLoginError = message;
+                if (loginErrorLabel != null) {
+                    loginErrorLabel.setText("⚠  " + message);
+                    loginErrorLabel.setVisible(true);
+                    loginErrorLabel.setManaged(true);
+                    System.out.println("testo impostato: " + loginErrorLabel.getText());
+
+                }else{
+                    System.out.println("loginErrorLabel è null!");
+
+                }
+                return;
+            }
+
             // aggiunge un label rosso temporaneo all'action bar
             Label errorLabel = new Label("⚠  " + message);
             errorLabel.setStyle(
@@ -832,7 +857,6 @@ public class GUIView implements ViewInterface {
 
     private void renderTribeRow(HBox pane, List<TribeCard> cards, boolean clickable) {
         pane.getChildren().clear();
-        System.out.println(cards.size());
         for (TribeCard card : cards) {
             ImageView iv = cardImage(card.getImage());
             if (clickable) {
