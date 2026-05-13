@@ -30,4 +30,5 @@ public interface ViewInterface {
     void invalidChoice(String message);
     void showFinalScore(List<String> winners, Map< String , Integer> finalScores);
     void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe);
+    void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes);
 }

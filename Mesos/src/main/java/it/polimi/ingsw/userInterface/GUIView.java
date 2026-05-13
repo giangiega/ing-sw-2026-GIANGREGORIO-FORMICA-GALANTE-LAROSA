@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
+
+
 public class GUIView implements ViewInterface {
     private Stage primaryStage;
     private ClientSender sender;
@@ -53,6 +55,9 @@ public class GUIView implements ViewInterface {
     private int totalPlayers = 0;
     private Label loginErrorLabel;
     private String pendingLoginError = null;
+    private HBox ownTribePane;
+    private Accordion otherTribesAccordion;
+    private String myName;
 
     /**
      * CountDownLatch saves GUI from race condition between main Thread and JavaFX Thread
@@ -231,7 +236,7 @@ public class GUIView implements ViewInterface {
             }
             sender.sendOperation(new NumPlayersOperation(num));
         }
-
+        this.myName = name;
         ColorEnum color = (ColorEnum) selectedColor.getUserData();
         sender.sendOperation(new LoginOperation(name, color));
         // Dopo l'invio, il server risponderà con LoggedEvent → showLobby()
@@ -283,35 +288,39 @@ public class GUIView implements ViewInterface {
     public void showGameStart() {
         Platform.runLater(() -> {
 
-            // BACKGROUND
+            // ── BACKGROUND ──────────────────────────────────────────────
             var bgUrl = getClass().getResource("/images/screen/background.png");
             ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
-            background.setFitWidth(1280);
-            background.setFitHeight(720);
             background.setPreserveRatio(false);
             background.fitWidthProperty().bind(primaryStage.widthProperty());
             background.fitHeightProperty().bind(primaryStage.heightProperty());
 
-
-            // RIGHE CARTE
+            // ── RIGHE CARTE ─────────────────────────────────────────────
             upperRowPane = new HBox(12);
-            upperRowPane.setAlignment(Pos.CENTER);
+            upperRowPane.setAlignment(Pos.CENTER_LEFT);
 
             lowerRowPane = new HBox(10);
             lowerRowPane.setAlignment(Pos.CENTER);
 
             buildingUpperPane = new HBox(10);
-            buildingUpperPane.setAlignment(Pos.CENTER);
+            buildingUpperPane.setAlignment(Pos.CENTER_LEFT);
 
             buildingLowerPane = new HBox(10);
-            buildingLowerPane.setAlignment(Pos.CENTER);
+            buildingLowerPane.setAlignment(Pos.CENTER_LEFT);
 
-            // OFFER TRACK — riga orizzontale di tile centrata
+            // building in colonna a destra della upperRow
+            VBox buildingRows = new VBox(10, buildingUpperPane, buildingLowerPane);
+            buildingRows.setAlignment(Pos.TOP_LEFT);
+
+            HBox topRow = new HBox(20, upperRowPane, buildingRows);
+            topRow.setAlignment(Pos.CENTER);
+
+            // ── OFFER TRACK ─────────────────────────────────────────────
             offerTrackPane = new HBox(14);
             offerTrackPane.setAlignment(Pos.CENTER);
             offerTrackPane.setPadding(new Insets(10));
 
-            // TURN ORDER — verticale, centrata
+            // ── TURN ORDER ──────────────────────────────────────────────
             turnOrderPane = new VBox(8);
             turnOrderPane.setAlignment(Pos.CENTER);
             turnOrderPane.setPadding(new Insets(10, 16, 10, 16));
@@ -324,39 +333,60 @@ public class GUIView implements ViewInterface {
             turnOrderTitle.setStyle(
                     "-fx-text-fill: #e8c46a; -fx-font-size: 11; -fx-font-weight: bold;"
             );
-
             VBox turnOrderSection = new VBox(6, turnOrderTitle, turnOrderPane);
             turnOrderSection.setAlignment(Pos.CENTER);
 
-            // RIGA CENTRALE — turn order + offer track affiancati
+            // ── RIGA CENTRALE: turn order + offer track ──────────────────
             HBox middleRow = new HBox(30, turnOrderSection, offerTrackPane);
             middleRow.setAlignment(Pos.CENTER);
             middleRow.setPadding(new Insets(8, 0, 8, 0));
 
-            // RIGA BUILDING — le due righe building affiancate
-            HBox buildingRow = new HBox(10, buildingUpperPane, buildingLowerPane);
-            buildingRow.setAlignment(Pos.CENTER);
+            // ── SEZIONE PROPRIA TRIBÙ ────────────────────────────────────
+            ownTribePane = new HBox(12);
+            ownTribePane.setAlignment(Pos.CENTER_LEFT);
+            ownTribePane.setPadding(new Insets(6));
 
-            HBox topRow = new HBox(20, upperRowPane, buildingRow);
-            topRow.setAlignment(Pos.CENTER);
-
-            // AREA CARTE — tutto centrato verticalmente
-            VBox cardArea = new VBox(16,
-                    topRow,
-                    middleRow,
-                    lowerRowPane
+            ScrollPane ownTribeScroll = new ScrollPane(ownTribePane);
+            ownTribeScroll.setFitToHeight(true);
+            ownTribeScroll.setPrefHeight(CARD_H + 40);
+            ownTribeScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            ownTribeScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            ownTribeScroll.setStyle(
+                    "-fx-background: transparent; -fx-background-color: transparent;"
             );
+
+            Label ownTribeTitle = new Label("YOUR TRIBE");
+            ownTribeTitle.setStyle(
+                    "-fx-text-fill: #e8c46a; -fx-font-size: 12; -fx-font-weight: bold;"
+            );
+
+            VBox ownTribeSection = new VBox(4, ownTribeTitle, ownTribeScroll);
+            ownTribeSection.setPadding(new Insets(8, 16, 4, 16));
+            ownTribeSection.setStyle(
+                    "-fx-background-color: rgba(0,0,0,0.35); -fx-background-radius: 8;"
+            );
+
+            // ── ACCORDION TRIBÙ ALTRI GIOCATORI ──────────────────────────
+            otherTribesAccordion = new Accordion();
+            otherTribesAccordion.setStyle("-fx-background-color: transparent;");
+
+            VBox tribeArea = new VBox(8, ownTribeSection, otherTribesAccordion);
+            tribeArea.setPadding(new Insets(8, 0, 0, 0));
+
+            // ── CARD AREA COMPLETA ───────────────────────────────────────
+            VBox cardArea = new VBox(16, topRow, middleRow, lowerRowPane, tribeArea);
             cardArea.setAlignment(Pos.CENTER);
             cardArea.setPadding(new Insets(20));
 
-            // SCROLL — centrato nello spazio disponibile
             ScrollPane cardScroll = new ScrollPane(cardArea);
             cardScroll.setFitToWidth(true);
-            cardScroll.setFitToHeight(true);
-            cardScroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+            cardScroll.setFitToHeight(false);
+            cardScroll.setStyle(
+                    "-fx-background: transparent; -fx-background-color: transparent;"
+            );
             HBox.setHgrow(cardScroll, Priority.ALWAYS);
 
-            // PANNELLO DESTRO
+            // ── PANNELLO DESTRO ──────────────────────────────────────────
             roundLabel = new Label("Round 1");
             roundLabel.setStyle(
                     "-fx-text-fill: #f5e6c8; -fx-font-size: 15; -fx-font-weight: bold;"
@@ -374,13 +404,16 @@ public class GUIView implements ViewInterface {
             );
             VBox.setVgrow(playersScroll, Priority.ALWAYS);
 
+            Label playersTitle = new Label("PLAYERS:");
+            playersTitle.setStyle(
+                    "-fx-text-fill: #f5e6c8; -fx-font-weight: bold;"
+            );
+
             VBox rightPanel = new VBox(14,
                     eraLabel,
                     roundLabel,
                     new Separator(),
-                    new Label("GIOCATORI:") {{
-                        setStyle("-fx-text-fill: #f5e6c8; -fx-font-weight: bold;");
-                    }},
+                    playersTitle,
                     playersScroll
             );
             rightPanel.setPadding(new Insets(16));
@@ -389,14 +422,15 @@ public class GUIView implements ViewInterface {
             rightPanel.setMaxWidth(260);
             rightPanel.setStyle("-fx-background-color: rgba(20,10,5,0.80);");
 
-            // ACTION BAR (turno giocatore)
+            // ── ACTION BAR ───────────────────────────────────────────────
             actionBar = new HBox(10);
             actionBar.setPadding(new Insets(8, 16, 8, 16));
             actionBar.setAlignment(Pos.CENTER);
             actionBar.setStyle("-fx-background-color: rgba(180,40,20,0.85);");
             actionBar.setVisible(false);
+            actionBar.setManaged(false);
 
-            // ASSEMBLY
+            // ── ASSEMBLY ─────────────────────────────────────────────────
             HBox mainArea = new HBox(cardScroll, rightPanel);
             VBox.setVgrow(mainArea, Priority.ALWAYS);
 
@@ -524,6 +558,63 @@ public class GUIView implements ViewInterface {
             }
         });
     }
+    @Override
+    public void updateAllTribes(List<String> names,
+                                List<Map<CharacterEnum, List<CharacterCard>>> tribes) {
+        Platform.runLater(() -> {
+            if (otherTribesAccordion == null) return;
+            otherTribesAccordion.getPanes().clear();
+
+            for (int i = 0; i < names.size(); i++) {
+                String playerName = names.get(i);
+
+                if (playerName.equals(myName)) {
+                    continue;
+                }
+
+                HBox tribeContent = new HBox(15);
+                tribeContent.setPadding(new Insets(10));
+                tribeContent.setAlignment(Pos.TOP_LEFT);
+
+                Map<CharacterEnum, List<CharacterCard>> tribe = tribes.get(i);
+                for (CharacterEnum type : CharacterEnum.values()) {
+                    List<CharacterCard> cards = tribe.get(type);
+                    if (cards == null || cards.isEmpty()) continue;
+
+                    VBox typeColumn = new VBox(5);
+                    typeColumn.setAlignment(Pos.TOP_CENTER);
+
+                    ImageView typeIcon = icon(type.name().toLowerCase());
+                    typeIcon.setFitWidth(18);
+                    typeIcon.setFitHeight(18);
+                    Label countLabel = new Label("×" + cards.size());
+                    countLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 11;");
+                    typeColumn.getChildren().addAll(typeIcon, countLabel);
+                    for (CharacterCard card : cards) {
+                        ImageView cardImg = cardImage(card.getImage());
+                        // Ridimensioniamo le carte degli avversari per risparmiare spazio
+                        cardImg.setFitWidth(60);
+                        cardImg.setFitHeight(87);
+                        typeColumn.getChildren().add(cardImg);
+                    }
+
+                    tribeContent.getChildren().add(typeColumn);
+                }
+
+                ScrollPane scroll = new ScrollPane(tribeContent);
+                scroll.setFitToHeight(true);
+                scroll.setPrefHeight(150);
+                scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+
+                TitledPane pane = new TitledPane(names.get(i) + "'s tribe", scroll);
+                pane.setExpanded(false); // collassato di default
+                pane.setStyle("-fx-text-fill: #f5e6c8;");
+                otherTribesAccordion.getPanes().add(pane);
+            }
+        });
+    }
+
 
     @Override
     public void updateRound(int currentRound) {
@@ -541,51 +632,51 @@ public class GUIView implements ViewInterface {
             if (turnOrderPane == null) return;
             turnOrderPane.getChildren().clear();
 
-            List<Player> order = turnOrder.getOrder();
-            int numSlots = totalPlayers > 0 ? totalPlayers : order.size();
-            if (numSlots == 0) return;
+            List<Player> slots = turnOrder.getSlots();
+            int numSlots = slots.size();
 
+            if (totalPlayers == 0 && numSlots == 0) {
+                return;
+
+            }
+            int tileGraphicSize = (totalPlayers > 0) ? totalPlayers : numSlots;
             double tileW = 100;
             double tileH = 180;
 
-            // immagine sempre la stessa per tutta la partita
-            String tilePath = "/images/tiles/turnOrderTile_" + numSlots + ".png";
+            String tilePath = "/images/tiles/turnOrderTile_" + tileGraphicSize + ".png";
             var tileUrl = getClass().getResource(tilePath);
             if (tileUrl == null) {
                 System.err.println("TurnOrder tile non trovata: " + tilePath);
                 return;
             }
-
             ImageView tileImg = new ImageView(new Image(tileUrl.toExternalForm()));
+
             tileImg.setFitWidth(tileW);
             tileImg.setFitHeight(tileH);
             tileImg.setPreserveRatio(false);
 
-            // coordinate Y degli slot calibrate sull'immagine
-            double[] yCoordinates = switch (numSlots) {
-                case 2 -> new double[]{ 50, 85 };
-                case 3 -> new double[]{ 43, 78, 111 };
-                case 4 -> new double[]{ 36, 70, 103, 136 };
-                case 5 -> new double[]{ 26, 57, 90, 122, 154 };
-                default -> new double[numSlots];
+            double[] yCoordinates = switch (tileGraphicSize) {
+                case 2 -> new double[]{50, 85};
+                case 3 -> new double[]{43, 78, 111};
+                case 4 -> new double[]{36, 70, 103, 136};
+                case 5 -> new double[]{26, 57, 90, 122, 154};
+                default -> new double[tileGraphicSize];
             };
 
-            Pane overlay  = new Pane();
+            Pane overlay = new Pane();
             Pane namesPane = new Pane();
             overlay.setPrefSize(tileW, tileH);
             namesPane.setPrefWidth(80);
             namesPane.setPrefHeight(tileH);
 
-            // itera su TUTTI gli slot — non solo i giocatori già tornati
             for (int slot = 0; slot < numSlots; slot++) {
+                Player p = slots.get(slot);
+                if (slot >= yCoordinates.length) break;
                 double slotY = yCoordinates[slot];
 
-                if (slot < order.size()) {
-                    // slot occupato: mostra totem + nome
-                    Player p = order.get(slot);
+                if (p != null) {
                     String totemPath = "/images/icon/" + p.getTotemColor().name().toLowerCase() + ".png";
                     var totemUrl = getClass().getResource(totemPath);
-
                     if (totemUrl != null) {
                         ImageView totem = new ImageView(new Image(totemUrl.toExternalForm()));
                         double totemSize = 30;
@@ -596,14 +687,11 @@ public class GUIView implements ViewInterface {
                         totem.setLayoutY(slotY - totemSize / 2);
                         overlay.getChildren().add(totem);
                     }
-
                     Label nameLabel = new Label((slot + 1) + ". " + p.getName());
                     nameLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
                     nameLabel.setLayoutY(slotY - 8);
                     namesPane.getChildren().add(nameLabel);
-
                 } else {
-                    // slot vuoto: trattino placeholder
                     Label empty = new Label((slot + 1) + ". —");
                     empty.setStyle("-fx-text-fill: #555; -fx-font-size: 12;");
                     empty.setLayoutY(slotY - 8);
@@ -619,9 +707,8 @@ public class GUIView implements ViewInterface {
             turnOrderPane.getChildren().add(fullTurnOrder);
         });
     }
-
-    @Override
-    public void selectCard(int upperCount, int lowerCount, int cardsUpper, int cardsLower,
+        @Override
+        public void selectCard(int upperCount, int lowerCount, int cardsUpper, int cardsLower,
                            List<TribeCard> upperRow, List<TribeCard> lowerRow,
                            List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow) {
         Platform.runLater(() -> {
@@ -648,6 +735,7 @@ public class GUIView implements ViewInterface {
             msg.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
             actionBar.getChildren().add(msg);
             actionBar.setVisible(true);
+            actionBar.setManaged(true);
         });
     }
 
@@ -741,6 +829,8 @@ public class GUIView implements ViewInterface {
             msg.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
             actionBar.getChildren().add(msg);
             actionBar.setVisible(true);
+            actionBar.setManaged(true);
+
 
             // serve a rendere le tile libere cliccabili
             for (var node : offerTrackPane.getChildren()) {
@@ -815,6 +905,8 @@ public class GUIView implements ViewInterface {
             );
             actionBar.getChildren().add(errorLabel);
             actionBar.setVisible(true);
+            actionBar.setManaged(true);
+
 
             // lo rimuove dopo 3 secondi
             new Thread(() -> {
@@ -832,7 +924,38 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {
+        Platform.runLater(() -> {
+            if (ownTribePane == null) return;
+            ownTribePane.getChildren().clear();
 
+            for (CharacterEnum type : CharacterEnum.values()) {
+                List<CharacterCard> cards = tribe.get(type);
+                if (cards == null || cards.isEmpty()) continue;
+
+                // icona del tipo + conteggio
+                ImageView typeIcon = icon(type.name().toLowerCase());
+                Label countLabel = new Label("×" + cards.size());
+                countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 11;");
+                VBox header = new VBox(2, typeIcon, countLabel);
+                header.setAlignment(Pos.CENTER);
+
+                // carte del tipo in colonna
+                VBox cardColumn = new VBox(4);
+                cardColumn.setAlignment(Pos.TOP_CENTER);
+                for (CharacterCard card : cards) {
+                    cardColumn.getChildren().add(cardImage(card.getImage()));
+                }
+
+                VBox typeGroup = new VBox(4, header, cardColumn);
+                typeGroup.setAlignment(Pos.TOP_CENTER);
+                typeGroup.setPadding(new Insets(4, 6, 4, 6));
+                typeGroup.setStyle(
+                        "-fx-background-color: rgba(255,255,255,0.06);" +
+                                "-fx-background-radius: 6;"
+                );
+                ownTribePane.getChildren().add(typeGroup);
+            }
+        });
     }
 
     /**

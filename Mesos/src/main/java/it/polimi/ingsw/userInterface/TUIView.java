@@ -15,6 +15,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+
+
+
 public class TUIView implements ViewInterface {
     private final Scanner scanner = new Scanner(System.in);
     private ClientSender sender;
@@ -334,4 +337,17 @@ public class TUIView implements ViewInterface {
                         e.getKey(), e.getValue()));
 
     }
+    @Override
+    public void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes){
+        for (int i = 0; i < names.size(); i++) {
+            System.out.println(MAGENTA + BOLD + names.get(i) + "'s tribe:" + RESET);
+            for (var entry : tribes.get(i).entrySet()) {
+                if (!entry.getValue().isEmpty())
+                    System.out.println("  " + entry.getKey() + ": " + entry.getValue().size());
+            }
+        }
+    }
+
+
 }
+

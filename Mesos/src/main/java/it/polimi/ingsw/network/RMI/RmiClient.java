@@ -240,4 +240,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onEndGame(List<String> winners, Map<String, Integer> finalScores) throws RemoteException {
         view.showFinalScore(winners, finalScores);
     }
+    @Override
+    public void onUpdateAllTribes(List<String> names,
+                                  List<Map<CharacterEnum, List<CharacterCard>>> tribes)
+            throws RemoteException {
+        view.updateAllTribes(names, tribes);
+    }
 }

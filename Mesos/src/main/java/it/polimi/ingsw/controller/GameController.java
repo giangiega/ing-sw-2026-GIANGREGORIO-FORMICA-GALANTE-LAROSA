@@ -52,6 +52,8 @@ public class GameController {
                 game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
                 game.getBoard().getBuildingLowerRow()));
         broadcastEvent(new UpdateAllPlayersEvent(players));
+        broadcastEvent(new UpdateAllTribesEvent(players));
+
 
         turnController = new TurnController(this, players.size());
         turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
@@ -119,6 +121,7 @@ public class GameController {
             clientManagers.get(playerName).sendEvent(new ValidCardsEvent(player.getTribe()));
 
         broadcastEvent(new UpdateAllPlayersEvent(players));
+        broadcastEvent(new UpdateAllTribesEvent(players));
         broadcastEvent(new UpdateRowsEvent(game.getBoard().getUpperRow(), game.getBoard().getLowerRow(),
                 game.getBoard().getBuildingUpperRow(), game.getBoard().getBuildingLowerRow()));
 
@@ -141,6 +144,7 @@ public class GameController {
         } else {
             broadcastEvent(new UpdateRoundEvent(game.getCurrentRound()));
             broadcastEvent(new UpdateAllPlayersEvent(players));
+            broadcastEvent(new UpdateAllTribesEvent(players));
             broadcastEvent(new UpdateBoardEvent(game.getBoard().getOfferTrack(),
                     game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
                     game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),

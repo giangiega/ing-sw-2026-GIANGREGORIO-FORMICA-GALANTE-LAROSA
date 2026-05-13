@@ -68,4 +68,8 @@ public interface VirtualView extends Remote {
 
     /** The game has ended; final scores and winners are provided. */
     void onEndGame(List<String> winners, Map<String, Integer> finalScores) throws RemoteException;
+
+    void onUpdateAllTribes(List<String> names,
+                           List<Map<CharacterEnum, List<CharacterCard>>> tribes)
+            throws RemoteException;
 }

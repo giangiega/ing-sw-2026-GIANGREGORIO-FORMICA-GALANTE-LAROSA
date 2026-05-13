@@ -50,6 +50,7 @@ public class GsonFactory {
                         .registerSubtype(IsYourTurnEvent.class)
                         .registerSubtype(MoveTotemEvent.class)
                         .registerSubtype(UpdateAllPlayersEvent.class)
+                        .registerSubtype(UpdateAllTribesEvent.class)
                         .registerSubtype(UpdateBoardEvent.class)
                         .registerSubtype(UpdateOfferTrackEvent.class)
                         .registerSubtype(UpdateRoundEvent.class)
