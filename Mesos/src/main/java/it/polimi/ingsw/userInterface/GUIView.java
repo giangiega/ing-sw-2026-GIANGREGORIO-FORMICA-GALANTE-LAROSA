@@ -7,9 +7,11 @@ import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.cards.tribe.TribeCard;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
+import it.polimi.ingsw.network.clientInterface.ChooseCardOperation;
 import it.polimi.ingsw.network.clientInterface.LoginOperation;
 import it.polimi.ingsw.network.clientInterface.NumPlayersOperation;
 import it.polimi.ingsw.network.ClientSender;
+import it.polimi.ingsw.network.clientInterface.PlaceTotemOperation;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,6 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -41,6 +44,12 @@ public class GUIView implements ViewInterface {
     private Label roundLabel;
     private VBox turnOrderPane;
     private HBox actionBar;
+    private int pendingUpperCount = 0;
+    private int pendingLowerCount = 0;
+    private final List<Integer> selectedUpperIndices = new ArrayList<>();
+    private final List<Integer> selectedLowerIndices = new ArrayList<>();
+    private final List<Integer> selectedBuildingUpperIndices = new ArrayList<>();
+    private final List<Integer> selectedBuildingLowerIndices = new ArrayList<>();
 
     /**
      * CountDownLatch saves GUI from race condition between main Thread and JavaFX Thread
@@ -69,7 +78,8 @@ public class GUIView implements ViewInterface {
         primaryStage.setTitle("Mesos");
         primaryStage.setWidth(1280);
         primaryStage.setHeight(720);
-        primaryStage.setResizable(false);
+        primaryStage.setMinWidth(960);
+        primaryStage.setMinHeight(600);
         primaryStage.show();
     }
 
@@ -99,6 +109,8 @@ public class GUIView implements ViewInterface {
         background.setFitWidth(1280);
         background.setFitHeight(720);
         background.setPreserveRatio(false);
+        background.fitWidthProperty().bind(primaryStage.widthProperty());
+        background.fitHeightProperty().bind(primaryStage.heightProperty());
 
         // --- Form ---
         VBox form = new VBox(12);
@@ -216,12 +228,42 @@ public class GUIView implements ViewInterface {
     @Override
     public void showLobby(List<String> lobby) {
         Platform.runLater(() -> {
-            // Per ora: mostra un testo di attesa
-            Label waiting = new Label("Waiting for other players...\nConnected: " + lobby);
-            waiting.setStyle("-fx-font-size: 18; -fx-text-fill: white;");
-            StackPane root = new StackPane(waiting);
-            root.setStyle("-fx-background-color: #2c1810;");
-            primaryStage.setScene(new Scene(root, 960, 540));
+            var bgUrl = getClass().getResource("/images/screen/login_screen.png");
+            ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
+            background.setPreserveRatio(false);
+            background.fitWidthProperty().bind(primaryStage.widthProperty());
+            background.fitHeightProperty().bind(primaryStage.heightProperty());
+
+            Label title = new Label("Waiting for players...");
+            title.setStyle(
+                    "-fx-text-fill: #f5e6c8; -fx-font-size: 22; -fx-font-weight: bold;"
+            );
+
+            VBox playerList = new VBox(10);
+            playerList.setAlignment(Pos.CENTER);
+            for (String name : lobby) {
+                Label playerLabel = new Label("✔  " + name);
+                playerLabel.setStyle(
+                        "-fx-text-fill: #e8c46a; -fx-font-size: 16;"
+                );
+                playerList.getChildren().add(playerLabel);
+            }
+
+            Label counter = new Label(lobby.size() + " connected");
+            counter.setStyle("-fx-text-fill: #aaa; -fx-font-size: 13;");
+
+            VBox content = new VBox(20, title, playerList, counter);
+            content.setAlignment(Pos.CENTER);
+            content.setPadding(new Insets(30));
+            content.setMaxWidth(300);
+            content.setMaxHeight(250);
+            content.setStyle(
+                    "-fx-background-color: rgba(0,0,0,0.55);" +
+                            "-fx-background-radius: 12;"
+            );
+
+            StackPane root = new StackPane(background, content);
+            primaryStage.setScene(new Scene(root, primaryStage.getWidth(), primaryStage.getHeight()));
         });
     }
 
@@ -235,6 +277,9 @@ public class GUIView implements ViewInterface {
             background.setFitWidth(1280);
             background.setFitHeight(720);
             background.setPreserveRatio(false);
+            background.fitWidthProperty().bind(primaryStage.widthProperty());
+            background.fitHeightProperty().bind(primaryStage.heightProperty());
+
 
             // RIGHE CARTE
             upperRowPane = new HBox(12);
@@ -271,12 +316,12 @@ public class GUIView implements ViewInterface {
             VBox turnOrderSection = new VBox(6, turnOrderTitle, turnOrderPane);
             turnOrderSection.setAlignment(Pos.CENTER);
 
-            // RIGA CENTRALE — turn order + offer track affiancati, centrati
+            // RIGA CENTRALE — turn order + offer track affiancati
             HBox middleRow = new HBox(30, turnOrderSection, offerTrackPane);
             middleRow.setAlignment(Pos.CENTER);
             middleRow.setPadding(new Insets(8, 0, 8, 0));
 
-            // RIGA BUILDING — le due righe building affiancate, centrate
+            // RIGA BUILDING — le due righe building affiancate
             HBox buildingRow = new HBox(10, buildingUpperPane, buildingLowerPane);
             buildingRow.setAlignment(Pos.CENTER);
 
@@ -419,6 +464,7 @@ public class GUIView implements ViewInterface {
                         ? "-fx-background-color: rgba(20,10,5,0.30); -fx-background-radius: 8;"
                         : "-fx-background-color: rgba(90,45,12,0.70); -fx-background-radius: 8;"
         );
+        tileBox.setUserData(tile);
         return tileBox;
     }
 
@@ -501,10 +547,7 @@ public class GUIView implements ViewInterface {
             tileImg.setFitHeight(tileH);
             tileImg.setPreserveRatio(false);
 
-            // --- LOOKUP TABLE DELLE COORDINATE Y ---
-            // Questi valori rappresentano il "centro" in pixel (su un'altezza di 180)
-            // di ogni riquadro bianco per le varie tessere.
-            // Potresti doverli ritoccare di 2-3 pixel per la perfezione assoluta.
+
             double[] yCoordinates;
             switch (numPlayers) {
                 case 2:
@@ -526,9 +569,8 @@ public class GUIView implements ViewInterface {
             Pane overlay = new Pane();
             overlay.setPrefSize(tileW, tileH);
 
-            // Usiamo un Pane anche per i nomi, così li allineiamo alle stesse coordinate Y
             Pane namesPane = new Pane();
-            namesPane.setPrefWidth(80); // Regola la larghezza in base alla lunghezza dei nomi
+            namesPane.setPrefWidth(80);
             namesPane.setPrefHeight(tileH);
 
             for (int i = 0; i < order.size(); i++) {
@@ -544,8 +586,8 @@ public class GUIView implements ViewInterface {
                     totem.setFitHeight(totemSize);
                     totem.setPreserveRatio(true);
 
-                    double offsetSinistro = 10; // Il valore che hai trovato corretto
-                    double slotCenterY = yCoordinates[i]; // Prende la Y esatta dall'array
+                    double offsetSinistro = 10;
+                    double slotCenterY = yCoordinates[i];
 
                     totem.setLayoutX(offsetSinistro);
                     totem.setLayoutY(slotCenterY - (totemSize / 2));
@@ -554,12 +596,10 @@ public class GUIView implements ViewInterface {
                     System.err.println("Totem non trovato: " + totemPath);
                 }
 
-                // Nomi giocatori
                 Label nameLabel = new Label((i + 1) + ". " + p.getName());
                 nameLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 12;");
 
-                // Allinea il testo verticalmente allo stesso centro del totem
-                // Sottraiamo circa 8 pixel (metà dell'altezza del font) per centrarlo
+
                 nameLabel.setLayoutY(yCoordinates[i] - 8);
                 namesPane.getChildren().add(nameLabel);
             }
@@ -567,7 +607,6 @@ public class GUIView implements ViewInterface {
             StackPane tileWithTotems = new StackPane(tileImg, overlay);
             tileWithTotems.setPrefSize(tileW, tileH);
 
-            // Composizione finale
             HBox fullTurnOrder = new HBox(10, namesPane, tileWithTotems);
             fullTurnOrder.setAlignment(Pos.CENTER_LEFT);
 
@@ -579,17 +618,185 @@ public class GUIView implements ViewInterface {
     public void selectCard(int upperCount, int lowerCount, int cardsUpper, int cardsLower,
                            List<TribeCard> upperRow, List<TribeCard> lowerRow,
                            List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow) {
+        Platform.runLater(() -> {
+            if (upperRowPane == null) return;
 
+            pendingUpperCount = upperCount;
+            pendingLowerCount = lowerCount;
+            selectedUpperIndices.clear();
+            selectedLowerIndices.clear();
+            selectedBuildingUpperIndices.clear();
+            selectedBuildingLowerIndices.clear();
+
+            // aggiorna le righe con i click handler
+            renderTribeRowSelectable(upperRowPane, upperRow, selectedUpperIndices, upperCount);
+            renderTribeRowSelectable(lowerRowPane, lowerRow, selectedLowerIndices, lowerCount);
+            renderBuildingRowSelectable(buildingUpperPane, buildingUpperRow, selectedBuildingUpperIndices);
+            renderBuildingRowSelectable(buildingLowerPane, buildingLowerRow, selectedBuildingLowerIndices);
+
+            // action bar con istruzione
+            actionBar.getChildren().clear();
+            Label msg = new Label(
+                    "Select " + upperCount + " from upper row  |  " + lowerCount + " from lower row"
+            );
+            msg.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
+            actionBar.getChildren().add(msg);
+            actionBar.setVisible(true);
+        });
     }
+
+    private void renderTribeRowSelectable(HBox pane, List<TribeCard> cards,
+                                          List<Integer> selectedIndices, int maxSelectable) {
+        pane.getChildren().clear();
+        for (int i = 0; i < cards.size(); i++) {
+            final int index = i;
+            ImageView iv = cardImage(cards.get(i).getImage());
+
+            if (maxSelectable > 0) {
+                iv.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, gold, 6, 0.3, 0, 0);");
+                iv.setOnMouseEntered(e -> { if (!selectedIndices.contains(index)) iv.setOpacity(0.75); });
+                iv.setOnMouseExited(e  -> { if (!selectedIndices.contains(index)) iv.setOpacity(1.0); });
+                iv.setOnMouseClicked(e -> {
+                    handleCardSelection(iv, index, selectedIndices, maxSelectable);
+                    tryConfirmSelection();
+                });
+            }
+            pane.getChildren().add(iv);
+        }
+    }
+
+    private void renderBuildingRowSelectable(HBox pane, List<BuildingCard> cards,
+                                             List<Integer> selectedIndices) {
+        pane.getChildren().clear();
+        for (int i = 0; i < cards.size(); i++) {
+            final int index = i;
+            ImageView iv = cardImage(cards.get(i).getImage());
+
+            iv.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, gold, 6, 0.3, 0, 0);");
+            iv.setOnMouseEntered(e -> { if (!selectedIndices.contains(index)) iv.setOpacity(0.75); });
+            iv.setOnMouseExited(e  -> { if (!selectedIndices.contains(index)) iv.setOpacity(1.0); });
+            iv.setOnMouseClicked(e -> {
+                handleCardSelection(iv, index, selectedIndices, Integer.MAX_VALUE);
+                tryConfirmSelection();
+            });
+            pane.getChildren().add(iv);
+        }
+    }
+
+    private void handleCardSelection(ImageView iv, int index,
+                                     List<Integer> selectedIndices, int maxSelectable) {
+        if (selectedIndices.contains(index)) {
+            selectedIndices.remove((Integer) index);
+            iv.setOpacity(1.0);
+            iv.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, gold, 6, 0.3, 0, 0);");
+        } else if (selectedIndices.size() < maxSelectable) {
+            selectedIndices.add(index);
+            iv.setOpacity(0.5);
+            iv.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, #00ff88, 10, 0.6, 0, 0);");
+        }
+    }
+
+    private void tryConfirmSelection() {
+        if (selectedUpperIndices.size() == pendingUpperCount
+                && selectedLowerIndices.size() == pendingLowerCount) {
+            sender.sendOperation(new ChooseCardOperation(
+                    new ArrayList<>(selectedUpperIndices),
+                    new ArrayList<>(selectedLowerIndices),
+                    new ArrayList<>(selectedBuildingUpperIndices),
+                    new ArrayList<>(selectedBuildingLowerIndices)
+            ));
+            actionBar.setVisible(false);
+            // rimuovi i click handler dalle righe
+            clearRowHandlers(upperRowPane);
+            clearRowHandlers(lowerRowPane);
+            clearRowHandlers(buildingUpperPane);
+            clearRowHandlers(buildingLowerPane);
+        }
+    }
+
+    private void clearRowHandlers(HBox pane) {
+        for (var node : pane.getChildren()) {
+            node.setOnMouseClicked(null);
+            node.setOnMouseEntered(null);
+            node.setOnMouseExited(null);
+            node.setOpacity(1.0);
+            node.setStyle("");
+        }
+    }
+
 
     @Override
     public void placeTotem(List<Character> freeSlots) {
+        Platform.runLater(() -> {
+            if (offerTrackPane == null) return;
 
+            actionBar.getChildren().clear();
+            Label msg = new Label("Choose an offer tile to place your totem");
+            msg.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
+            actionBar.getChildren().add(msg);
+            actionBar.setVisible(true);
+
+            // serve a rendere le tile libere cliccabili
+            for (var node : offerTrackPane.getChildren()) {
+                if (node instanceof VBox tileBox) {
+                    // recupera la lettera dal primo label dentro la tileBox
+                    OfferTile tile = (OfferTile) tileBox.getUserData();
+                    char letter = tile.getLetter();
+                    if (freeSlots.contains(letter)) {
+                        tileBox.setStyle(
+                                "-fx-background-color: rgba(200,150,0,0.75);" +
+                                        "-fx-background-radius: 8; -fx-cursor: hand;"
+                        );
+                        tileBox.setOnMouseEntered(e -> tileBox.setOpacity(0.75));
+                        tileBox.setOnMouseExited(e  -> tileBox.setOpacity(1.0));
+                        tileBox.setOnMouseClicked(e -> {
+                            sender.sendOperation(new PlaceTotemOperation(letter));
+                            actionBar.setVisible(false);
+                            clearOfferTrackHandlers();
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    private void clearOfferTrackHandlers() {
+        for (var node : offerTrackPane.getChildren()) {
+            if (node instanceof VBox tileBox) {
+                tileBox.setOnMouseClicked(null);
+                tileBox.setOnMouseEntered(null);
+                tileBox.setOnMouseExited(null);
+                tileBox.setOpacity(1.0);
+
+                // ripristina lo stile originale dalla tile salvata
+                if (tileBox.getUserData() instanceof OfferTile tile) {
+                    tileBox.setStyle(
+                            tile.getFreeOfferTile()
+                                    ? "-fx-background-color: rgba(20,10,5,0.30); -fx-background-radius: 8;"
+                                    : "-fx-background-color: rgba(90,45,12,0.70); -fx-background-radius: 8;"
+                    );
+                }
+            }
+        }
     }
 
     @Override
     public void invalidChoice(String message) {
+        Platform.runLater(() -> {
+            // aggiunge un label rosso temporaneo all'action bar
+            Label errorLabel = new Label("⚠  " + message);
+            errorLabel.setStyle(
+                    "-fx-text-fill: #ff6b6b; -fx-font-size: 13; -fx-font-weight: bold;"
+            );
+            actionBar.getChildren().add(errorLabel);
+            actionBar.setVisible(true);
 
+            // lo rimuove dopo 3 secondi
+            new Thread(() -> {
+                try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
+                Platform.runLater(() -> actionBar.getChildren().remove(errorLabel));
+            }).start();
+        });
     }
 
     @Override
