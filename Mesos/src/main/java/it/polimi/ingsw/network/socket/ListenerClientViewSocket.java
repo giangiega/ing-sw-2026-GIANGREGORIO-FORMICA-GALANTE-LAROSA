@@ -65,7 +65,6 @@ public class ListenerClientViewSocket implements Runnable {
      */
     private void handleServerClosedConnection(){
         System.out.println("From ListenerClientViewSocket: connection closed by the server");
-        //Aggiungere messaggio di fine partita
     }
 
     /**
@@ -73,6 +72,5 @@ public class ListenerClientViewSocket implements Runnable {
      */
     private void handleNetworkError(Exception e){
         System.err.println("From ListenerClientViewSocket: lost connection" +e.getMessage());
-        //Aggiungere messaggio di crash
     }
 }

@@ -35,4 +35,5 @@ abstract public class ServerClass {
         gameController = new GameController(lobbyPlayers, clientManagers);
         gameController.startGame();
     }
+    public void handleDisconnection(String playerName){};
 }

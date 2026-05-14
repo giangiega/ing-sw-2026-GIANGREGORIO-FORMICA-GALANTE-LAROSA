@@ -30,37 +30,59 @@ public class LobbyController {
      */
     public synchronized void addPlayer(String name, ColorEnum color, ClientConnection cm) {
 
-        if (gameStarted || lobbyPlayers.size() >= numPlayers) {
-            List<String> lobbyNames = new ArrayList<>();
-            for(Player p : lobbyPlayers)
-                lobbyNames.add(p.getName());
-            cm.sendEvent(new LoggedEvent(false, name, color, lobbyNames));
-            return;
-        }
+        if(gameStarted){//Game has already started: the behaviour is different
+            //Checking to see if the player was in the game
+            String disconnectedPlayer = null;
+            GameController gameController = server.getGameController();
 
-        for (Player p : lobbyPlayers) {
-            if (p.getName().equals(name) || p.getTotemColor().equals(color)){
-                cm.sendEvent(new LoggedEvent(false, name, color, new ArrayList<>()));
+            for(String S : gameController.getDisconnectedPlayers()){
+                if(S.equals(name)){//The player has left the game and now is joining back
+                    disconnectedPlayer = name;
+                    break;
+                }
+            }
+            if(disconnectedPlayer == null){//if it isn't a reconnection --> full lobby
+                List<String> lobbyNames = new ArrayList<>();
+                for(Player p : lobbyPlayers) lobbyNames.add(p.getName());
+                cm.sendEvent(new LoggedEvent(false, name, color, lobbyNames));
+            }else{//reconnection
+                clientManagers.put(name, cm);
+                cm.setPlayerName(name);
+                server.handleDisconnection(name);
+            }
+            return;
+        }else{//Game hasn't started yet-->normale behaviour
+            if (lobbyPlayers.size() >= numPlayers) {
+                List<String> lobbyNames = new ArrayList<>();
+                for(Player p : lobbyPlayers)
+                    lobbyNames.add(p.getName());
+                cm.sendEvent(new LoggedEvent(false, name, color, lobbyNames));
                 return;
             }
 
+            for (Player p : lobbyPlayers) {
+                if (p.getName().equals(name) || p.getTotemColor().equals(color)){
+                    cm.sendEvent(new LoggedEvent(false, name, color, new ArrayList<>()));
+                    return;
+                }
+
+            }
+            Player player = new Player(name, color);
+            lobbyPlayers.add(player);
+            clientManagers.put(name, cm);
+            cm.setPlayerName(name);
+
+            List<String>  playerNames = new ArrayList<>();
+            for(Player p : lobbyPlayers)
+                playerNames.add(p.getName());
+
+            cm.sendEvent(new LoggedEvent(true, name, color,playerNames));
+
+            if(lobbyPlayers.size() == numPlayers) {
+                gameStarted = true;
+                server.fullLobby(lobbyPlayers, clientManagers);
+            }
         }
-        Player player = new Player(name, color);
-        lobbyPlayers.add(player);
-        clientManagers.put(name, cm);
-        cm.setPlayerName(name);
-
-        List<String>  playerNames = new ArrayList<>();
-        for(Player p : lobbyPlayers)
-            playerNames.add(p.getName());
-
-        cm.sendEvent(new LoggedEvent(true, name, color,playerNames));
-
-        if(lobbyPlayers.size() == numPlayers) {
-            gameStarted = true;
-            server.fullLobby(lobbyPlayers, clientManagers);
-        }
-
     }
 
     public void setServer(ServerClass server){

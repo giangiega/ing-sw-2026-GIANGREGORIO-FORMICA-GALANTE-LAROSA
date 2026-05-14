@@ -225,6 +225,14 @@ public class GameController {
 
     /**
      * @author Giuse
+     * This method return the list of the names of the players who left the game
+     */
+    public List<String> getDisconnectedPlayers() {
+        return disconnectedPlayers;
+    }
+
+    /**
+     * @author Giuse
      * @return the number of connected players
      */
     public int getConnectedPlayersCount(){

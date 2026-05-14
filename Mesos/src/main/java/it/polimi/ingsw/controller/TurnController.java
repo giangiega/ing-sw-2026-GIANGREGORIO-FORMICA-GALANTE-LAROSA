@@ -153,9 +153,9 @@ public class TurnController {
 
     /**
      * @author Giuse
-     * @param playerName
-     * This method is called by the GameController when a player drops
-     * If it happens during the placement phase, if alla remaining connected
+     * @param playerName : name of the player who left the game
+     * This method is called by the GameController when a player crashes
+     * If it happens during the placement phase, if all remaining connected
      * players have already placed, it forces the game to advance to the resolve phase
      * If it happens during the resolve phase, if it was the player's turn,
      * skip him
@@ -167,9 +167,7 @@ public class TurnController {
             if (connectedCount > 0 && totemPlacedCurrRound.size() >= connectedCount) {
                 startResolvePhase(savedOfferTrack != null ? savedOfferTrack : new ArrayList<>());
             }
-            // else: the next askNextTotemPlacement call will skip the disconnected player
-        } else {
-            // Resolve phase: skip if it was their turn
+        } else {// Resolve phase: skip if it was their turn
             skipCurrentPlayer(playerName);
         }
     }

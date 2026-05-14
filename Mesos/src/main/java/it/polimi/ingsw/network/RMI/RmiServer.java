@@ -36,6 +36,17 @@ public class RmiServer extends ServerClass implements VirtualServer {
     }
 
     /**
+     * @author Giuse
+     * @param playerName : name of the player who left the game
+     * This method propagates the disconnection to the GameController
+     */
+    @Override
+    public void handleDisconnection(String playerName) {
+        if (gameController != null && playerName != null)
+            gameController.handleDisconnection(playerName);
+    }
+
+    /**
      * RmiClient calls this method to "complete" (add him to server's client list)
      * the connection with server
      * @param client
@@ -80,4 +91,5 @@ public class RmiServer extends ServerClass implements VirtualServer {
         RmiClientManager cm = clientManagerMap.get(client);
         gameController.resolveAction(cm.getPlayerName(), upperCards, lowerCards, upperBuildings, lowerBuildings);
     }
+
 }
