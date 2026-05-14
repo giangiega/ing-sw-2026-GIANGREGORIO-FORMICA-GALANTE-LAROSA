@@ -154,12 +154,12 @@ public class TUIView implements ViewInterface {
     public void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps,
                                  List<Map<CharacterEnum, List<String>>> tribeDesc,
                                  List<List<String>> buildingDesc) {
-        System.out.println(CYAN + BOLD + "\n============= PLAYERS STATUS =============" + RESET);
+        System.out.println(BLUE + BOLD + "\n============= PLAYERS STATUS =============" + RESET);
         for (int i = 0; i < names.size(); i++) {
             System.out.printf(MAGENTA + BOLD + "  %-15s  food: %2d   PP: %3d%n" + RESET,
                     names.get(i), foods.get(i), pps.get(i));
 
-            System.out.printf("  %-15s's tribe\n", names.get(i));
+            System.out.printf(CYAN + BOLD + "  %s's tribe\n" + RESET, names.get(i));
             Map<CharacterEnum, List<String>> tribe = tribeDesc.get(i);
             for (CharacterEnum type : CharacterEnum.values()) {
                 List<String> cards = tribe.get(type);
@@ -168,14 +168,14 @@ public class TUIView implements ViewInterface {
                         System.out.println("      - " + card);
                 }
             }
-            System.out.printf("  %-15s's buildings\n", names.get(i));
+            System.out.printf(CYAN + BOLD + "  %s's buildings\n" + RESET, names.get(i));
             List<String> buildings = buildingDesc.get(i);
             if (!buildings.isEmpty())
                 for(String building : buildings)
                     System.out.println("      - " + building);
             System.out.print("\n");
         }
-        System.out.println(CYAN + BOLD + "=========================================" + RESET);
+        System.out.println(BLUE + BOLD + "=========================================" + RESET);
     }
 
     @Override
@@ -333,10 +333,6 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
-    public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {
-    }
-
-    @Override
     public void showFinalScore(List<String> winners, Map< String , Integer> finalScores) {
         System.out.println(CYAN + BOLD + "\n╔══════════════════════════╗");
         System.out.println("║       GAME OVER!         ║");
@@ -351,11 +347,5 @@ public class TUIView implements ViewInterface {
                         e.getKey(), e.getValue()));
 
     }
-    @Override
-    public void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes){
-
-    }
-
-
 }
 

@@ -12,7 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-
+/**
+ * last 2 methods are dfined as default because TUI doesn't need them.
+ * Those methods used to manage the update of every player's tribe, now is managed in updateAllPLayers().
+ * GUI needs those 2 methods, so it must override them.
+ */
 public interface ViewInterface {
     Consumer<Runnable> getUIDispatcher();
     void init(ClientSender sender);
@@ -29,6 +33,6 @@ public interface ViewInterface {
     void placeTotem(List<Character> freeSlots);
     void invalidChoice(String message);
     void showFinalScore(List<String> winners, Map< String , Integer> finalScores);
-    void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe);
-    void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes);
+    default void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {}
+    default void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes) {}
 }

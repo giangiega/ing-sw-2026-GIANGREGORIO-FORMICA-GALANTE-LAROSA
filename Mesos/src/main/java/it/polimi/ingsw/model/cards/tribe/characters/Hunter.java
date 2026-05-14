@@ -41,7 +41,7 @@ public class Hunter extends CharacterCard{
 
     @Override
     public String toString(){
-        return "Hunter" +(getHunt() ? "[Hunt icon]" : "") + " | Era: " + getEra();
+        return "Hunter" + (getHunt() ? " [Hunt icon]" : "") + " | Era: " + getEra();
 
     }
 
