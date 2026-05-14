@@ -53,8 +53,12 @@ public class RmiServer extends ServerClass implements VirtualServer {
      * @throws RemoteException
      */
     @Override
-    public synchronized void connect(VirtualView client) throws RemoteException{
-        RmiClientManager cm = new RmiClientManager(client);
+    public synchronized void connect(VirtualView client) throws RemoteException {
+        RmiClientManager cm = new RmiClientManager(client, () -> {
+            RmiClientManager manager = clientManagerMap.get(client);
+            if (gameController != null && manager != null)
+                gameController.handleDisconnection(manager.getPlayerName());
+        });
         clientManagerMap.put(client, cm);
         cm.sendEvent(new AckEvent(connected == 0));
         connected++;
@@ -69,6 +73,7 @@ public class RmiServer extends ServerClass implements VirtualServer {
     @Override
     public void login(String name, ColorEnum totemColor, VirtualView client) throws RemoteException{
         RmiClientManager cm = clientManagerMap.get(client);
+        if(cm == null) return;
 
         if (lobbyController == null) {
             cm.sendEvent(new LoggedEvent(false, cm.getPlayerName(),
@@ -82,14 +87,29 @@ public class RmiServer extends ServerClass implements VirtualServer {
     @Override
     public void placeTotem(VirtualView client, char position) throws RemoteException {
         RmiClientManager cm = clientManagerMap.get(client);
-        gameController.placeTotem(cm.getPlayerName(), position);
+        if((cm != null) && (gameController != null)) {
+            gameController.placeTotem(cm.getPlayerName(), position);
+        }
     }
 
     @Override
     public void chooseCard(VirtualView client, List<Integer> upperCards, List<Integer> lowerCards,
                            List<Integer> upperBuildings, List<Integer> lowerBuildings) throws RemoteException {
         RmiClientManager cm = clientManagerMap.get(client);
-        gameController.resolveAction(cm.getPlayerName(), upperCards, lowerCards, upperBuildings, lowerBuildings);
+        if((cm != null) && (gameController != null)){
+            gameController.resolveAction(cm.getPlayerName(), upperCards, lowerCards, upperBuildings, lowerBuildings);
+        }
+    }
+    /**
+     * @author Giuse
+     * @param client
+     * This method only function is to check if the connection is still alive
+     * If the client can reach this method, the RMI connection is alive.
+     * If the connection is dead the call will throw a RemoteException on the client side,
+     * triggering the reconnect logic.
+     */
+    @Override
+    public void ping(VirtualView client) throws RemoteException {
     }
 
 }

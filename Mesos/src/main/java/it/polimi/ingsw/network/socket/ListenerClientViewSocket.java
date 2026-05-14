@@ -20,16 +20,21 @@ public class ListenerClientViewSocket implements Runnable {
     private final ViewInterface view;
     private final Gson gson;
     private final Consumer<Runnable> uiDispatcher;
+    private final Runnable onServerLost;
+
     /**
      * @param in : reading channel
      * @param view : view
      * @param uiDispatcher : dispatch for UI: Runnable for TUI
+     * @param onServerLost  callback invoked whenever the server connection drops;
+     * provided by SocketClient as a reconnection trigger
      */
-    public ListenerClientViewSocket(BufferedReader in, ViewInterface view, Consumer<Runnable> uiDispatcher){
+    public ListenerClientViewSocket(BufferedReader in, ViewInterface view, Consumer<Runnable> uiDispatcher, Runnable onServerLost){
         this.in = in;
         this.view = view;
         this.uiDispatcher = uiDispatcher;
         this.gson = GsonFactory.serverEventGson();
+        this.onServerLost = onServerLost;
     }
     @Override
     public void run() {
@@ -62,15 +67,27 @@ public class ListenerClientViewSocket implements Runnable {
 
     /**
      * It shows that the connection was closed without any errors
+     * Notifies the view and triggers reconnection: even a clean close could be
+     * caused by a server-side crash that flushed the socket before dying.
+     * If the game is truly over the server will reject the reconnection attempt.
      */
     private void handleServerClosedConnection(){
         System.out.println("From ListenerClientViewSocket: connection closed by the server");
+        uiDispatcher.accept(() ->
+                view.showPlayerDisconnected("server"));
+        onServerLost.run();
     }
 
     /**
+     * @param e : thrown exception
      * It shows that the connection was lost
+     * This method is called when the socket throws an IOException mid-stream.
+     * Notifies the view and triggers reconnection.
      */
     private void handleNetworkError(Exception e){
         System.err.println("From ListenerClientViewSocket: lost connection" +e.getMessage());
+        uiDispatcher.accept(() ->
+                view.showPlayerDisconnected("server"));
+        onServerLost.run();
     }
 }

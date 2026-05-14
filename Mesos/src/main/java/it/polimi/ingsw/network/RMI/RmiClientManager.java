@@ -15,16 +15,19 @@ public class RmiClientManager implements ClientConnection {
     private String playerName;
 
     private final BlockingQueue<ServerEvent> eventQueue;
-
+    private final Runnable onDisconnect;
 
     /**
      * constructor, starts a separate thread for handling the correct parallel execution of
      * updateViewRmi between clients: as soon as there is an event to be sent for that client,
      * it is queued and sent by the thread dedicated to that client.
      * @param client
+     * @param onDisconnect : invoked when a RemoteException signals that the client can no longer
+     *                       be reached
      */
-    public RmiClientManager(VirtualView client){
+    public RmiClientManager(VirtualView client, Runnable onDisconnect) {
         this.client = client;
+        this.onDisconnect = onDisconnect;
         this.eventQueue = new LinkedBlockingQueue<>();
 
         new Thread(() -> {
@@ -61,6 +64,9 @@ public class RmiClientManager implements ClientConnection {
                 break;
             } catch (RemoteException e) {
                 System.err.println("RMI communication error with " + playerName);
+                if(playerName != null){
+                    onDisconnect.run();
+                }
                 break;
             }
         }

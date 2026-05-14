@@ -11,6 +11,7 @@ import it.polimi.ingsw.model.cards.tribe.TribeCard;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
+import javax.swing.text.View;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -19,16 +20,25 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     private static final String SERVER_NAME = "MesosServer";
+    private static final int HEARTBEAT_INTERVAL_S = 5;
+    private static final int INITIAL_RETRY_DELAY_S = 2;
+    private static final int MAX_RETRY_DELAY_S = 30;
 
     private final String host;
     private final int port;
 
     // Set in connect(); used by all VirtualView callbacks
     private ViewInterface view;
+
+    private volatile VirtualServer server;
+    private ScheduledExecutorService heartbeat;
 
     /**
      * @param host: RMI registry host
@@ -43,32 +53,104 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param view: the concrete view (TUIView or GUIView) to notify
+     * @param view : concrete view (GUI or TUI) to notify
+     * @throws IOException : if the registry lookup or initial remote call fails
+     * @throws RemoteException
+     */
+    public void connect(ViewInterface view) throws IOException {
+        this.view = view;
+        doConnect();
+    }
+
+    /**
      * @throws IOException : if the registry lookup or remote call fails
-     * Connects to the RMI server and wires up the full client stack: by
+     * (Ri)Connects to the RMI server and wires up the full client stack: by
      * looking up the VirtualServer stub in the registry.
      * It also creates the ClientViewRMI and injects it into the view via
      * ViewInterface.init()so that the view can send operations.
      */
-    public void connect(ViewInterface view) throws IOException {
+    public void doConnect() throws IOException {
         try {
             //looking up the VirtualServer stub in the registry and creates the ClientViewRMI
             Registry registry = LocateRegistry.getRegistry(host, port);
-            VirtualServer server = (VirtualServer) registry.lookup(SERVER_NAME);
+            server = (VirtualServer) registry.lookup(SERVER_NAME);
 
             // Inject the sender: from this point the view can call sendOperation()
             ClientViewRMI sender = new ClientViewRMI(server, this);
             view.init(sender);
 
-            // Store for callbacks
-            this.view = view;
+            // Store for callbacks using connect
+            server.connect(this);
 
             // Register this callback object — server replies with AckEvent
             server.connect(this);
 
+            startHeartbeat();
+
         } catch (NotBoundException e) {
             throw new IOException("Server not found in RMI registry: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * This method starts a periodic ping loop.  If any ping call throws a
+     * RemoteException the connection is considered lost: the heartbeat
+     * is stopped, the view is notified, and a reconnection retry loop begins.
+     */
+    private void startHeartbeat() {
+        stopHeartbeat();
+        heartbeat = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "rmi-heartbeat");
+            t.setDaemon(true); // must not prevent JVM shutdown
+            return t;
+        });
+        heartbeat.scheduleAtFixedRate(() -> {
+            try {
+                server.ping(this);
+            } catch (RemoteException e) {
+                System.err.println("[RmiClient] heartbeat failed: " + e.getMessage());
+                stopHeartbeat();
+                view.getUIDispatcher().accept(() ->
+                        view.showPlayerDisconnected("server"));
+                scheduleReconnect();
+            }
+        }, HEARTBEAT_INTERVAL_S, HEARTBEAT_INTERVAL_S, TimeUnit.SECONDS);
+    }
+
+    /** Shuts down the heartbeat scheduler without blocking. */
+    private void stopHeartbeat() {
+        if (heartbeat != null && !heartbeat.isShutdown()) {
+            heartbeat.shutdownNow();
+            heartbeat = null;
+        }
+    }
+
+    /**
+     * This method launches a background thread that retries doConnect() with
+     * exponential backoff (2 s → 4 s → … capped at 30 s).
+     * Once the connection is re-established the player is prompted to log in again.
+     * The server's LobbyController will recognise
+     * the nickname as a reconnection and resume the game.
+     */
+    private void scheduleReconnect() {
+        new Thread(() -> {
+            int delayS = INITIAL_RETRY_DELAY_S;
+            while (true) {
+                System.out.println("[RmiClient] reconnecting in " + delayS + "s …");
+                try {
+                    TimeUnit.SECONDS.sleep(delayS);
+                    doConnect();
+                    view.getUIDispatcher().accept(view::askLogin);
+                    return;
+                } catch (IOException e) {
+                    System.err.println("[RmiClient] reconnect failed: " + e.getMessage());
+                    delayS = Math.min(delayS * 2, MAX_RETRY_DELAY_S);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+        }, "rmi-reconnect").start();
     }
 
     /**
@@ -240,10 +322,51 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onEndGame(List<String> winners, Map<String, Integer> finalScores) throws RemoteException {
         view.showFinalScore(winners, finalScores);
     }
+
+    /**
+     * @param names
+     * @param tribes
+     * @throws RemoteException
+     */
     @Override
     public void onUpdateAllTribes(List<String> names,
                                   List<Map<CharacterEnum, List<CharacterCard>>> tribes)
             throws RemoteException {
         view.updateAllTribes(names, tribes);
+    }
+
+    /**
+     * @param playerName
+     * @throws RemoteException
+     */
+    @Override
+    public void onPlayerDisconnected(String playerName) throws RemoteException {
+        view.getUIDispatcher().accept(() -> view.showPlayerDisconnected(playerName));
+    }
+
+    /**
+     * @param playerName
+     * @throws RemoteException
+     */
+    @Override
+    public void onPlayerReconnected(String playerName) throws RemoteException {
+        view.getUIDispatcher().accept(() -> view.showPlayerReconnected(playerName));
+    }
+
+    /**
+     * @param timeoutSeconds seconds before the remaining player is declared winner.
+     * @throws RemoteException
+     */
+    @Override
+    public void onGameSuspended(int timeoutSeconds) throws RemoteException {
+        view.getUIDispatcher().accept(() -> view.showGameSuspended(timeoutSeconds));
+    }
+
+    /**
+     * @throws RemoteException
+     */
+    @Override
+    public void onGameResumed() throws RemoteException {
+        view.getUIDispatcher().accept(view::showGameResumed);
     }
 }
