@@ -31,4 +31,31 @@ public interface ViewInterface {
     void showFinalScore(List<String> winners, Map< String , Integer> finalScores);
     void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe);
     void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes);
+
+    /**
+     * @author Giuse
+     * @param playerName : name of the player who left the game
+     * This method notifies that a player has disconnected mid-game
+     */
+    void showPlayerDisconnected(String playerName);
+
+    /**
+     * @author Giuse
+     * @param playerName : name of the player who returned to the game
+     * This method notifies that a previously disconnected player has reconnected
+     */
+    void showPlayerReconnected(String playerName);
+
+    /**
+     * @author Giuse
+     * @param timeoutSeconds seconds before the remaining player is declared winner by timeout
+     * This method notifies that only one player is left and the game is now paused
+     */
+    void showGameSuspended(int timeoutSeconds);
+
+    /**
+     * @author Giuse
+     * This method notifies that a second player reconnected and the game is resuming
+     */
+    void showGameResumed();
 }

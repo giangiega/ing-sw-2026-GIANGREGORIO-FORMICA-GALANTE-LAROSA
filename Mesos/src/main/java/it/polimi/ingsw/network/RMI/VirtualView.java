@@ -72,4 +72,19 @@ public interface VirtualView extends Remote {
     void onUpdateAllTribes(List<String> names,
                            List<Map<CharacterEnum, List<CharacterCard>>> tribes)
             throws RemoteException;
+
+    /** A player has disconnected mid-game. */
+    void onPlayerDisconnected(String playerName) throws RemoteException;
+
+    /** A previously disconnected player has reconnected. */
+    void onPlayerReconnected(String playerName) throws RemoteException;
+
+    /**
+     * The game is now suspended because only one player is connected.
+     * @param timeoutSeconds seconds before the remaining player is declared winner.
+     */
+    void onGameSuspended(int timeoutSeconds) throws RemoteException;
+
+    /** A second player reconnected: the suspended game is resuming. */
+    void onGameResumed() throws RemoteException;
 }

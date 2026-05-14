@@ -11,19 +11,35 @@ import it.polimi.ingsw.model.decks.Deck;
 import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.game.GameConfig;
 import it.polimi.ingsw.network.ClientConnection;
-import it.polimi.ingsw.network.socket.ClientManagerSocket;
-import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.serverInterface.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 public class GameController {
     private final List<Player> players;
     private final Map<String, ClientConnection> clientManagers;
     private Game game;
     private TurnController turnController;
+
+    private List<String> disconnectedPlayers;
+    /**
+     * Timer used when only one player is left connected.
+     * If no one reconnects within SUSPENSION_TIMEOUT_SECONDS, the sole
+     * remaining player is declared the winner.
+     */
+    private static final int SUSPENSION_TIMEOUT_SECONDS = 60;
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture<?> suspensionFuture;
+
+
 
     public GameController(List<Player> players, Map<String, ClientConnection> clientManagers) {
         this.players = players;
@@ -206,5 +222,126 @@ public class GameController {
         List<Player> winners = game.getWinner(finalScores);
         broadcastEvent(new EndGameEvent(winners, finalScores));
     }
+
+    /**
+     * @author Giuse
+     * @return the number of connected players
+     */
+    public int getConnectedPlayersCount(){
+        int connectedPlayers = 0;
+        for(Player p : players){
+            if(!disconnectedPlayers.contains(p.getName())){
+                connectedPlayers++;
+            }
+        }
+        return connectedPlayers;
+    }
+
+    /**
+     * @author Giuse
+     * @return true if the player is disconnected
+     */
+    public boolean isDisconnectedPlayer(String playerName){
+       if(disconnectedPlayers.contains(playerName))
+           return true;
+       return false;
+    }
+
+    /**
+     * @author Giuse
+     * @param playerName : name of the disconnected player
+     * This method put the player in the disconnected players' list and notify this to all other players
+     * via PlayerDisconnectedEvent. After that, if there's only one player left in the lobby, it starts a countdown.
+     * If no player reconnect, the only remaining one is proclaimed as winner and endGame() is called.
+     * Otherwise, it collabs with TurnController to skip the disconnected players' turns
+     */
+    public synchronized void handleDisconnection(String playerName) {
+        //Checking for unknown or already-disconnected player
+        if (getPlayerByName(playerName) == null) return;
+        if (disconnectedPlayers.contains(playerName)) return;
+
+        disconnectedPlayers.add(playerName);
+        broadcastEvent(new PlayerDisconnectedEvent(playerName));
+
+        // Nothing more to do if the game hasn't started
+        if (game == null || turnController == null) return;
+
+        int connectedCount = getConnectedPlayersCount();
+
+        if (connectedCount <= 1) { //one or less player left to account for empty game
+            broadcastEvent(new GameSuspendedEvent(SUSPENSION_TIMEOUT_SECONDS));
+            startSuspensionTimer();
+        } else{
+            turnController.onPlayerDisconnected(playerName);
+        }
+    }
+
+    /**
+     * @author Giuse
+     * @param playerName : player the returned
+     * This method remove the player's name from the disconnected list. After that, it updates his entry
+     * in the clientManagers and stops the clock, if one had even started. It sends the current board state
+     * to the player
+     */
+    public synchronized void handleReconnection(String playerName, ClientConnection newCm) {
+        if (!disconnectedPlayers.contains(playerName)) return;//Wrong client
+
+        disconnectedPlayers.remove(playerName);
+        clientManagers.put(playerName, newCm);
+
+        cancelSuspensionTimer();
+        broadcastEvent(new PlayerReconnectedEvent(playerName));
+
+        // Send the full current game state to the reconnected client so their
+        // view is up-to-date before they need to act.
+        if (game != null) {
+            newCm.sendEvent(new UpdateRoundEvent(game.getCurrentRound()));
+            newCm.sendEvent(new GameStartedEvent(
+                    game.getBoard().getOfferTrack(),
+                    game.getBoard().getTurnOrderTile(),
+                    game.getBoard().getUpperRow(),
+                    game.getBoard().getLowerRow(),
+                    game.getBoard().getBuildingUpperRow(),
+                    game.getBoard().getBuildingLowerRow()));
+            newCm.sendEvent(new UpdateAllPlayersEvent(players));
+
+            int connectedCount = getConnectedPlayersCount();
+            if (connectedCount >= 2) {
+                broadcastEvent(new GameResumedEvent());
+                turnController.resumeAfterSuspension();
+            }
+        }
+    }
+    /**********Timer handling**********/
+
+    /**
+     * @author Giuse
+     * This method cancel any ongoing timer
+     */
+    private void cancelSuspensionTimer() {
+        if (suspensionFuture != null && !suspensionFuture.isDone()) {
+            suspensionFuture.cancel(false);
+            suspensionFuture = null;
+        }
+    }
+
+    /**
+     * @author Giuse
+     * This method starts a new timer
+     */
+    private void startSuspensionTimer() {
+        cancelSuspensionTimer(); // cancel any existing timer before starting a new one
+        suspensionFuture = scheduler.schedule(() -> {
+            synchronized (this) {
+                // Double-check: if someone reconnected, the timer was already cancelled
+                if (getConnectedPlayersCount() >= 2) return;
+                // Declare the last connected player as winner
+                endGame();
+            }
+        }, SUSPENSION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+    }
+
+
+
 
 }
