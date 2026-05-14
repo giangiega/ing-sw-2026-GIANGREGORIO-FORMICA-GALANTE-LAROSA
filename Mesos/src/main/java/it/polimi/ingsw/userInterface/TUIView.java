@@ -151,11 +151,30 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
-    public void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps) {
+    public void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps,
+                                 List<Map<CharacterEnum, List<String>>> tribeDesc,
+                                 List<List<String>> buildingDesc) {
         System.out.println(CYAN + BOLD + "\n============= PLAYERS STATUS =============" + RESET);
-        for (int i = 0; i < names.size(); i++)
-            System.out.printf("  %-15s  food: %2d   PP: %3d%n",
+        for (int i = 0; i < names.size(); i++) {
+            System.out.printf(MAGENTA + BOLD + "  %-15s  food: %2d   PP: %3d%n" + RESET,
                     names.get(i), foods.get(i), pps.get(i));
+
+            System.out.printf("  %-15s's tribe\n", names.get(i));
+            Map<CharacterEnum, List<String>> tribe = tribeDesc.get(i);
+            for (CharacterEnum type : CharacterEnum.values()) {
+                List<String> cards = tribe.get(type);
+                if (cards != null && !cards.isEmpty()) {
+                    for (String card : cards)
+                        System.out.println("      - " + card);
+                }
+            }
+            System.out.printf("  %-15s's buildings\n", names.get(i));
+            List<String> buildings = buildingDesc.get(i);
+            if (!buildings.isEmpty())
+                for(String building : buildings)
+                    System.out.println("      - " + building);
+            System.out.print("\n");
+        }
         System.out.println(CYAN + BOLD + "=========================================" + RESET);
     }
 
@@ -315,11 +334,6 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {
-        System.out.println(MAGENTA + BOLD + "\n--- Your updated tribe ---" + RESET);
-        for (Map.Entry<CharacterEnum, List<CharacterCard>> entry : tribe.entrySet()) {
-            if (!entry.getValue().isEmpty())
-                System.out.println("  " + entry.getKey() + ": " + entry.getValue().size());
-        }
     }
 
     @Override
@@ -339,13 +353,7 @@ public class TUIView implements ViewInterface {
     }
     @Override
     public void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes){
-        for (int i = 0; i < names.size(); i++) {
-            System.out.println(MAGENTA + BOLD + names.get(i) + "'s tribe:" + RESET);
-            for (var entry : tribes.get(i).entrySet()) {
-                if (!entry.getValue().isEmpty())
-                    System.out.println("  " + entry.getKey() + ": " + entry.getValue().size());
-            }
-        }
+
     }
 
 

@@ -46,7 +46,8 @@ public interface VirtualView extends Remote {
 
     /** Global player status update (food and prestige points for every player). */
     void onUpdateAllPlayers(List<String> names, List<Integer> foods,
-                            List<Integer> pps) throws RemoteException;
+                            List<Integer> pps, List<Map<CharacterEnum, List<String>>> tribeDesc,
+                            List<List<String>> buildingDesc) throws RemoteException;
 
     /** The offer track and turn-order tile have changed. */
     void onUpdateOfferTrack(List<OfferTile> offerTrack,

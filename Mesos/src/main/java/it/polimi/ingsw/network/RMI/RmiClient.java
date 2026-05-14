@@ -44,7 +44,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     /**
      * @param view: the concrete view (TUIView or GUIView) to notify
-     * @throws IOException : if the registry lookup or remote call fails
+     * @throws IOException if the registry lookup or remote call fails
      * Connects to the RMI server and wires up the full client stack: by
      * looking up the VirtualServer stub in the registry.
      * It also creates the ClientViewRMI and injects it into the view via
@@ -174,8 +174,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onUpdateAllPlayers(List<String> names, List<Integer> foods,
-                                   List<Integer> pps) throws RemoteException {
-        view.updateAllPlayers(names, foods, pps);
+                                   List<Integer> pps,
+                                   List<Map<CharacterEnum, List<String>>> tribeDesc,
+                                   List<List<String>> buildingDesc) throws RemoteException {
+        view.updateAllPlayers(names, foods, pps, tribeDesc, buildingDesc);
     }
 
     /**

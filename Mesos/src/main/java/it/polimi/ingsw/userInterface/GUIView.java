@@ -531,7 +531,9 @@ public class GUIView implements ViewInterface {
     }
 
     @Override
-    public void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps) { // vedere di aggiungere , List<Map<Character,Integer>> tribeCounts, ma bisogna cambiare la TUI
+    public void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps,
+                                 List<Map<CharacterEnum, List<String>>> tribeDesc,
+                                 List<List<String>> buildingDesc) {
         Platform.runLater(() -> {
             if(playersStatus == null) return; // quando la board non è pronta
 

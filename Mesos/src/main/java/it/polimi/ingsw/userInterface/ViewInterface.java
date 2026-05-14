@@ -22,7 +22,7 @@ public interface ViewInterface {
     void showGameStart();
     void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow, List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow);
     void updateOfferTrack(List<OfferTile> offerTrack);
-    void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps);
+    void updateAllPlayers(List<String> names, List<Integer> foods, List<Integer> pps, List<Map<CharacterEnum, List<String>>> tribeDesc,  List<List<String>> buildingDesc);
     void updateRound(int currentRound);
     void updateTurnOrder(TurnOrderTile turnOrder);
     void selectCard(int upperCount, int lowerCount, int cardsUpper, int cardsLower,List<TribeCard> upperRow, List<TribeCard> lowerRow, List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow);
