@@ -46,9 +46,8 @@ public class LobbyController {
                 for(Player p : lobbyPlayers) lobbyNames.add(p.getName());
                 cm.sendEvent(new LoggedEvent(false, name, color, lobbyNames));
             }else{//reconnection
-                clientManagers.put(name, cm);
                 cm.setPlayerName(name);
-                server.handleDisconnection(name);
+                server.getGameController().handleReconnection(name, cm);
             }
             return;
         }else{//Game hasn't started yet-->normale behaviour

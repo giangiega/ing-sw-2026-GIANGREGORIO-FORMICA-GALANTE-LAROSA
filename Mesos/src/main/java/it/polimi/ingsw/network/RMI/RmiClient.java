@@ -82,9 +82,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             // Store for callbacks using connect
             server.connect(this);
 
-            // Register this callback object — server replies with AckEvent
-            server.connect(this);
-
             startHeartbeat();
 
         } catch (NotBoundException e) {

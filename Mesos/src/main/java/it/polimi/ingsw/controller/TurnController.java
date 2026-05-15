@@ -177,13 +177,13 @@ public class TurnController {
      * Resends the appropriate information to the player currently expected to act.
      * Called by GameController after the game resumes from suspension.
      */
-    public void resumeAfterSuspension() {
-        if (!inResolvingPhase) {
-            if (savedTurnOrderTile != null) {
-                askNextTotemPlacement(savedTurnOrderTile);
-            }
-        } else {
-            // Skip disconnected players and ask the next connected one
+    public void resumeAfterSuspension(TurnOrderTile currentTile, List<OfferTile> currentTrack) {
+        this.savedTurnOrderTile = currentTile;
+        this.savedOfferTrack = currentTrack;
+
+        if (!inResolvingPhase) {//PlaceTotem phase: ask next player
+            askNextTotemPlacement(currentTile);
+        } else {//Resolve phase: skip disconnected players
             advanceResolvePhase();
         }
     }

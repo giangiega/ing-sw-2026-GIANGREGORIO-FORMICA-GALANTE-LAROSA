@@ -44,6 +44,7 @@ public class GameController {
     public GameController(List<Player> players, Map<String, ClientConnection> clientManagers) {
         this.players = players;
         this.clientManagers = clientManagers;
+        this.disconnectedPlayers = new ArrayList<>();
     }
 
     /**
@@ -312,11 +313,19 @@ public class GameController {
                     game.getBoard().getBuildingUpperRow(),
                     game.getBoard().getBuildingLowerRow()));
             newCm.sendEvent(new UpdateAllPlayersEvent(players));
+            newCm.sendEvent(new UpdateAllTribesEvent(players));
+            Player p = getPlayerByName(playerName);
+            if (p != null) {
+                newCm.sendEvent(new ValidCardsEvent(p.getTribe()));
+            }
 
             int connectedCount = getConnectedPlayersCount();
             if (connectedCount >= 2) {
                 broadcastEvent(new GameResumedEvent());
-                turnController.resumeAfterSuspension();
+                turnController.resumeAfterSuspension(
+                        game.getBoard().getTurnOrderTile(),
+                        game.getBoard().getOfferTrack()
+                );
             }
         }
     }
