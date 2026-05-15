@@ -166,6 +166,9 @@ public class TurnController {
             int connectedCount = gameController.getConnectedPlayersCount();
             if (connectedCount > 0 && totemPlacedCurrRound.size() >= connectedCount) {
                 startResolvePhase(savedOfferTrack != null ? savedOfferTrack : new ArrayList<>());
+            }else if (connectedCount > 0) {
+                //THe disconnected player was placing, so we ask the next connected player
+                askNextTotemPlacement(savedTurnOrderTile);
             }
         } else {// Resolve phase: skip if it was their turn
             skipCurrentPlayer(playerName);

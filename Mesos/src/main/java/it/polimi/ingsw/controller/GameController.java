@@ -39,6 +39,9 @@ public class GameController {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture<?> suspensionFuture;
 
+    private boolean gameOver = false;
+    private boolean isSuspended = false;
+
 
 
     public GameController(List<Player> players, Map<String, ClientConnection> clientManagers) {
@@ -81,6 +84,7 @@ public class GameController {
      * Sends an event that updates the board with the totem.
      */
     public synchronized void placeTotem(String playerName, char letter) {
+        if(isSuspended) return;//Ignore input if the game is suspended
         Player p = getPlayerByName(playerName);
         if(p == null)
             return;
@@ -115,6 +119,7 @@ public class GameController {
     public synchronized void resolveAction(String playerName,
                                            List<Integer> upperCards, List<Integer> lowerCards,
                                            List<Integer> upperBuildings, List<Integer> lowerBuildings) {
+        if(isSuspended) return;//Ignore input while suspended
         if (!playerName.equals(turnController.getCurrentResolvingPlayer()))
             return;
 
@@ -190,7 +195,15 @@ public class GameController {
     // helper methods to access players or tiles into the previous methods
     private void broadcastEvent(ServerEvent serverEvent) {
         for(ClientConnection cm : clientManagers.values()) {
-            cm.sendEvent(serverEvent);
+            String name = cm.getPlayerName();
+            if(name != null && disconnectedPlayers.contains(name)) {
+                continue;
+            }
+            try{
+                cm.sendEvent(serverEvent);
+            }catch(Exception e){
+                System.out.println("Broadcast: cannot send event to player" + name + ":" + e.getMessage());
+            }
         }
     }
 
@@ -219,9 +232,28 @@ public class GameController {
     }
 
     private void endGame() {
+        gameOver = true;//No more reconnection if the game has ended
         Map<Player, Integer> finalScores = game.calculateFinalScores();
+        List<Player> listOfToRemovePlayers =  new ArrayList<>();
+        for(Player p : finalScores.keySet()) {
+            if(getDisconnectedPlayers().contains(p.getName())) {
+                listOfToRemovePlayers.add(p);
+            }
+        }
+        for(Player p : listOfToRemovePlayers) {
+            finalScores.remove(p);
+        }
         List<Player> winners = game.getWinner(finalScores);
         broadcastEvent(new EndGameEvent(winners, finalScores));
+    }
+
+    /**
+     * @author Giuse
+     * @return gameOver
+     * This method tells if the game is over
+     */
+    public boolean getGameOver() {
+        return gameOver;
     }
 
     /**
@@ -293,10 +325,13 @@ public class GameController {
      * to the player
      */
     public synchronized void handleReconnection(String playerName, ClientConnection newCm) {
+        if(gameOver) return;//You can't reconnect to the game if it is over
         if (!disconnectedPlayers.contains(playerName)) return;//Wrong client
 
         disconnectedPlayers.remove(playerName);
         clientManagers.put(playerName, newCm);
+
+        boolean wasSuspended = isSuspended;
 
         cancelSuspensionTimer();
         broadcastEvent(new PlayerReconnectedEvent(playerName));
@@ -305,9 +340,10 @@ public class GameController {
         // view is up-to-date before they need to act.
         if (game != null) {
             newCm.sendEvent(new UpdateRoundEvent(game.getCurrentRound()));
-            newCm.sendEvent(new GameStartedEvent(
+            newCm.sendEvent(new UpdateOfferTrackEvent(
                     game.getBoard().getOfferTrack(),
-                    game.getBoard().getTurnOrderTile(),
+                    game.getBoard().getTurnOrderTile()));
+            newCm.sendEvent(new UpdateRowsEvent(
                     game.getBoard().getUpperRow(),
                     game.getBoard().getLowerRow(),
                     game.getBoard().getBuildingUpperRow(),
@@ -319,8 +355,7 @@ public class GameController {
                 newCm.sendEvent(new ValidCardsEvent(p.getTribe()));
             }
 
-            int connectedCount = getConnectedPlayersCount();
-            if (connectedCount >= 2) {
+            if (wasSuspended) {
                 broadcastEvent(new GameResumedEvent());
                 turnController.resumeAfterSuspension(
                         game.getBoard().getTurnOrderTile(),
@@ -336,6 +371,7 @@ public class GameController {
      * This method cancel any ongoing timer
      */
     private void cancelSuspensionTimer() {
+        isSuspended = false;//If I cancel the timer, the game is not suspended anymore
         if (suspensionFuture != null && !suspensionFuture.isDone()) {
             suspensionFuture.cancel(false);
             suspensionFuture = null;
@@ -347,7 +383,12 @@ public class GameController {
      * This method starts a new timer
      */
     private void startSuspensionTimer() {
-        cancelSuspensionTimer(); // cancel any existing timer before starting a new one
+        // Cancel any in-flight future WITHOUT clearing isSuspended
+        if (suspensionFuture != null && !suspensionFuture.isDone()) {
+            suspensionFuture.cancel(false);
+            suspensionFuture = null;
+        }
+        isSuspended = true; // Bug 5 & 7: mark game as suspended only after cleaning up
         suspensionFuture = scheduler.schedule(() -> {
             synchronized (this) {
                 // Double-check: if someone reconnected, the timer was already cancelled

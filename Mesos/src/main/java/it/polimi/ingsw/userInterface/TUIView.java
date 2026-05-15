@@ -350,23 +350,23 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void showPlayerDisconnected(String playerName) {
-        System.out.println(RED + BOLD + "\n⚠ Player disconnected: " + RESET + playerName + RESET);
+        System.out.println(RED + BOLD + "\nPlayer disconnected: " + RESET + playerName + RESET);
     }
 
     @Override
     public void showPlayerReconnected(String playerName) {
-        System.out.println(GREEN + BOLD + "\n✓ Player reconnected: " + RESET + playerName + RESET);
+        System.out.println(GREEN + BOLD + "\nPlayer reconnected: " + RESET + playerName + RESET);
     }
 
     @Override
     public void showGameSuspended(int timeoutSeconds) {
-        System.out.println(YELLOW + BOLD + "\n⏸ Game suspended! Waiting for players to reconnect... " + RESET);
+        System.out.println(YELLOW + BOLD + "\nGame suspended! Waiting for players to reconnect... " + RESET);
         System.out.println(YELLOW + "Timeout: " + timeoutSeconds + " seconds. If no one returns, the remaining player wins." + RESET);
     }
 
     @Override
     public void showGameResumed() {
-        System.out.println(GREEN + BOLD + "\n▶ Game resumed! Continuing..." + RESET);
+        System.out.println(GREEN + BOLD + "\nGame resumed! Continuing..." + RESET);
     }
 
 

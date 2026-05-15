@@ -31,9 +31,16 @@ public class LobbyController {
     public synchronized void addPlayer(String name, ColorEnum color, ClientConnection cm) {
 
         if(gameStarted){//Game has already started: the behaviour is different
+            GameController gameController = server.getGameController();
+            if(gameController.getGameOver()){//Work with GameController to stop reconnection after the game is over
+                List<String> lobbyNames = new ArrayList<>();
+                for(Player p : lobbyPlayers) lobbyNames.add(p.getName());
+                cm.sendEvent(new LoggedEvent(false, name, color, lobbyNames));
+                return;
+            }
+
             //Checking to see if the player was in the game
             String disconnectedPlayer = null;
-            GameController gameController = server.getGameController();
 
             for(String S : gameController.getDisconnectedPlayers()){
                 if(S.equals(name)){//The player has left the game and now is joining back
