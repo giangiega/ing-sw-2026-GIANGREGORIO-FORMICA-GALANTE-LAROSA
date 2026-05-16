@@ -4,6 +4,7 @@
 package it.polimi.ingsw.network.RMI;
 
 import it.polimi.ingsw.enums.CharacterEnum;
+import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
@@ -87,4 +88,6 @@ public interface VirtualView extends Remote {
 
     /** A second player reconnected: the suspended game is resuming. */
     void onGameResumed() throws RemoteException;
+    /** A reconnected player needs its old totem's color*/
+    void onReconnectedTotem(ColorEnum totemColor) throws RemoteException;
 }

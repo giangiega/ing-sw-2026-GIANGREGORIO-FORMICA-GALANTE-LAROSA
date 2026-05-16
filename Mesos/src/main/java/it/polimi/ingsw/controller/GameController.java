@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.exceptions.InvalidPlayerActionException;
 import it.polimi.ingsw.model.*;
@@ -290,6 +291,16 @@ public class GameController {
 
     /**
      * @author Giuse
+     * @param playerName
+     * @return null if the player doesn't exist or the totem's color
+     */
+    public ColorEnum getPlayerColor(String playerName) {
+        Player p = getPlayerByName(playerName);
+        return p != null ? p.getTotemColor() : null;
+    }
+
+    /**
+     * @author Giuse
      * @param playerName : name of the disconnected player
      * This method put the player in the disconnected players' list and notify this to all other players
      * via PlayerDisconnectedEvent. After that, if there's only one player left in the lobby, it starts a countdown.
@@ -334,6 +345,9 @@ public class GameController {
         boolean wasSuspended = isSuspended;
 
         cancelSuspensionTimer();
+
+        newCm.sendEvent(new ReconnectedTotemEvent(getPlayerByName(playerName).getTotemColor()));
+
         broadcastEvent(new PlayerReconnectedEvent(playerName));
 
         // Send the full current game state to the reconnected client so their

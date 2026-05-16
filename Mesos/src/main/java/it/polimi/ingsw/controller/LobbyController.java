@@ -52,8 +52,14 @@ public class LobbyController {
                 for(Player p : lobbyPlayers) lobbyNames.add(p.getName());
                 cm.sendEvent(new LoggedEvent(false, name, color, lobbyNames));
             }else{//reconnection
+                ColorEnum originalColor = gameController.getPlayerColor(name);
+
+                List<String> lobbyNames = new ArrayList<>();
+                for(Player p : lobbyPlayers) lobbyNames.add(p.getName());
+                cm.sendEvent(new LoggedEvent(true, name, originalColor, lobbyNames));
+
                 cm.setPlayerName(name);
-                server.getGameController().handleReconnection(name, cm);
+                gameController.handleReconnection(name, cm);
             }
             return;
         }else{//Game hasn't started yet-->normale behaviour

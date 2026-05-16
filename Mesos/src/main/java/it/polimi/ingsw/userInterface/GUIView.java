@@ -1043,4 +1043,8 @@ public class GUIView implements ViewInterface {
             alert.show();
         });
     }
+    @Override
+    public void showReconnectedTotem(ColorEnum totemColor) {
+       //Messaggio che dice al player che il suo totem originale era di quel colore;
+    }
 }

@@ -369,6 +369,9 @@ public class TUIView implements ViewInterface {
         System.out.println(GREEN + BOLD + "\nGame resumed! Continuing..." + RESET);
     }
 
-
+    @Override
+    public void showReconnectedTotem(ColorEnum totemColor) {
+        System.out.println(YELLOW + "\nYour original totem was" + totemColor + RESET);
+    }
 }
 

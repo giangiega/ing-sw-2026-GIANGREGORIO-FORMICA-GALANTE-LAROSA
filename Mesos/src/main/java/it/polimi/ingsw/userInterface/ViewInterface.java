@@ -1,6 +1,7 @@
 package it.polimi.ingsw.userInterface;
 
 import it.polimi.ingsw.enums.CharacterEnum;
+import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
@@ -58,4 +59,11 @@ public interface ViewInterface {
      * This method notifies that a second player reconnected and the game is resuming
      */
     void showGameResumed();
+
+    /**
+     * @author Giuse
+     * @param totemColor
+     * This method tells the reconnected player what the color of is totem before disconnecting
+     */
+    void showReconnectedTotem(ColorEnum totemColor);
 }

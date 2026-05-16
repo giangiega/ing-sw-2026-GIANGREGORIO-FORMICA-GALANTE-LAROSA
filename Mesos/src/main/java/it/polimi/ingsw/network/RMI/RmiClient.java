@@ -4,6 +4,7 @@
 package it.polimi.ingsw.network.RMI;
 
 import it.polimi.ingsw.enums.CharacterEnum;
+import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
@@ -365,5 +366,12 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     @Override
     public void onGameResumed() throws RemoteException {
         view.getUIDispatcher().accept(view::showGameResumed);
+    }
+
+    /**
+     * @param totemColor : right old color
+     */
+    public void onReconnectedTotem(ColorEnum totemColor) throws RemoteException {
+        view.showReconnectedTotem(totemColor);
     }
 }
