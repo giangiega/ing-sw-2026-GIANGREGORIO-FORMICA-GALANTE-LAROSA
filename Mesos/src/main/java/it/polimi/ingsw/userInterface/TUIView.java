@@ -371,7 +371,7 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void showReconnectedTotem(ColorEnum totemColor) {
-        System.out.println(YELLOW + "\nYour original totem was" + totemColor + RESET);
+        System.out.println(YELLOW + "\nYour original totem was " + totemColor + RESET);
     }
 }
 

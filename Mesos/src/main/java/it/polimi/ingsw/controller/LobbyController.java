@@ -19,10 +19,36 @@ public class LobbyController {
     private final List<Player> lobbyPlayers = new ArrayList<>();
     private final Map<String, ClientConnection> clientManagers = new HashMap<>();
     private boolean gameStarted = false;
+    private final Map<String, ColorEnum> ghostPlayers = new HashMap<>();
 
     public LobbyController(int numPlayers) {
         this.numPlayers = numPlayers;
     }
+
+    /**
+     * @author Giuse
+     * @param playerName : name of the player who disconnected
+     * This method puts the name of the player who left the lobby in a map: ghostPlayers.
+     * It makes possible to player who disconnected form the lobby to join back before the game starts
+     * It isn't used once the game has started.
+     * If the player is indeed a ghost: remove it from lobbyPlayers, clean the manager and
+     * insert him in ghostPlayers map
+     */
+    public synchronized void handleLobbyDisconnection(String playerName) {
+        Player ghost = null;
+        for (Player p : lobbyPlayers) {
+            if (p.getName().equals(playerName)) {
+                ghost = p;
+                break;
+            }
+        }
+        if (ghost == null) return;//If it isn't a ghost player, nothing to do
+
+        lobbyPlayers.remove(ghost);
+        clientManagers.remove(playerName);
+        ghostPlayers.put(playerName, ghost.getTotemColor());
+    }
+
     /**
      * Manages the synchronized player's login.
      * Checks that the chosen name and totem color are valid.
@@ -39,7 +65,7 @@ public class LobbyController {
                 return;
             }
 
-            //Checking to see if the player was in the game
+            //Checking to see if the player was in the game: game is not over
             String disconnectedPlayer = null;
             for(String S : gameController.getDisconnectedPlayers()){
                 if(S.equals(name)){//The player has left the game and now is joining back
@@ -63,7 +89,7 @@ public class LobbyController {
             }
             return;
         }else{//Game hasn't started yet-->normale behaviour
-            if (lobbyPlayers.size() >= numPlayers) {
+            if (lobbyPlayers.size() >= numPlayers) {//Already max capacity
                 List<String> lobbyNames = new ArrayList<>();
                 for(Player p : lobbyPlayers)
                     lobbyNames.add(p.getName());
@@ -71,13 +97,49 @@ public class LobbyController {
                 return;
             }
 
+            //Lobby is still not full: player can join
+            if (ghostPlayers.containsKey(name)) {//Player was a ghost one
+                ColorEnum originalColor = ghostPlayers.get(name);
+
+                //Checking to see if the totem has been taken while player was offline
+                boolean colorTaken = false;
+                for(Player p : lobbyPlayers){
+                    if(p.getTotemColor().equals(originalColor)){
+                        colorTaken = true;
+                    }
+                }
+                if (colorTaken) {//New login if the totem has been taken
+                    ghostPlayers.remove(name);
+                    cm.sendEvent(new LoggedEvent(false, name, originalColor, new ArrayList<>()));
+                    return;
+                }
+
+                ghostPlayers.remove(name);
+                Player player = new Player(name, originalColor);
+                lobbyPlayers.add(player);
+                clientManagers.put(name, cm);
+                cm.setPlayerName(name);
+
+                List<String> playerNames = new ArrayList<>();
+                for (Player p : lobbyPlayers) playerNames.add(p.getName());
+                cm.sendEvent(new LoggedEvent(true, name, originalColor, playerNames));
+
+                if (lobbyPlayers.size() == numPlayers) {
+                    gameStarted = true;
+                    server.fullLobby(lobbyPlayers, clientManagers);
+                }
+                return;
+            }
+
+            //Player was not a ghost one
             for (Player p : lobbyPlayers) {
-                if (p.getName().equals(name) || p.getTotemColor().equals(color)){
+                if (p.getName().equals(name) || p.getTotemColor().equals(color)){//Name/Totem not free
                     cm.sendEvent(new LoggedEvent(false, name, color, new ArrayList<>()));
                     return;
                 }
 
             }
+            //Player joining lobby
             Player player = new Player(name, color);
             lobbyPlayers.add(player);
             clientManagers.put(name, cm);
@@ -89,7 +151,7 @@ public class LobbyController {
 
             cm.sendEvent(new LoggedEvent(true, name, color,playerNames));
 
-            if(lobbyPlayers.size() == numPlayers) {
+            if(lobbyPlayers.size() == numPlayers) {//If after the player has joined the lobby it is full, game can start
                 gameStarted = true;
                 server.fullLobby(lobbyPlayers, clientManagers);
             }

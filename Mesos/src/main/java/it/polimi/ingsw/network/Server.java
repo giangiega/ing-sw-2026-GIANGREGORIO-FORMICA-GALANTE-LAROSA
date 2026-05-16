@@ -72,11 +72,16 @@ public class Server extends ServerClass{
      */
     @Override
     public void handleDisconnection(String playerName){
-        if (playerName == null) return;
+        if (playerName == null) {
+            if (lobbyController == null) {
+                resetServer();
+            }
+            return;
+        }
         if (gameController != null) {
             gameController.handleDisconnection(playerName);
-        } else if (lobbyController != null) {//Game hasn't started yet, clean lobby
-            resetServer();
+        } else if (lobbyController != null) {
+            lobbyController.handleLobbyDisconnection(playerName);
         }
     }
 }

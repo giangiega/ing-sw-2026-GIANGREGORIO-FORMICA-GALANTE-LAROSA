@@ -372,6 +372,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     /**
      * @param totemColor : right old color
      */
+    @Override
     public void onReconnectedTotem(ColorEnum totemColor) throws RemoteException {
         view.getUIDispatcher().accept(()-> view.showReconnectedTotem(totemColor));
     }

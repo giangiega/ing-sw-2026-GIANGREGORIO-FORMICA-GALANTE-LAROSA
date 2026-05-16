@@ -42,11 +42,16 @@ public class RmiServer extends ServerClass implements VirtualServer {
      */
     @Override
     public void handleDisconnection(String playerName) {
-        if (playerName == null) return;
+        if (playerName == null) {
+            if (lobbyController == null) {
+                resetServer();
+            }
+            return;
+        }
         if (gameController != null) {
             gameController.handleDisconnection(playerName);
-        } else if (lobbyController != null) {//Game hasn't started yet, clean lobby
-            resetServer();
+        } else if (lobbyController != null) {
+            lobbyController.handleLobbyDisconnection(playerName);
         }
     }
 
@@ -60,8 +65,8 @@ public class RmiServer extends ServerClass implements VirtualServer {
     public synchronized void connect(VirtualView client) throws RemoteException {
         RmiClientManager cm = new RmiClientManager(client, () -> {
             RmiClientManager manager = clientManagerMap.get(client);
-            if (gameController != null && manager != null)
-                gameController.handleDisconnection(manager.getPlayerName());
+            String name = (manager != null) ? manager.getPlayerName() : null;
+            handleDisconnection(name);
         });
         clientManagerMap.put(client, cm);
         cm.sendEvent(new AckEvent(connected == 0));
