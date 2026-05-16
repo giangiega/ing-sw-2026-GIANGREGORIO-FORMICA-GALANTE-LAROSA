@@ -41,7 +41,6 @@ public class LobbyController {
 
             //Checking to see if the player was in the game
             String disconnectedPlayer = null;
-
             for(String S : gameController.getDisconnectedPlayers()){
                 if(S.equals(name)){//The player has left the game and now is joining back
                     disconnectedPlayer = name;

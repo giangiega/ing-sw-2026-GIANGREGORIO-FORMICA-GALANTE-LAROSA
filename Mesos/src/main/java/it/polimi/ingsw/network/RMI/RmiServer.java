@@ -42,8 +42,12 @@ public class RmiServer extends ServerClass implements VirtualServer {
      */
     @Override
     public void handleDisconnection(String playerName) {
-        if (gameController != null && playerName != null)
+        if (playerName == null) return;
+        if (gameController != null) {
             gameController.handleDisconnection(playerName);
+        } else if (lobbyController != null) {//Game hasn't started yet, clean lobby
+            resetServer();
+        }
     }
 
     /**

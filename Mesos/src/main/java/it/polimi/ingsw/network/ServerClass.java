@@ -36,4 +36,13 @@ abstract public class ServerClass {
         gameController.startGame();
     }
     public void handleDisconnection(String playerName){};
+
+    /**
+     * This method resets the server
+     */
+    public synchronized void resetServer() {
+        lobbyController = null;
+        gameController = null;
+        connected = 0;
+    }
 }
