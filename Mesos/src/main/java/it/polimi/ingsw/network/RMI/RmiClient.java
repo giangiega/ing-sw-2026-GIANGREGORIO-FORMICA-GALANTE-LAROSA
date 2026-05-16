@@ -157,8 +157,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onAck(boolean isFirst) throws RemoteException {
-        if (isFirst) view.askNumPlayers();
-        else view.askLogin();
+        if (isFirst) view.getUIDispatcher().accept(() -> view.askNumPlayers());
+        else view.getUIDispatcher().accept(() -> view.askLogin());
     }
 
     /**
@@ -172,13 +172,13 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onLogged(boolean result, String name, String color,
                          List<String> lobbyPlayers) throws RemoteException {
         if (result) {
-            view.showLobby(lobbyPlayers);
+            view.getUIDispatcher().accept(() -> view.showLobby(lobbyPlayers));
         } else {
             if (lobbyPlayers.size() >= 2)
-                view.invalidChoice("The lobby is full");
+                view.getUIDispatcher().accept(() -> view.invalidChoice("The lobby is full"));
             else {
-                view.invalidChoice("Name or color already used");
-                view.askLogin();
+                view.getUIDispatcher().accept(() -> view.invalidChoice("Name or color already used"));
+                view.getUIDispatcher().accept(() -> view.askLogin());
             }
         }
     }
@@ -197,10 +197,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                               List<TribeCard> upperRow, List<TribeCard> lowerRow,
                               List<BuildingCard> buildingUpperRow,
                               List<BuildingCard> buildingLowerRow) throws RemoteException {
-        view.showGameStart();
-        view.updateOfferTrack(offerTrack);
-        view.updateTurnOrder(tile);
-        view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+        view.getUIDispatcher().accept(() -> view.showGameStart());
+        view.getUIDispatcher().accept(() -> view.updateOfferTrack(offerTrack));
+        view.getUIDispatcher().accept(() -> view.updateTurnOrder(tile));
+        view.getUIDispatcher().accept(() -> view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow));
     }
 
     /**
@@ -219,8 +219,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                              List<TribeCard> upperRow, List<TribeCard> lowerRow,
                              List<BuildingCard> buildingUpperRow,
                              List<BuildingCard> buildingLowerRow) throws RemoteException {
-        view.selectCard(upperCount, lowerCount, cardsUpper, cardsLower,
-                upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+        view.getUIDispatcher().accept(() ->
+                view.selectCard(upperCount, lowerCount, cardsUpper, cardsLower,
+                upperRow, lowerRow, buildingUpperRow, buildingLowerRow));
     }
 
     /**
@@ -229,7 +230,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onMoveTotem(List<Character> freeSlots) throws RemoteException {
-        view.placeTotem(freeSlots);
+        view.getUIDispatcher().accept(() -> view.placeTotem(freeSlots));
     }
 
     /**
@@ -243,7 +244,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onUpdateBoard(List<TribeCard> upperRow, List<TribeCard> lowerRow,
                               List<BuildingCard> buildingUpperRow,
                               List<BuildingCard> buildingLowerRow) throws RemoteException {
-        view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+        view.getUIDispatcher().accept(() -> view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow));
     }
 
     /**
@@ -255,7 +256,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     @Override
     public void onUpdateAllPlayers(List<String> names, List<Integer> foods,
                                    List<Integer> pps) throws RemoteException {
-        view.updateAllPlayers(names, foods, pps);
+        view.getUIDispatcher().accept(() -> view.updateAllPlayers(names, foods, pps));
     }
 
     /**
@@ -266,8 +267,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     @Override
     public void onUpdateOfferTrack(List<OfferTile> offerTrack,
                                    TurnOrderTile turnOrderTile) throws RemoteException {
-        view.updateOfferTrack(offerTrack);
-        view.updateTurnOrder(turnOrderTile);
+        view.getUIDispatcher().accept(() -> view.updateOfferTrack(offerTrack));
+        view.getUIDispatcher().accept(() -> view.updateTurnOrder(turnOrderTile));
     }
 
     /**
@@ -276,7 +277,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onUpdateRound(int currentRound) throws RemoteException {
-        view.updateRound(currentRound);
+        view.getUIDispatcher().accept(() -> view.updateRound(currentRound));
     }
 
     /**
@@ -290,7 +291,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onUpdateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
                              List<BuildingCard> buildingUpperRow,
                              List<BuildingCard> buildingLowerRow) throws RemoteException {
-        view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+        view.getUIDispatcher().accept(() -> view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow));
     }
 
     /**
@@ -299,7 +300,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) throws RemoteException {
-        view.showValidCards(tribe);
+        view.getUIDispatcher().accept(() -> view.showValidCards(tribe));
     }
 
     /**
@@ -308,7 +309,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onInvalidChoice(String message) throws RemoteException {
-        view.invalidChoice(message);
+        view.getUIDispatcher().accept(() -> view.invalidChoice(message));
     }
 
     /**
@@ -318,7 +319,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onEndGame(List<String> winners, Map<String, Integer> finalScores) throws RemoteException {
-        view.showFinalScore(winners, finalScores);
+        view.getUIDispatcher().accept(() -> view.showFinalScore(winners, finalScores));
     }
 
     /**
@@ -330,7 +331,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onUpdateAllTribes(List<String> names,
                                   List<Map<CharacterEnum, List<CharacterCard>>> tribes)
             throws RemoteException {
-        view.updateAllTribes(names, tribes);
+        view.getUIDispatcher().accept(() -> view.updateAllTribes(names, tribes));
     }
 
     /**
@@ -372,6 +373,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      * @param totemColor : right old color
      */
     public void onReconnectedTotem(ColorEnum totemColor) throws RemoteException {
-        view.showReconnectedTotem(totemColor);
+        view.getUIDispatcher().accept(()-> view.showReconnectedTotem(totemColor));
     }
 }
