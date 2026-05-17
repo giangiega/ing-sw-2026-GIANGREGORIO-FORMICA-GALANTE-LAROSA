@@ -23,6 +23,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -34,8 +35,20 @@ public class GUIView implements ViewInterface {
     private Stage primaryStage;
     private ClientSender sender;
 
-    private static final double CARD_W = 100;
-    private static final double CARD_H = 145;
+    private static final double CARD_W = 115;
+    private static final double CARD_H = 168;
+
+    private static final Map<CharacterEnum, String> CHAR_ICONS = Map.of(
+            CharacterEnum.HUNTER,   "hunter",
+            CharacterEnum.GATHERER, "gatherer",
+            CharacterEnum.SHAMAN,   "shaman",
+            CharacterEnum.ARTIST,   "artist",
+            CharacterEnum.BUILDER,  "builder",
+            CharacterEnum.INVENTOR, "inventor"
+    );
+
+    private final Map<String, Map<CharacterEnum, List<CharacterCard>>> allTribesData = new HashMap<>();
+
 
     private HBox upperRowPane;
     private HBox lowerRowPane;
@@ -57,7 +70,10 @@ public class GUIView implements ViewInterface {
     private String pendingLoginError = null;
     private HBox ownTribePane;
     private Accordion otherTribesAccordion;
+    private StackPane sceneRoot;
     private String myName;
+    private Map<CharacterEnum, List<CharacterCard>> myTribe = new HashMap<>();
+    private int myFood = 0;
 
     /**
      * CountDownLatch saves GUI from race condition between main Thread and JavaFX Thread
@@ -409,17 +425,17 @@ public class GUIView implements ViewInterface {
                     "-fx-text-fill: #f5e6c8; -fx-font-weight: bold;"
             );
 
-            VBox rightPanel = new VBox(14,
+            VBox rightPanel = new VBox(12,
                     eraLabel,
                     roundLabel,
                     new Separator(),
                     playersTitle,
                     playersScroll
             );
-            rightPanel.setPadding(new Insets(16));
-            rightPanel.setPrefWidth(260);
-            rightPanel.setMinWidth(260);
-            rightPanel.setMaxWidth(260);
+            rightPanel.setPadding(new Insets(12));
+            rightPanel.setPrefWidth(180);
+            rightPanel.setMinWidth(180);
+            rightPanel.setMaxWidth(180);
             rightPanel.setStyle("-fx-background-color: rgba(20,10,5,0.80);");
 
             // ── ACTION BAR ───────────────────────────────────────────────
@@ -435,11 +451,38 @@ public class GUIView implements ViewInterface {
             VBox.setVgrow(mainArea, Priority.ALWAYS);
 
             VBox rootLayout = new VBox(mainArea, actionBar);
-            StackPane sceneRoot = new StackPane(background, rootLayout);
+            sceneRoot = new StackPane(background, rootLayout);
 
             primaryStage.setScene(new Scene(sceneRoot, 1280, 720));
         });
     }
+
+    private void showToast(String message) {
+        System.out.println("showToast called, sceneRoot: " + sceneRoot);
+        if (sceneRoot == null) return;
+
+        Label toast = new Label("⚠  " + message);
+        toast.setStyle(
+                "-fx-background-color: rgba(170,20,20,0.93);" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 14;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-padding: 12 24;" +
+                        "-fx-background-radius: 8;"
+        );
+
+        StackPane.setAlignment(toast, Pos.TOP_CENTER);
+        StackPane.setMargin(toast, new Insets(20,0,0,0));
+        sceneRoot.getChildren().add(toast);
+        System.out.println("Toast aggiunto, figli in sceneRoot: " + sceneRoot.getChildren().size());
+
+        new Thread(() -> {
+            try { Thread.sleep(3500); } catch (InterruptedException ignored) {}
+            Platform.runLater(() -> sceneRoot.getChildren().remove(toast));
+        }).start();
+    }
+
+
 
     /**
      * @author Daniele
@@ -475,6 +518,10 @@ public class GUIView implements ViewInterface {
         });
 
     }
+    /**
+     * Creates the view for a single offer tile (building or character).
+     * Positions the player totem precisely inside the white box feature at the bottom of the card.
+     */
     private VBox buildOfferTileView(OfferTile tile) {
         String tilePath = "/images/tiles/" + tile.getLetter() + "_front.png";
         var tileUrl = getClass().getResource(tilePath);
@@ -482,14 +529,48 @@ public class GUIView implements ViewInterface {
         ImageView tileImg;
         if (tileUrl != null) {
             tileImg = new ImageView(new Image(tileUrl.toExternalForm()));
-            tileImg.setFitWidth(90);
-            tileImg.setFitHeight(120);
-            tileImg.setPreserveRatio(true);
+            // Manteniamo le dimensioni fisse della carta a 110x150
+            tileImg.setFitWidth(110);
+            tileImg.setFitHeight(150);
+            tileImg.setPreserveRatio(false); // Forza le dimensioni per coordinate stabili
         } else {
             System.err.println("Tile not found: " + tilePath);
             tileImg = new ImageView();
         }
 
+        // Creiamo un Pane trasparente per gestire il posizionamento assoluto
+        Pane overlay = new Pane();
+        overlay.setPrefSize(110, 150);
+
+        if (!tile.getFreeOfferTile() && tile.getOccupant() != null) {
+            String totemPath = "/images/icon/" + tile.getOccupant().getTotemColor().name().toLowerCase() + ".png";
+            var totemUrl = getClass().getResource(totemPath);
+            if (totemUrl != null) {
+                ImageView totem = new ImageView(new Image(totemUrl.toExternalForm()));
+
+                // --- MODIFICA 1: AUMENTATA DIMENSIONE TOTEM ---
+                // Portato a 42 (prima era 28) per riempire meglio il box bianco
+                double totemSize = 42;
+                totem.setFitWidth(totemSize);
+                totem.setFitHeight(totemSize);
+                totem.setPreserveRatio(true);
+
+                // --- MODIFICA 2: CORRETTO POSIZIONAMENTO ASSOLUTO ---
+                // Calcolato per centrare orizzontalmente il totem di 42px in una carta da 110px: (110-42)/2 = 34
+                totem.setLayoutX(40);
+
+                // Spinto decisamente verso il basso (prima era 68) per farlo entrare nel box bianco
+                totem.setLayoutY(12);
+
+                overlay.getChildren().add(totem);
+            }
+        }
+
+        // Lo StackPane impila l'immagine di sfondo e l'overlay del totem
+        StackPane tileStack = new StackPane(tileImg, overlay);
+        tileStack.setPrefSize(110, 150);
+
+        // --- RESTO DEL CODICE ORIGINALE PER LE LABEL ---
         Label occupantLabel = new Label(
                 tile.getFreeOfferTile() ? "free" : tile.getOccupant().getName()
         );
@@ -502,7 +583,7 @@ public class GUIView implements ViewInterface {
         occupantLabel.setWrapText(true);
         occupantLabel.setAlignment(Pos.CENTER);
 
-        VBox tileBox = new VBox(4, tileImg, occupantLabel);
+        VBox tileBox = new VBox(4, tileStack, occupantLabel);
         tileBox.setAlignment(Pos.CENTER);
         tileBox.setPadding(new Insets(6));
         tileBox.setStyle(
@@ -540,6 +621,9 @@ public class GUIView implements ViewInterface {
             if(totalPlayers == 0) totalPlayers = names.size();
             playersStatus.getChildren().clear();
             for (int i = 0; i < names.size(); i++) {
+                if (names.get(i).equals(myName)) {
+                    myFood = foods.get(i);
+                }
                 Label nameLabel = new Label(names.get(i));
                 nameLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 13; -fx-font-weight: bold;");
 
@@ -553,6 +637,7 @@ public class GUIView implements ViewInterface {
                 stats.setAlignment(Pos.CENTER_LEFT);
 
                 VBox playerBox = new VBox(4, nameLabel, stats);
+                playerBox.setUserData(names.get(i));
                 playerBox.setPadding(new Insets(8));
                 playerBox.setStyle("-fx-background-color: rgba(255,255,255,0.08); -fx-background-radius: 6;");
 
@@ -560,61 +645,104 @@ public class GUIView implements ViewInterface {
             }
         });
     }
+
     @Override
     public void updateAllTribes(List<String> names,
                                 List<Map<CharacterEnum, List<CharacterCard>>> tribes) {
         Platform.runLater(() -> {
-            if (otherTribesAccordion == null) return;
-            otherTribesAccordion.getPanes().clear();
-
+            allTribesData.clear();
             for (int i = 0; i < names.size(); i++) {
-                String playerName = names.get(i);
-
-                if (playerName.equals(myName)) {
-                    continue;
-                }
-
-                HBox tribeContent = new HBox(15);
-                tribeContent.setPadding(new Insets(10));
-                tribeContent.setAlignment(Pos.TOP_LEFT);
-
-                Map<CharacterEnum, List<CharacterCard>> tribe = tribes.get(i);
-                for (CharacterEnum type : CharacterEnum.values()) {
-                    List<CharacterCard> cards = tribe.get(type);
-                    if (cards == null || cards.isEmpty()) continue;
-
-                    VBox typeColumn = new VBox(5);
-                    typeColumn.setAlignment(Pos.TOP_CENTER);
-
-                    ImageView typeIcon = icon(type.name().toLowerCase());
-                    typeIcon.setFitWidth(18);
-                    typeIcon.setFitHeight(18);
-                    Label countLabel = new Label("×" + cards.size());
-                    countLabel.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 11;");
-                    typeColumn.getChildren().addAll(typeIcon, countLabel);
-                    for (CharacterCard card : cards) {
-                        ImageView cardImg = cardImage(card.getImage());
-                        // Ridimensioniamo le carte degli avversari per risparmiare spazio
-                        cardImg.setFitWidth(60);
-                        cardImg.setFitHeight(87);
-                        typeColumn.getChildren().add(cardImg);
-                    }
-
-                    tribeContent.getChildren().add(typeColumn);
-                }
-
-                ScrollPane scroll = new ScrollPane(tribeContent);
-                scroll.setFitToHeight(true);
-                scroll.setPrefHeight(150);
-                scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-                scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
-
-                TitledPane pane = new TitledPane(names.get(i) + "'s tribe", scroll);
-                pane.setExpanded(false); // collassato di default
-                pane.setStyle("-fx-text-fill: #f5e6c8;");
-                otherTribesAccordion.getPanes().add(pane);
+                allTribesData.put(names.get(i), tribes.get(i));
             }
+            refreshPlayerButtons(names);
         });
+    }
+
+    private void refreshPlayerButtons(List<String> names) {
+        if (playersStatus == null) return;
+        for (var node : playersStatus.getChildren()) {
+            if (node instanceof VBox playerBox && playerBox.getUserData() instanceof String name) {
+                if (playerBox.getChildren().size() > 2) continue;
+                if (!name.equals(myName) && allTribesData.containsKey(name)) {
+                    Button viewBtn = new Button("👁 View tribe");
+                    viewBtn.setStyle(
+                            "-fx-background-color: rgba(200,150,0,0.5); -fx-text-fill: #f5e6c8;" +
+                                    "-fx-font-size: 10; -fx-padding: 3 8; -fx-background-radius: 4; -fx-cursor: hand;"
+                    );
+                    String captureName = name;
+                    viewBtn.setOnAction(e -> showTribePopup(captureName, allTribesData.get(captureName)));
+                    playerBox.getChildren().add(viewBtn);
+                }
+            }
+        }
+    }
+
+    private void showTribePopup(String playerName, Map<CharacterEnum, List<CharacterCard>> tribe) {
+        if (sceneRoot == null) return;
+        Region dim = new Region();
+        dim.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
+
+        Label title = new Label(playerName + "'s Tribe");
+        title.setStyle(
+                "-fx-text-fill: #e8c46a; -fx-font-size: 18; -fx-font-weight: bold;"
+        );
+
+        HBox tribeContent = new HBox(20);
+        tribeContent.setAlignment(Pos.TOP_LEFT);
+        tribeContent.setPadding(new Insets(12));
+
+        for (CharacterEnum type : CharacterEnum.values()) {
+            List<CharacterCard> cards = tribe.get(type);
+            if (cards == null || cards.isEmpty()) continue;
+
+            ImageView typeIcon = icon(CHAR_ICONS.getOrDefault(type, type.name().toLowerCase()));
+            typeIcon.setFitWidth(24);
+            typeIcon.setFitHeight(24);
+
+            Label countLabel = new Label("×" + cards.size());
+            countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 12;");
+
+            VBox col = new VBox(6, typeIcon, countLabel);
+            col.setAlignment(Pos.TOP_CENTER);
+
+            for (CharacterCard card : cards) {
+                ImageView img = cardImage(card.getImage());
+                img.setFitWidth(80);
+                img.setFitHeight(116);
+                col.getChildren().add(img);
+            }
+            tribeContent.getChildren().add(col);
+        }
+
+        ScrollPane scroll = new ScrollPane(tribeContent);
+        scroll.setFitToHeight(true);
+        scroll.setPrefHeight(420);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+
+        Button closeBtn = new Button("✕  Close");
+        closeBtn.setStyle(
+                "-fx-background-color: #c0392b; -fx-text-fill: white;" +
+                        "-fx-font-size: 13; -fx-padding: 6 20;" +
+                        "-fx-background-radius: 6; -fx-cursor: hand;"
+        );
+
+        VBox popup = new VBox(16, title, scroll, closeBtn);
+        popup.setAlignment(Pos.TOP_CENTER);
+        popup.setPadding(new Insets(24));
+        popup.setMaxWidth(860);
+        popup.setStyle(
+                "-fx-background-color: rgba(20,10,5,0.97);" +
+                        "-fx-background-radius: 12;"
+        );
+
+        StackPane overlay = new StackPane(dim, popup);
+        overlay.setAlignment(Pos.CENTER);
+
+        closeBtn.setOnAction(e -> sceneRoot.getChildren().remove(overlay));
+        dim.setOnMouseClicked(e -> sceneRoot.getChildren().remove(overlay));
+
+        sceneRoot.getChildren().add(overlay);
     }
 
 
@@ -671,10 +799,11 @@ public class GUIView implements ViewInterface {
             namesPane.setPrefWidth(80);
             namesPane.setPrefHeight(tileH);
 
-            for (int slot = 0; slot < numSlots; slot++) {
-                Player p = slots.get(slot);
+            for (int slot = 0; slot < tileGraphicSize; slot++) {
+
                 if (slot >= yCoordinates.length) break;
                 double slotY = yCoordinates[slot];
+                Player p = (slot < numSlots) ? slots.get(slot) : null;
 
                 if (p != null) {
                     String totemPath = "/images/icon/" + p.getTotemColor().name().toLowerCase() + ".png";
@@ -880,41 +1009,20 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void invalidChoice(String message) {
-        System.out.println("invalidChoice chiamato: " + message);
-
         Platform.runLater(() -> {
-            System.out.println("actionBar: " + actionBar);
-            System.out.println("loginErrorLabel: " + loginErrorLabel);
-            if (actionBar == null){
+            if (actionBar == null) {
+                // siamo ancora nella fase login — mostra sul form
                 pendingLoginError = message;
                 if (loginErrorLabel != null) {
                     loginErrorLabel.setText("⚠  " + message);
                     loginErrorLabel.setVisible(true);
                     loginErrorLabel.setManaged(true);
-                    System.out.println("testo impostato: " + loginErrorLabel.getText());
-
-                }else{
-                    System.out.println("loginErrorLabel è null!");
-
                 }
                 return;
             }
 
-            // aggiunge un label rosso temporaneo all'action bar
-            Label errorLabel = new Label("⚠  " + message);
-            errorLabel.setStyle(
-                    "-fx-text-fill: #ff6b6b; -fx-font-size: 13; -fx-font-weight: bold;"
-            );
-            actionBar.getChildren().add(errorLabel);
-            actionBar.setVisible(true);
-            actionBar.setManaged(true);
-
-
-            // lo rimuove dopo 3 secondi
-            new Thread(() -> {
-                try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
-                Platform.runLater(() -> actionBar.getChildren().remove(errorLabel));
-            }).start();
+            // siamo in partita — mostra il toast sopra tutto
+            showToast(message);
         });
     }
 
@@ -926,6 +1034,7 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {
+        this.myTribe = tribe;
         Platform.runLater(() -> {
             if (ownTribePane == null) return;
             ownTribePane.getChildren().clear();
@@ -935,7 +1044,7 @@ public class GUIView implements ViewInterface {
                 if (cards == null || cards.isEmpty()) continue;
 
                 // icona del tipo + conteggio
-                ImageView typeIcon = icon(type.name().toLowerCase());
+                ImageView typeIcon = icon(CHAR_ICONS.getOrDefault(type, type.name().toLowerCase()));
                 Label countLabel = new Label("×" + cards.size());
                 countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 11;");
                 VBox header = new VBox(2, typeIcon, countLabel);
