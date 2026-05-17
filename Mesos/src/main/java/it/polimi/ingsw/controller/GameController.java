@@ -320,7 +320,12 @@ public class GameController {
 
         int connectedCount = getConnectedPlayersCount();
 
-        if (connectedCount <= 1) { //one or less player left to account for empty game
+        if(connectedCount == 0){//No player il game: game ends instantly
+            System.out.println("Server: no player left in the game, game ended.");
+            cancelSuspensionTimer();
+            endGame();
+        }
+        else if (connectedCount == 1) { //one player left--> start timer
             broadcastEvent(new GameSuspendedEvent(SUSPENSION_TIMEOUT_SECONDS));
             startSuspensionTimer();
         } else{
@@ -405,8 +410,9 @@ public class GameController {
         isSuspended = true;
         suspensionFuture = scheduler.schedule(() -> {
             synchronized (this) {
-                // Double-check: if someone reconnected, the timer was already cancelled
-                if (getConnectedPlayersCount() >= 2) return;
+                // Check if someone reconnected
+                if (getConnectedPlayersCount() >= 1) return;
+                System.out.println("Server: no reconnection during timeout, game is over.");
                 // Declare the last connected player as winner
                 endGame();
             }

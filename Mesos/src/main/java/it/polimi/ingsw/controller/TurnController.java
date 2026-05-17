@@ -15,6 +15,7 @@ public class TurnController {
     private final Set<String> totemPlacedCurrRound = new HashSet<>();
     private final List<String> resolveOrder = new ArrayList<>();
     private int idx;
+    private String currentPlacementPlayer = null;//Player that has to place
 
     //Disconnection e Reconnection handling
     private boolean inResolvingPhase = false;
@@ -44,6 +45,8 @@ public class TurnController {
      */
     public void onTotemPlaced(String playerName, TurnOrderTile turnOrderTile, List<OfferTile> offerTrack) {
         totemPlacedCurrRound.add(playerName);
+        savedOfferTrack = offerTrack; //Update
+        savedTurnOrderTile = turnOrderTile;
 
         int connectedCount = gameController.getConnectedPlayersCount();
 
@@ -64,6 +67,7 @@ public class TurnController {
         for (Player p : turnOrderTile.getSlots()) {
             if(p != null && !totemPlacedCurrRound.contains(p.getName())
                     && !gameController.isDisconnectedPlayer(p.getName()) ) {
+                currentPlacementPlayer = p.getName();
                 gameController.sendMoveTotem(p.getName());
                 return;
             }
@@ -71,6 +75,7 @@ public class TurnController {
         // At this point, all connected players have placed; So this can happen if the last placer
         // disconnected right after placing. Advance to resolve phase with the
         // most recent offer track we have; if we have none yet, end the round.
+        currentPlacementPlayer = null;
         if (savedOfferTrack != null) {
             startResolvePhase(savedOfferTrack);
         } else {
@@ -169,7 +174,7 @@ public class TurnController {
             }else if (connectedCount > 0) {
                 // Ask the next player only if the crashed one hasn't already placed his totem (it was his turn while he crashed)
                 // If he has already placed his totem, someone else is already waiting
-                if (!totemPlacedCurrRound.contains(playerName)) {
+                if (playerName.equals(currentPlacementPlayer)) {
                     askNextTotemPlacement(savedTurnOrderTile);
                 }
             }

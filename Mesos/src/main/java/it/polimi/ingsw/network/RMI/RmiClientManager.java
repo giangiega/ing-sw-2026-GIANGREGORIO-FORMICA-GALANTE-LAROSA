@@ -98,7 +98,7 @@ public class RmiClientManager implements ClientConnection {
      * This method stops the heartbeat and queue thread; then it notifies the server
      */
     private synchronized void triggerDisconnect() {
-        if (stopped) return; // già gestito, evita doppia chiamata
+        if (stopped) return;
         stopped = true;
         heartbeat.shutdownNow();
         queueThread.interrupt();
