@@ -53,7 +53,7 @@ public class Inventor extends CharacterCard {
 
     @Override
     public String toString() {
-        return "Inventor | Icon : " + getIconType() + " | Era : " + getEra();
+        return "Inventor | Icon: " + getIconType() + " | Era: " + getEra();
     }
 
 
