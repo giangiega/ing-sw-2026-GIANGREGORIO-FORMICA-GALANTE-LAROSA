@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Ale
@@ -63,14 +64,29 @@ public class RmiServer extends ServerClass implements VirtualServer {
      */
     @Override
     public synchronized void connect(VirtualView client) throws RemoteException {
+        //If a manager already exists, then reconnection. Stop it and build a new one
+        RmiClientManager old = clientManagerMap.get(client);
+        if (old != null) {
+            old.stopSilently();
+        }
+
+        if (connected > 0 && lobbyController == null && gameController == null) {
+            resetServer(); //connected = 0
+        }
+
+        AtomicReference<RmiClientManager> cmRef = new AtomicReference<>();
+
+        //Using cm to avoid race condition: map has already been updated by reconnection
         RmiClientManager cm = new RmiClientManager(client, () -> {
-            RmiClientManager manager = clientManagerMap.get(client);
-            String name = (manager != null) ? manager.getPlayerName() : null;
-            handleDisconnection(name);
+            RmiClientManager self = cmRef.get();
+            handleDisconnection(self != null ? self.getPlayerName() : null);
         });
+
+        cmRef.set(cm);
         clientManagerMap.put(client, cm);
         cm.sendEvent(new AckEvent(connected == 0));
         connected++;
+
     }
 
     @Override
@@ -120,5 +136,4 @@ public class RmiServer extends ServerClass implements VirtualServer {
     @Override
     public void ping(VirtualView client) throws RemoteException {
     }
-
 }

@@ -138,7 +138,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 try {
                     TimeUnit.SECONDS.sleep(delayS);
                     doConnect();
-                    view.getUIDispatcher().accept(view::askLogin);
                     return;
                 } catch (IOException e) {
                     System.err.println("[RmiClient] reconnect failed: " + e.getMessage());
@@ -376,4 +375,11 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onReconnectedTotem(ColorEnum totemColor) throws RemoteException {
         view.getUIDispatcher().accept(()-> view.showReconnectedTotem(totemColor));
     }
+
+    /**
+     * @throws RemoteException
+     * Ping server-->client. If rhe connection is down, it throws RemoteException
+     */
+    @Override
+    public void onPing() throws RemoteException {}
 }

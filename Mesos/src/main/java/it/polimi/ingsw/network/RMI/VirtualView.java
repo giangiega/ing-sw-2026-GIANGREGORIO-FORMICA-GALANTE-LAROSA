@@ -88,6 +88,10 @@ public interface VirtualView extends Remote {
 
     /** A second player reconnected: the suspended game is resuming. */
     void onGameResumed() throws RemoteException;
+
     /** A reconnected player needs its old totem's color*/
     void onReconnectedTotem(ColorEnum totemColor) throws RemoteException;
+
+    /**Heartbeat server->client: if it fails, the connection is lost*/
+    void onPing() throws RemoteException;
 }
