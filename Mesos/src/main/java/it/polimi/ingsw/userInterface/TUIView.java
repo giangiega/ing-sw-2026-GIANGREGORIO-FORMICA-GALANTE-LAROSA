@@ -329,10 +329,7 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void invalidChoice(String message) {
-    }
-
-    @Override
-    public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {
+        System.out.println(RED + BOLD + "err: " + message + RESET);
     }
 
     @Override
@@ -349,9 +346,6 @@ public class TUIView implements ViewInterface {
                 .forEach(e -> System.out.printf("  %-15s %3d PP%n",
                         e.getKey(), e.getValue()));
 
-    }
-    @Override
-    public void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes){
     }
 
     @Override
