@@ -167,8 +167,11 @@ public class TurnController {
             if (connectedCount > 0 && totemPlacedCurrRound.size() >= connectedCount) {
                 startResolvePhase(savedOfferTrack != null ? savedOfferTrack : new ArrayList<>());
             }else if (connectedCount > 0) {
-                //THe disconnected player was placing, so we ask the next connected player
-                askNextTotemPlacement(savedTurnOrderTile);
+                // Ask the next player only if the crashed one hasn't already placed his totem (it was his turn while he crashed)
+                // If he has already placed his totem, someone else is already waiting
+                if (!totemPlacedCurrRound.contains(playerName)) {
+                    askNextTotemPlacement(savedTurnOrderTile);
+                }
             }
         } else {// Resolve phase: skip if it was their turn
             skipCurrentPlayer(playerName);

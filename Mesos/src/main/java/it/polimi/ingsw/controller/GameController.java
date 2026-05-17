@@ -402,7 +402,7 @@ public class GameController {
             suspensionFuture.cancel(false);
             suspensionFuture = null;
         }
-        isSuspended = true; // Bug 5 & 7: mark game as suspended only after cleaning up
+        isSuspended = true;
         suspensionFuture = scheduler.schedule(() -> {
             synchronized (this) {
                 // Double-check: if someone reconnected, the timer was already cancelled
