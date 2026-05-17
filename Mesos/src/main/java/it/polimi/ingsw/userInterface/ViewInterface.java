@@ -30,8 +30,15 @@ public interface ViewInterface {
     void placeTotem(List<Character> freeSlots);
     void invalidChoice(String message);
     void showFinalScore(List<String> winners, Map< String , Integer> finalScores);
-    void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe);
-    void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes);
+
+    /**
+     * This two methods are defined as default because TUI doesn't need them.
+     * Those methods used to manage the update of every player's tribe, now is managed in updateAllPlayers()
+     * GUI needs those 2 methods, so it must override them
+     *
+     */
+    default void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe){};
+    default void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes){};
 
     /**
      * @author Giuse

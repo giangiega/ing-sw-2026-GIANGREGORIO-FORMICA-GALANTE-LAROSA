@@ -83,7 +83,7 @@ public class BuildingCard extends Card {
 
     // only used for PLAYER STATUS update
     public String updateCard() {
-        return effect.toString() + "| food: " + baseFoodCost + "| PP: " + basePrestigePoints +
-                "| era: " + getEra() ;
+        return effect.toString() + "| food: " + baseFoodCost + " | PP: " + basePrestigePoints +
+                " | era: " + getEra() ;
     }
 }
