@@ -55,7 +55,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     /**
      * @param view : concrete view (GUI or TUI) to notify
-     * @throws IOException : if the registry lookup or initial remote call fails
+     * @throws IOException if the registry lookup or initial remote call fails
      * @throws RemoteException
      */
     public void connect(ViewInterface view) throws IOException {
@@ -254,8 +254,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onUpdateAllPlayers(List<String> names, List<Integer> foods,
-                                   List<Integer> pps) throws RemoteException {
-        view.getUIDispatcher().accept(() -> view.updateAllPlayers(names, foods, pps));
+                                   List<Integer> pps,
+                                   List<Map<CharacterEnum, List<String>>> tribeDesc,
+                                   List<List<String>> buildingDesc) throws RemoteException {
+        view.getUIDispatcher().accept(() -> view.updateAllPlayers(names, foods, pps, tribeDesc, buildingDesc));
     }
 
     /**
