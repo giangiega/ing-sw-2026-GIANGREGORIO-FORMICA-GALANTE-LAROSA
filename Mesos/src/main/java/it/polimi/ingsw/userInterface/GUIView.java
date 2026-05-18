@@ -509,7 +509,7 @@ public class GUIView implements ViewInterface {
     @Override
     public void updateOfferTrack(List<OfferTile> offerTrack) {
         Platform.runLater(() -> {
-            if(offerTrackPane == null) return; // quando la board non è pronta
+            if(offerTrackPane == null) return;
 
             offerTrackPane.getChildren().clear();
             for (OfferTile tile : offerTrack) {
@@ -529,16 +529,14 @@ public class GUIView implements ViewInterface {
         ImageView tileImg;
         if (tileUrl != null) {
             tileImg = new ImageView(new Image(tileUrl.toExternalForm()));
-            // Manteniamo le dimensioni fisse della carta a 110x150
             tileImg.setFitWidth(110);
             tileImg.setFitHeight(150);
-            tileImg.setPreserveRatio(false); // Forza le dimensioni per coordinate stabili
+            tileImg.setPreserveRatio(false);
         } else {
             System.err.println("Tile not found: " + tilePath);
             tileImg = new ImageView();
         }
 
-        // Creiamo un Pane trasparente per gestire il posizionamento assoluto
         Pane overlay = new Pane();
         overlay.setPrefSize(110, 150);
 
@@ -548,29 +546,19 @@ public class GUIView implements ViewInterface {
             if (totemUrl != null) {
                 ImageView totem = new ImageView(new Image(totemUrl.toExternalForm()));
 
-                // --- MODIFICA 1: AUMENTATA DIMENSIONE TOTEM ---
-                // Portato a 42 (prima era 28) per riempire meglio il box bianco
                 double totemSize = 42;
                 totem.setFitWidth(totemSize);
                 totem.setFitHeight(totemSize);
                 totem.setPreserveRatio(true);
-
-                // --- MODIFICA 2: CORRETTO POSIZIONAMENTO ASSOLUTO ---
-                // Calcolato per centrare orizzontalmente il totem di 42px in una carta da 110px: (110-42)/2 = 34
-                totem.setLayoutX(40);
-
-                // Spinto decisamente verso il basso (prima era 68) per farlo entrare nel box bianco
-                totem.setLayoutY(12);
-
+                totem.setLayoutX(44);
+                totem.setLayoutY(7);
                 overlay.getChildren().add(totem);
             }
         }
 
-        // Lo StackPane impila l'immagine di sfondo e l'overlay del totem
         StackPane tileStack = new StackPane(tileImg, overlay);
         tileStack.setPrefSize(110, 150);
 
-        // --- RESTO DEL CODICE ORIGINALE PER LE LABEL ---
         Label occupantLabel = new Label(
                 tile.getFreeOfferTile() ? "free" : tile.getOccupant().getName()
         );
@@ -616,7 +604,7 @@ public class GUIView implements ViewInterface {
                                  List<Map<CharacterEnum, List<String>>> tribeDesc,
                                  List<List<String>> buildingDesc) {
         Platform.runLater(() -> {
-            if(playersStatus == null) return; // quando la board non è pronta
+            if(playersStatus == null) return;
 
             if(totalPlayers == 0) totalPlayers = names.size();
             playersStatus.getChildren().clear();
@@ -696,8 +684,8 @@ public class GUIView implements ViewInterface {
             if (cards == null || cards.isEmpty()) continue;
 
             ImageView typeIcon = icon(CHAR_ICONS.getOrDefault(type, type.name().toLowerCase()));
-            typeIcon.setFitWidth(24);
-            typeIcon.setFitHeight(24);
+            typeIcon.setFitWidth(32);
+            typeIcon.setFitHeight(32);
 
             Label countLabel = new Label("×" + cards.size());
             countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 12;");
@@ -707,8 +695,8 @@ public class GUIView implements ViewInterface {
 
             for (CharacterCard card : cards) {
                 ImageView img = cardImage(card.getImage());
-                img.setFitWidth(80);
-                img.setFitHeight(116);
+                img.setFitWidth(90);
+                img.setFitHeight(130);
                 col.getChildren().add(img);
             }
             tribeContent.getChildren().add(col);
@@ -749,7 +737,7 @@ public class GUIView implements ViewInterface {
     @Override
     public void updateRound(int currentRound) {
         Platform.runLater(() -> {
-            if(roundLabel == null) return; // quando la board non è pronta
+            if(roundLabel == null) return;
 
             roundLabel.setText("Round " + currentRound);
         });
@@ -851,14 +839,10 @@ public class GUIView implements ViewInterface {
             selectedLowerIndices.clear();
             selectedBuildingUpperIndices.clear();
             selectedBuildingLowerIndices.clear();
-
-            // aggiorna le righe con i click handler
             renderTribeRowSelectable(upperRowPane, upperRow, selectedUpperIndices, upperCount);
             renderTribeRowSelectable(lowerRowPane, lowerRow, selectedLowerIndices, lowerCount);
             renderBuildingRowSelectable(buildingUpperPane, buildingUpperRow, selectedBuildingUpperIndices);
             renderBuildingRowSelectable(buildingLowerPane, buildingLowerRow, selectedBuildingLowerIndices);
-
-            // action bar con istruzione
             actionBar.getChildren().clear();
             Label msg = new Label(
                     "Select " + upperCount + " from upper row  |  " + lowerCount + " from lower row"
@@ -962,11 +946,8 @@ public class GUIView implements ViewInterface {
             actionBar.setVisible(true);
             actionBar.setManaged(true);
 
-
-            // serve a rendere le tile libere cliccabili
             for (var node : offerTrackPane.getChildren()) {
                 if (node instanceof VBox tileBox) {
-                    // recupera la lettera dal primo label dentro la tileBox
                     OfferTile tile = (OfferTile) tileBox.getUserData();
                     char letter = tile.getLetter();
                     if (freeSlots.contains(letter)) {
@@ -995,7 +976,6 @@ public class GUIView implements ViewInterface {
                 tileBox.setOnMouseExited(null);
                 tileBox.setOpacity(1.0);
 
-                // ripristina lo stile originale dalla tile salvata
                 if (tileBox.getUserData() instanceof OfferTile tile) {
                     tileBox.setStyle(
                             tile.getFreeOfferTile()
@@ -1011,7 +991,6 @@ public class GUIView implements ViewInterface {
     public void invalidChoice(String message) {
         Platform.runLater(() -> {
             if (actionBar == null) {
-                // siamo ancora nella fase login — mostra sul form
                 pendingLoginError = message;
                 if (loginErrorLabel != null) {
                     loginErrorLabel.setText("⚠  " + message);
@@ -1020,8 +999,6 @@ public class GUIView implements ViewInterface {
                 }
                 return;
             }
-
-            // siamo in partita — mostra il toast sopra tutto
             showToast(message);
         });
     }
@@ -1043,14 +1020,12 @@ public class GUIView implements ViewInterface {
                 List<CharacterCard> cards = tribe.get(type);
                 if (cards == null || cards.isEmpty()) continue;
 
-                // icona del tipo + conteggio
                 ImageView typeIcon = icon(CHAR_ICONS.getOrDefault(type, type.name().toLowerCase()));
                 Label countLabel = new Label("×" + cards.size());
                 countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 11;");
                 VBox header = new VBox(2, typeIcon, countLabel);
                 header.setAlignment(Pos.CENTER);
 
-                // carte del tipo in colonna
                 VBox cardColumn = new VBox(4);
                 cardColumn.setAlignment(Pos.TOP_CENTER);
                 for (CharacterCard card : cards) {
