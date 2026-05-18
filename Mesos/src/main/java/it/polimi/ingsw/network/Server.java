@@ -63,6 +63,27 @@ public class Server extends ServerClass{
     public GameController getGameController(){
         return this.gameController;
     }
+
+    /**
+     * @author Giuse
+     * @param playerName : name of the player who disconnected
+     * This method checks to see if the gameController exists, then
+     * it calls its method: handleDisconnection
+     */
+    @Override
+    public void handleDisconnection(String playerName){
+        if (playerName == null) {
+            if (lobbyController == null) {
+                resetServer();
+            }
+            return;
+        }
+        if (gameController != null) {
+            gameController.handleDisconnection(playerName);
+        } else if (lobbyController != null) {
+            lobbyController.handleLobbyDisconnection(playerName);
+        }
+    }
 }
 
 

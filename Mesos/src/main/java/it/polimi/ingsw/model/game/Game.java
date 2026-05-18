@@ -189,10 +189,11 @@ public class Game {
      * calculateFinalScores() is not called inside getWinner() bc I need to show points at the end.
      */
     public List<Player> getWinner(Map <Player,Integer> scores) {
-        Player winner = players.getFirst();
+        List<Player> scoredPlayers = new ArrayList<>(scores.keySet());
+        Player winner = scoredPlayers.getFirst();
 
-        for(int i = 1; i < players.size(); i++) {
-            Player curr =  players.get(i);
+        for(int i = 1; i < scoredPlayers.size(); i++) {
+            Player curr =  scoredPlayers.get(i);
             if(scores.get(curr) > scores.get(winner)) {
                 winner = curr;
             }
@@ -204,7 +205,7 @@ public class Game {
         }
         List<Player> winners = new ArrayList<>();
         winners.add(winner);
-        for(Player player : players) {
+        for(Player player : scoredPlayers) {
             if(scores.get(player).equals(scores.get(winner)) && player.getFood() == winner.getFood()) {
                 if(!winners.contains(player)) {
                     winners.add(player);

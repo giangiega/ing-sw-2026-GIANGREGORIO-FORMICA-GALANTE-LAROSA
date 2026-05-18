@@ -1,6 +1,7 @@
 package it.polimi.ingsw.userInterface;
 
 import it.polimi.ingsw.enums.CharacterEnum;
+import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
@@ -12,11 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-/**
- * last 2 methods are dfined as default because TUI doesn't need them.
- * Those methods used to manage the update of every player's tribe, now is managed in updateAllPLayers().
- * GUI needs those 2 methods, so it must override them.
- */
+
 public interface ViewInterface {
     Consumer<Runnable> getUIDispatcher();
     void init(ClientSender sender);
@@ -33,6 +30,47 @@ public interface ViewInterface {
     void placeTotem(List<Character> freeSlots);
     void invalidChoice(String message);
     void showFinalScore(List<String> winners, Map< String , Integer> finalScores);
-    default void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {}
-    default void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes) {}
+
+    /**
+     * This two methods are defined as default because TUI doesn't need them.
+     * Those methods used to manage the update of every player's tribe, now is managed in updateAllPlayers()
+     * GUI needs those 2 methods, so it must override them
+     *
+     */
+    default void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe){};
+    default void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes){};
+
+    /**
+     * @author Giuse
+     * @param playerName : name of the player who left the game
+     * This method notifies that a player has disconnected mid-game
+     */
+    void showPlayerDisconnected(String playerName);
+
+    /**
+     * @author Giuse
+     * @param playerName : name of the player who returned to the game
+     * This method notifies that a previously disconnected player has reconnected
+     */
+    void showPlayerReconnected(String playerName);
+
+    /**
+     * @author Giuse
+     * @param timeoutSeconds seconds before the remaining player is declared winner by timeout
+     * This method notifies that only one player is left and the game is now paused
+     */
+    void showGameSuspended(int timeoutSeconds);
+
+    /**
+     * @author Giuse
+     * This method notifies that a second player reconnected and the game is resuming
+     */
+    void showGameResumed();
+
+    /**
+     * @author Giuse
+     * @param totemColor
+     * This method tells the reconnected player what the color of is totem before disconnecting
+     */
+    void showReconnectedTotem(ColorEnum totemColor);
 }

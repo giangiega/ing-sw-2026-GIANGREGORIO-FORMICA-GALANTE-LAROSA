@@ -4,6 +4,7 @@
 package it.polimi.ingsw.network.RMI;
 
 import it.polimi.ingsw.enums.CharacterEnum;
+import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
@@ -11,6 +12,7 @@ import it.polimi.ingsw.model.cards.tribe.TribeCard;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
+import javax.swing.text.View;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -19,16 +21,25 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     private static final String SERVER_NAME = "MesosServer";
+    private static final int HEARTBEAT_INTERVAL_S = 5;
+    private static final int INITIAL_RETRY_DELAY_S = 2;
+    private static final int MAX_RETRY_DELAY_S = 30;
 
     private final String host;
     private final int port;
 
     // Set in connect(); used by all VirtualView callbacks
     private ViewInterface view;
+
+    private volatile VirtualServer server;
+    private ScheduledExecutorService heartbeat;
 
     /**
      * @param host: RMI registry host
@@ -43,32 +54,100 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param view: the concrete view (TUIView or GUIView) to notify
-     * @throws IOException if the registry lookup or remote call fails
-     * Connects to the RMI server and wires up the full client stack: by
+     * @param view : concrete view (GUI or TUI) to notify
+     * @throws IOException if the registry lookup or initial remote call fails
+     * @throws RemoteException
+     */
+    public void connect(ViewInterface view) throws IOException {
+        this.view = view;
+        doConnect();
+    }
+
+    /**
+     * @throws IOException : if the registry lookup or remote call fails
+     * (Ri)Connects to the RMI server and wires up the full client stack: by
      * looking up the VirtualServer stub in the registry.
      * It also creates the ClientViewRMI and injects it into the view via
      * ViewInterface.init()so that the view can send operations.
      */
-    public void connect(ViewInterface view) throws IOException {
+    public void doConnect() throws IOException {
         try {
             //looking up the VirtualServer stub in the registry and creates the ClientViewRMI
             Registry registry = LocateRegistry.getRegistry(host, port);
-            VirtualServer server = (VirtualServer) registry.lookup(SERVER_NAME);
+            server = (VirtualServer) registry.lookup(SERVER_NAME);
 
             // Inject the sender: from this point the view can call sendOperation()
             ClientViewRMI sender = new ClientViewRMI(server, this);
             view.init(sender);
 
-            // Store for callbacks
-            this.view = view;
-
-            // Register this callback object — server replies with AckEvent
+            // Store for callbacks using connect
             server.connect(this);
+
+            startHeartbeat();
 
         } catch (NotBoundException e) {
             throw new IOException("Server not found in RMI registry: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * This method starts a periodic ping loop.  If any ping call throws a
+     * RemoteException the connection is considered lost: the heartbeat
+     * is stopped, the view is notified, and a reconnection retry loop begins.
+     */
+    private void startHeartbeat() {
+        stopHeartbeat();
+        heartbeat = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "rmi-heartbeat");
+            t.setDaemon(true); // must not prevent JVM shutdown
+            return t;
+        });
+        heartbeat.scheduleAtFixedRate(() -> {
+            try {
+                server.ping(this);
+            } catch (RemoteException e) {
+                System.err.println("[RmiClient] heartbeat failed: " + e.getMessage());
+                stopHeartbeat();
+                view.getUIDispatcher().accept(() ->
+                        view.showPlayerDisconnected("server"));
+                scheduleReconnect();
+            }
+        }, HEARTBEAT_INTERVAL_S, HEARTBEAT_INTERVAL_S, TimeUnit.SECONDS);
+    }
+
+    /** Shuts down the heartbeat scheduler without blocking. */
+    private void stopHeartbeat() {
+        if (heartbeat != null && !heartbeat.isShutdown()) {
+            heartbeat.shutdownNow();
+            heartbeat = null;
+        }
+    }
+
+    /**
+     * This method launches a background thread that retries doConnect() with
+     * exponential backoff (2 s → 4 s → … capped at 30 s).
+     * Once the connection is re-established the player is prompted to log in again.
+     * The server's LobbyController will recognise
+     * the nickname as a reconnection and resume the game.
+     */
+    private void scheduleReconnect() {
+        new Thread(() -> {
+            int delayS = INITIAL_RETRY_DELAY_S;
+            while (true) {
+                System.out.println("[RmiClient] reconnecting in " + delayS + "s …");
+                try {
+                    TimeUnit.SECONDS.sleep(delayS);
+                    doConnect();
+                    return;
+                } catch (IOException e) {
+                    System.err.println("[RmiClient] reconnect failed: " + e.getMessage());
+                    delayS = Math.min(delayS * 2, MAX_RETRY_DELAY_S);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+        }, "rmi-reconnect").start();
     }
 
     /**
@@ -77,8 +156,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onAck(boolean isFirst) throws RemoteException {
-        if (isFirst) view.askNumPlayers();
-        else view.askLogin();
+        if (isFirst) view.getUIDispatcher().accept(() -> view.askNumPlayers());
+        else view.getUIDispatcher().accept(() -> view.askLogin());
     }
 
     /**
@@ -92,13 +171,13 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onLogged(boolean result, String name, String color,
                          List<String> lobbyPlayers) throws RemoteException {
         if (result) {
-            view.showLobby(lobbyPlayers);
+            view.getUIDispatcher().accept(() -> view.showLobby(lobbyPlayers));
         } else {
             if (lobbyPlayers.size() >= 2)
-                view.invalidChoice("The lobby is full");
+                view.getUIDispatcher().accept(() -> view.invalidChoice("The lobby is full"));
             else {
-                view.invalidChoice("Name or color already used");
-                view.askLogin();
+                view.getUIDispatcher().accept(() -> view.invalidChoice("Name or color already used"));
+                view.getUIDispatcher().accept(() -> view.askLogin());
             }
         }
     }
@@ -117,10 +196,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                               List<TribeCard> upperRow, List<TribeCard> lowerRow,
                               List<BuildingCard> buildingUpperRow,
                               List<BuildingCard> buildingLowerRow) throws RemoteException {
-        view.showGameStart();
-        view.updateOfferTrack(offerTrack);
-        view.updateTurnOrder(tile);
-        view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+        view.getUIDispatcher().accept(() -> view.showGameStart());
+        view.getUIDispatcher().accept(() -> view.updateOfferTrack(offerTrack));
+        view.getUIDispatcher().accept(() -> view.updateTurnOrder(tile));
+        view.getUIDispatcher().accept(() -> view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow));
     }
 
     /**
@@ -139,8 +218,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                              List<TribeCard> upperRow, List<TribeCard> lowerRow,
                              List<BuildingCard> buildingUpperRow,
                              List<BuildingCard> buildingLowerRow) throws RemoteException {
-        view.selectCard(upperCount, lowerCount, cardsUpper, cardsLower,
-                upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+        view.getUIDispatcher().accept(() ->
+                view.selectCard(upperCount, lowerCount, cardsUpper, cardsLower,
+                upperRow, lowerRow, buildingUpperRow, buildingLowerRow));
     }
 
     /**
@@ -149,7 +229,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onMoveTotem(List<Character> freeSlots) throws RemoteException {
-        view.placeTotem(freeSlots);
+        view.getUIDispatcher().accept(() -> view.placeTotem(freeSlots));
     }
 
     /**
@@ -163,7 +243,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onUpdateBoard(List<TribeCard> upperRow, List<TribeCard> lowerRow,
                               List<BuildingCard> buildingUpperRow,
                               List<BuildingCard> buildingLowerRow) throws RemoteException {
-        view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+        view.getUIDispatcher().accept(() -> view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow));
     }
 
     /**
@@ -177,7 +257,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                                    List<Integer> pps,
                                    List<Map<CharacterEnum, List<String>>> tribeDesc,
                                    List<List<String>> buildingDesc) throws RemoteException {
-        view.updateAllPlayers(names, foods, pps, tribeDesc, buildingDesc);
+        view.getUIDispatcher().accept(() -> view.updateAllPlayers(names, foods, pps, tribeDesc, buildingDesc));
     }
 
     /**
@@ -188,8 +268,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     @Override
     public void onUpdateOfferTrack(List<OfferTile> offerTrack,
                                    TurnOrderTile turnOrderTile) throws RemoteException {
-        view.updateOfferTrack(offerTrack);
-        view.updateTurnOrder(turnOrderTile);
+        view.getUIDispatcher().accept(() -> view.updateOfferTrack(offerTrack));
+        view.getUIDispatcher().accept(() -> view.updateTurnOrder(turnOrderTile));
     }
 
     /**
@@ -198,7 +278,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onUpdateRound(int currentRound) throws RemoteException {
-        view.updateRound(currentRound);
+        view.getUIDispatcher().accept(() -> view.updateRound(currentRound));
     }
 
     /**
@@ -212,7 +292,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void onUpdateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
                              List<BuildingCard> buildingUpperRow,
                              List<BuildingCard> buildingLowerRow) throws RemoteException {
-        view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow);
+        view.getUIDispatcher().accept(() -> view.updateRows(upperRow, lowerRow, buildingUpperRow, buildingLowerRow));
     }
 
     /**
@@ -221,7 +301,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) throws RemoteException {
-        view.showValidCards(tribe);
+        view.getUIDispatcher().accept(() -> view.showValidCards(tribe));
     }
 
     /**
@@ -230,7 +310,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onInvalidChoice(String message) throws RemoteException {
-        view.invalidChoice(message);
+        view.getUIDispatcher().accept(() -> view.invalidChoice(message));
     }
 
     /**
@@ -240,12 +320,68 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onEndGame(List<String> winners, Map<String, Integer> finalScores) throws RemoteException {
-        view.showFinalScore(winners, finalScores);
+        view.getUIDispatcher().accept(() -> view.showFinalScore(winners, finalScores));
     }
+
+    /**
+     * @param names
+     * @param tribes
+     * @throws RemoteException
+     */
     @Override
     public void onUpdateAllTribes(List<String> names,
                                   List<Map<CharacterEnum, List<CharacterCard>>> tribes)
             throws RemoteException {
-        view.updateAllTribes(names, tribes);
+        view.getUIDispatcher().accept(() -> view.updateAllTribes(names, tribes));
     }
+
+    /**
+     * @param playerName
+     * @throws RemoteException
+     */
+    @Override
+    public void onPlayerDisconnected(String playerName) throws RemoteException {
+        view.getUIDispatcher().accept(() -> view.showPlayerDisconnected(playerName));
+    }
+
+    /**
+     * @param playerName
+     * @throws RemoteException
+     */
+    @Override
+    public void onPlayerReconnected(String playerName) throws RemoteException {
+        view.getUIDispatcher().accept(() -> view.showPlayerReconnected(playerName));
+    }
+
+    /**
+     * @param timeoutSeconds seconds before the remaining player is declared winner.
+     * @throws RemoteException
+     */
+    @Override
+    public void onGameSuspended(int timeoutSeconds) throws RemoteException {
+        view.getUIDispatcher().accept(() -> view.showGameSuspended(timeoutSeconds));
+    }
+
+    /**
+     * @throws RemoteException
+     */
+    @Override
+    public void onGameResumed() throws RemoteException {
+        view.getUIDispatcher().accept(view::showGameResumed);
+    }
+
+    /**
+     * @param totemColor : right old color
+     */
+    @Override
+    public void onReconnectedTotem(ColorEnum totemColor) throws RemoteException {
+        view.getUIDispatcher().accept(()-> view.showReconnectedTotem(totemColor));
+    }
+
+    /**
+     * @throws RemoteException
+     * Ping server-->client. If rhe connection is down, it throws RemoteException
+     */
+    @Override
+    public void onPing() throws RemoteException {}
 }

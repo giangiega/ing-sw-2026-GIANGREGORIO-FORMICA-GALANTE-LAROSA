@@ -1113,4 +1113,49 @@ public class GUIView implements ViewInterface {
             pane.getChildren().add(iv);
         }
     }
+
+    @Override
+    public void showPlayerDisconnected(String playerName) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Player " + playerName + " has disconnected.");
+            alert.setTitle("Connection Lost");
+            alert.setHeaderText(null);
+            alert.show();
+        });
+    }
+
+    @Override
+    public void showPlayerReconnected(String playerName) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Player " + playerName + " has reconnected.");
+            alert.setTitle("Player Returned");
+            alert.setHeaderText(null);
+            alert.show();
+        });
+    }
+
+    @Override
+    public void showGameSuspended(int timeoutSeconds) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.WARNING,
+                    "Game suspended. Waiting for other players to reconnect. Timeout: " + timeoutSeconds + "s.");
+            alert.setTitle("Game Suspended");
+            alert.setHeaderText(null);
+            alert.show();
+        });
+    }
+
+    @Override
+    public void showGameResumed() {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "All players are back. Game is resuming!");
+            alert.setTitle("Game Resumed");
+            alert.setHeaderText(null);
+            alert.show();
+        });
+    }
+    @Override
+    public void showReconnectedTotem(ColorEnum totemColor) {
+       //Messaggio che dice al player che il suo totem originale era di quel colore;
+    }
 }

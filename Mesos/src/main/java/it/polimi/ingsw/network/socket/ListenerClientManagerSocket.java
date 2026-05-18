@@ -40,14 +40,16 @@ public class ListenerClientManagerSocket {
      * @throws IOException
      */
     public void startClientListener() throws IOException {
-        String jsonString;
+        try{
+            String jsonString;
 
-        while((jsonString = input.readLine()) != null){
-            //create correct operation class based on json field "op"
-            ClientOperation clientOperation = gson.fromJson(jsonString, ClientOperation.class);
-            clientOperation.executeOp(server, clientManagerSocket);
+            while((jsonString = input.readLine()) != null){
+                //create correct operation class based on json field "op"
+                ClientOperation clientOperation = gson.fromJson(jsonString, ClientOperation.class);
+                clientOperation.executeOp(server, clientManagerSocket);
+            }
+        }finally{
+            server.handleDisconnection(clientManagerSocket.getPlayerName());
         }
     }
-
-
 }

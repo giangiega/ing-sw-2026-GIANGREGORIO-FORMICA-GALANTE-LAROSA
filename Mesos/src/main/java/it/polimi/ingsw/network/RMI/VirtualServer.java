@@ -19,4 +19,11 @@ public interface VirtualServer extends Remote {
     public void placeTotem(VirtualView client, char position) throws RemoteException;
     public void chooseCard(VirtualView client, List<Integer> upperCards, List<Integer> lowerCards,
                     List<Integer> upperBuildings, List<Integer> lowerBuildings) throws RemoteException;
+    /**
+     * @author Giuse
+     * @param client : the calling client stub, used to identify the sender
+     * This method is ì called periodically by RmiClient.
+     * If this throws a RemoteException the connection is considered lost.
+     */
+    public void ping(VirtualView client) throws RemoteException;
 }
