@@ -3,6 +3,7 @@
  */
 package it.polimi.ingsw.network.RMI;
 
+import it.polimi.ingsw.database.RankingRow;
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
@@ -319,8 +320,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      * @throws RemoteException
      */
     @Override
-    public void onEndGame(List<String> winners, Map<String, Integer> finalScores) throws RemoteException {
+    public void onEndGame(List<String> winners, Map<String, Integer> finalScores, List<RankingRow> ranking, Map<String, Integer> playersPosition) throws RemoteException {
         view.getUIDispatcher().accept(() -> view.showFinalScore(winners, finalScores));
+        view.getUIDispatcher().accept(() -> view.showLeaderboard(ranking, playersPosition));
     }
 
     /**

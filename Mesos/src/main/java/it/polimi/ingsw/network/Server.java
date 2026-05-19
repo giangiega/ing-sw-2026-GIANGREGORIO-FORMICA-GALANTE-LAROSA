@@ -74,6 +74,7 @@ public class Server extends ServerClass{
     public void handleDisconnection(String playerName){
         if (playerName == null) {
             if (lobbyController == null) {
+                needReset = true;
                 resetServer();
             }
             return;

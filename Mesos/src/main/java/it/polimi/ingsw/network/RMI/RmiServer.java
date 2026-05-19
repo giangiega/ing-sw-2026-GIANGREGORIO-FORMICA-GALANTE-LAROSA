@@ -45,6 +45,7 @@ public class RmiServer extends ServerClass implements VirtualServer {
     public void handleDisconnection(String playerName) {
         if (playerName == null) {
             if (lobbyController == null) {
+                needReset = true;
                 resetServer();
             }
             return;
@@ -70,7 +71,7 @@ public class RmiServer extends ServerClass implements VirtualServer {
             old.stopSilently();
         }
 
-        if (connected > 0 && lobbyController == null && gameController == null) {
+        if (needReset) {
             resetServer(); //connected = 0
         }
 

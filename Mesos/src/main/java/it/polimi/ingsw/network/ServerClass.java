@@ -15,6 +15,7 @@ abstract public class ServerClass {
     protected static LobbyController lobbyController;
     protected static GameController gameController;
     protected static int connected = 0;
+    protected static boolean needReset = false;
 
     public LobbyController getLobbyController(){
         return lobbyController;
@@ -44,5 +45,6 @@ abstract public class ServerClass {
         lobbyController = null;
         gameController = null;
         connected = 0;
+        needReset = false;
     }
 }
