@@ -94,7 +94,7 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void showGameStart() {
-        System.out.println(CYAN + "\n╔═════════════════════════════╗");
+        System.out.println(YELLOW + BOLD + "\n╔═════════════════════════════╗");
         System.out.println("║        GAME STARTED!        ║");
         System.out.println("╚═════════════════════════════╝" + RESET);
     }
@@ -334,7 +334,7 @@ public class TUIView implements ViewInterface {
 
     @Override
     public void showFinalScore(List<String> winners, Map< String , Integer> finalScores) {
-        System.out.println(CYAN + BOLD + "\n╔══════════════════════════╗");
+        System.out.println(YELLOW + BOLD + "\n╔══════════════════════════╗");
         System.out.println("║       GAME OVER!         ║");
         System.out.println("╚══════════════════════════╝" + RESET);
 
