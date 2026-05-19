@@ -1,4 +1,5 @@
 package it.polimi.ingsw.userInterface;
+import it.polimi.ingsw.database.RankingRow;
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.*;
@@ -21,6 +22,7 @@ import java.util.function.Consumer;
 public class TUIView implements ViewInterface {
     private final Scanner scanner = new Scanner(System.in);
     private ClientSender sender;
+    private String nickname;
 
     private static final String RESET = "\033[0m";
     private static final String CYAN = "\033[0;36m";
@@ -86,6 +88,7 @@ public class TUIView implements ViewInterface {
 
         try {
             sender.sendOperation(new LoginOperation(name, ColorEnum.valueOf(color)));
+            this.nickname = name;
         } catch (IllegalArgumentException e) {
             System.out.println(RED + BOLD + "err: Invalid color, try again." + RESET);
             askLogin();
@@ -346,6 +349,26 @@ public class TUIView implements ViewInterface {
                 .forEach(e -> System.out.printf("  %-15s %3d PP%n",
                         e.getKey(), e.getValue()));
 
+    }
+
+    @Override
+    public void showLeaderboard(List<RankingRow> ranking, Map<String, Integer> playersPosition){
+        if (ranking != null && !ranking.isEmpty()) {
+            System.out.println(CYAN + BOLD + "\n--- Global Leaderboard (" +
+                    ranking.get(0).getNumPlayers() + " players) ---" + RESET);
+            System.out.printf("  %-4s %-15s %6s  %s%n", "Rank", "Player", "totalWins", "totalScore");
+            System.out.println("  " + "-".repeat(46));
+            for (RankingRow row : ranking) {
+                String line = String.format("  %-4s %-15s %4d wins %4d PP %n",
+                        "#" + row.getPosition(), row.getNickname(),
+                        row.getTotalWin(), row.getScore());
+                if(row.getNickname().equals(nickname)){
+                    System.out.println(GREEN + BOLD + line + RESET);
+                }else {
+                    System.out.println(line);
+                }
+            }
+        }
     }
 
     @Override

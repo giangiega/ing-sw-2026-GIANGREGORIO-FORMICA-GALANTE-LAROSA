@@ -1,5 +1,6 @@
 package it.polimi.ingsw.userInterface;
 
+import it.polimi.ingsw.database.RankingRow;
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
@@ -13,6 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * last 2 methods are defined as default because TUI doesn't need them.
+ * Those methods used to manage the update of every player's tribe, now is managed in updateAllPLayers().
+ * GUI needs those 2 methods, so it must override them.
+ */
 
 public interface ViewInterface {
     Consumer<Runnable> getUIDispatcher();
@@ -30,6 +36,7 @@ public interface ViewInterface {
     void placeTotem(List<Character> freeSlots);
     void invalidChoice(String message);
     void showFinalScore(List<String> winners, Map< String , Integer> finalScores);
+    void showLeaderboard(List<RankingRow> ranking, Map<String, Integer> playersPosition);
 
     /**
      * This two methods are defined as default because TUI doesn't need them.

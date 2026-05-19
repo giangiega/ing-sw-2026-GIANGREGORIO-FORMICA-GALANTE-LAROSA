@@ -1,5 +1,6 @@
 package it.polimi.ingsw.userInterface;
 
+import it.polimi.ingsw.database.RankingRow;
 import it.polimi.ingsw.enums.*;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
@@ -1023,6 +1024,10 @@ public class GUIView implements ViewInterface {
 
     }
 
+    @Override
+    public void showLeaderboard(List<RankingRow> ranking, Map<String, Integer> playersPosition){
+
+    }
 
     @Override
     public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe, List<BuildingCard> buildings) {

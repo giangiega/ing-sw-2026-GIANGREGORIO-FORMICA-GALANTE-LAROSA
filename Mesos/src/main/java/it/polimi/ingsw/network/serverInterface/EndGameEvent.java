@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.serverInterface;
 
+import it.polimi.ingsw.database.RankingRow;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.network.RMI.VirtualView;
 import it.polimi.ingsw.userInterface.ViewInterface;
@@ -13,7 +14,10 @@ import java.util.Map;
 public class EndGameEvent implements ServerEvent {
     List<String> winnerNames;
     Map<String, Integer> finalScores;
-    public EndGameEvent(List<Player> winners,  Map<Player, Integer> scores) {
+    List<RankingRow> ranking;
+    Map<String, Integer> playersPosition;
+
+    public EndGameEvent(List<Player> winners,  Map<Player, Integer> scores, List<RankingRow> ranking, Map<String, Integer> playersPosition) {
         this.winnerNames = new ArrayList<>();
         for (Player player : winners)
             this.winnerNames.add(player.getName());
@@ -22,15 +26,19 @@ public class EndGameEvent implements ServerEvent {
         for (Map.Entry<Player, Integer> entry : scores.entrySet()) {
             this.finalScores.put(entry.getKey().getName(), entry.getValue());
         }
+
+        this.ranking = ranking;
+        this.playersPosition = playersPosition;
     }
 
     @Override
     public void updateView(ViewInterface view){
         view.showFinalScore(winnerNames, finalScores);
+        view.showLeaderboard(ranking, playersPosition);
     }
 
     @Override
     public void updateViewRmi(VirtualView client) throws RemoteException {
-        client.onEndGame(winnerNames, finalScores);
+        client.onEndGame(winnerNames, finalScores, ranking, playersPosition);
     }
 }

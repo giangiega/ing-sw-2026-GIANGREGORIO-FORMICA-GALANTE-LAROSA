@@ -3,6 +3,7 @@
  */
 package it.polimi.ingsw.network.RMI;
 
+import it.polimi.ingsw.database.RankingRow;
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
@@ -69,7 +70,7 @@ public interface VirtualView extends Remote {
     void onInvalidChoice(String message) throws RemoteException;
 
     /** The game has ended; final scores and winners are provided. */
-    void onEndGame(List<String> winners, Map<String, Integer> finalScores) throws RemoteException;
+    void onEndGame(List<String> winners, Map<String, Integer> finalScores, List<RankingRow> ranking, Map<String, Integer> playersPosition) throws RemoteException;
 
     void onUpdateAllTribes(List<String> names,
                            List<Map<CharacterEnum, List<CharacterCard>>> tribes)

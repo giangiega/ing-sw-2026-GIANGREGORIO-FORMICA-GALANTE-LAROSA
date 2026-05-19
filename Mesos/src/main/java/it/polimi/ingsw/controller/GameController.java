@@ -1,5 +1,7 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.database.DatabaseManager;
+import it.polimi.ingsw.database.RankingRow;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.exceptions.InvalidPlayerActionException;
@@ -15,6 +17,7 @@ import it.polimi.ingsw.network.ClientConnection;
 import it.polimi.ingsw.network.serverInterface.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +32,7 @@ public class GameController {
     private final Map<String, ClientConnection> clientManagers;
     private Game game;
     private TurnController turnController;
+    private DatabaseManager database;
 
     private List<String> disconnectedPlayers;
     /**
@@ -78,6 +82,8 @@ public class GameController {
 
         turnController = new TurnController(this, players.size());
         turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
+
+        this.database = DatabaseManager.getDatabase();
     }
 
     /**
@@ -245,7 +251,25 @@ public class GameController {
             finalScores.remove(p);
         }
         List<Player> winners = game.getWinner(finalScores);
-        broadcastEvent(new EndGameEvent(winners, finalScores));
+        int numPlayers = players.size();
+
+        for (Player p: finalScores.keySet()){
+            boolean winner;
+            if(winners.contains(p)){
+                winner = true;
+            }else{
+                winner = false;
+            }
+            database.saveResult(p.getName(), finalScores.get(p), numPlayers, winner);
+        }
+
+        List<RankingRow> ranking = database.getRanking(numPlayers);
+
+        Map<String, Integer> playersPosition = new HashMap<>();
+        for(Player p: finalScores.keySet())
+            playersPosition.put(p.getName(), database.getPlayerPosition(p.getName(), numPlayers));
+
+        broadcastEvent(new EndGameEvent(winners, finalScores, ranking, playersPosition));
     }
 
     /**
@@ -418,8 +442,4 @@ public class GameController {
             }
         }, SUSPENSION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
     }
-
-
-
-
 }
