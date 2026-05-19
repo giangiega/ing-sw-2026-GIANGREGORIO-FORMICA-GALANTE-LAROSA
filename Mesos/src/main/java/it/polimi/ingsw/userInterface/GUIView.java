@@ -327,10 +327,10 @@ public class GUIView implements ViewInterface {
 
             // building in colonna a destra della upperRow
             VBox buildingRows = new VBox(10, buildingUpperPane, buildingLowerPane);
-            buildingRows.setAlignment(Pos.TOP_LEFT);
+            buildingRows.setAlignment(Pos.BOTTOM_LEFT);
 
             HBox topRow = new HBox(20, upperRowPane, buildingRows);
-            topRow.setAlignment(Pos.CENTER);
+            topRow.setAlignment(Pos.BOTTOM_CENTER);
 
             // ── OFFER TRACK ─────────────────────────────────────────────
             offerTrackPane = new HBox(14);
@@ -886,9 +886,9 @@ public class GUIView implements ViewInterface {
             int effectiveCost = Math.max(0, card.getBaseFC() - builderDiscount);
             boolean canAfford = myFood >= effectiveCost;
 
-            if (!canAfford) {
-                iv.setOpacity(0.45);
-            }
+           // if (!canAfford) {
+           //     iv.setOpacity(0.45);
+           //  }
 
             iv.setStyle("-fx-cursor: hand;");
             iv.setOnMouseEntered(e -> {
@@ -1034,7 +1034,7 @@ public class GUIView implements ViewInterface {
 
 
     @Override
-    public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) {
+    public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe, List<BuildingCard> buildings) {
         this.myTribe = tribe;
         Platform.runLater(() -> {
             if (ownTribePane == null) return;
@@ -1064,6 +1064,27 @@ public class GUIView implements ViewInterface {
                                 "-fx-background-radius: 6;"
                 );
                 ownTribePane.getChildren().add(typeGroup);
+            }
+            if (buildings != null && !buildings.isEmpty()) {
+                Label buildingTitle = new Label("BUILDINGS");
+                buildingTitle.setStyle(
+                        "-fx-text-fill: #e8c46a; -fx-font-size: 11; -fx-font-weight: bold;"
+                );
+
+                VBox buildingColumn = new VBox(4);
+                buildingColumn.setAlignment(Pos.TOP_CENTER);
+                for (BuildingCard card : buildings) {
+                    buildingColumn.getChildren().add(cardImage(card.getImage()));
+                }
+
+                VBox buildingGroup = new VBox(4, buildingTitle, buildingColumn);
+                buildingGroup.setAlignment(Pos.TOP_CENTER);
+                buildingGroup.setPadding(new Insets(4, 6, 4, 6));
+                buildingGroup.setStyle(
+                        "-fx-background-color: rgba(255,255,255,0.06);" +
+                                "-fx-background-radius: 6;"
+                );
+                ownTribePane.getChildren().add(buildingGroup);
             }
         });
     }

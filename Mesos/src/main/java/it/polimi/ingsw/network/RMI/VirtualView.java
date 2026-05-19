@@ -63,7 +63,7 @@ public interface VirtualView extends Remote {
                       List<BuildingCard> buildingLowerRow) throws RemoteException;
 
     /** Shows the player which character cards in their tribe are valid this round. */
-    void onValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) throws RemoteException;
+    void onValidCards(Map<CharacterEnum, List<CharacterCard>> tribe, List<BuildingCard> buildings) throws RemoteException;
 
     /** The last action was invalid; a descriptive message is provided. */
     void onInvalidChoice(String message) throws RemoteException;

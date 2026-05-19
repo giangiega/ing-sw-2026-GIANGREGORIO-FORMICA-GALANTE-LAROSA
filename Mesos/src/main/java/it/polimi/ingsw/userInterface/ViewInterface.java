@@ -37,7 +37,7 @@ public interface ViewInterface {
      * GUI needs those 2 methods, so it must override them
      *
      */
-    default void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe){};
+    default void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe, List<BuildingCard> buildings) {};
     default void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes){};
 
     /**

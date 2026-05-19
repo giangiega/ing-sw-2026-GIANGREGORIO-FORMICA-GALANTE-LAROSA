@@ -141,7 +141,7 @@ public class GameController {
 
         Player player = getPlayerByName(playerName);
         if(player != null)
-            clientManagers.get(playerName).sendEvent(new ValidCardsEvent(player.getTribe()));
+            clientManagers.get(playerName).sendEvent(new ValidCardsEvent(player.getTribe(),player.getBuildingCards()));
 
         broadcastEvent(new UpdateAllPlayersEvent(players));
         broadcastEvent(new UpdateAllTribesEvent(players));
@@ -371,7 +371,7 @@ public class GameController {
             newCm.sendEvent(new UpdateAllTribesEvent(players));
             Player p = getPlayerByName(playerName);
             if (p != null) {
-                newCm.sendEvent(new ValidCardsEvent(p.getTribe()));
+                newCm.sendEvent(new ValidCardsEvent(p.getTribe(),p.getBuildingCards()));
             }
 
             if (wasSuspended) {

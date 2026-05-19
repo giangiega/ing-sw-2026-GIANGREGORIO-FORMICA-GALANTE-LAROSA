@@ -300,8 +300,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      * @throws RemoteException
      */
     @Override
-    public void onValidCards(Map<CharacterEnum, List<CharacterCard>> tribe) throws RemoteException {
-        view.getUIDispatcher().accept(() -> view.showValidCards(tribe));
+    public void onValidCards(Map<CharacterEnum, List<CharacterCard>> tribe,List<BuildingCard> buildings) throws RemoteException {
+        view.getUIDispatcher().accept(() -> view.showValidCards(tribe,buildings));
     }
 
     /**
