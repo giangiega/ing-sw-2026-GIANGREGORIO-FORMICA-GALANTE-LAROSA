@@ -39,14 +39,6 @@ public class GUIView implements ViewInterface {
     private static final double CARD_W = 115;
     private static final double CARD_H = 168;
 
-    private static final Map<CharacterEnum, String> CHAR_ICONS = Map.of(
-            CharacterEnum.HUNTER,   "hunter",
-            CharacterEnum.GATHERER, "gatherer",
-            CharacterEnum.SHAMAN,   "shaman",
-            CharacterEnum.ARTIST,   "artist",
-            CharacterEnum.BUILDER,  "builder",
-            CharacterEnum.INVENTOR, "inventor"
-    );
 
     private final Map<String, Map<CharacterEnum, List<CharacterCard>>> allTribesData = new HashMap<>();
 
@@ -316,17 +308,17 @@ public class GUIView implements ViewInterface {
             upperRowPane = new HBox(12);
             upperRowPane.setAlignment(Pos.CENTER_LEFT);
 
-            lowerRowPane = new HBox(10);
+            lowerRowPane = new HBox(12);
             lowerRowPane.setAlignment(Pos.CENTER);
 
-            buildingUpperPane = new HBox(10);
+            buildingUpperPane = new HBox(12);
             buildingUpperPane.setAlignment(Pos.CENTER_LEFT);
 
-            buildingLowerPane = new HBox(10);
+            buildingLowerPane = new HBox(12);
             buildingLowerPane.setAlignment(Pos.CENTER_LEFT);
 
             // building in colonna a destra della upperRow
-            VBox buildingRows = new VBox(10, buildingUpperPane, buildingLowerPane);
+            VBox buildingRows = new VBox(12, buildingUpperPane, buildingLowerPane);
             buildingRows.setAlignment(Pos.BOTTOM_LEFT);
 
             HBox topRow = new HBox(20, upperRowPane, buildingRows);
@@ -359,13 +351,13 @@ public class GUIView implements ViewInterface {
             middleRow.setPadding(new Insets(8, 0, 8, 0));
 
             // ── SEZIONE PROPRIA TRIBÙ ────────────────────────────────────
-            ownTribePane = new HBox(12);
+            ownTribePane = new HBox(16);
             ownTribePane.setAlignment(Pos.CENTER_LEFT);
-            ownTribePane.setPadding(new Insets(6));
+            ownTribePane.setPadding(new Insets(8));
 
             ScrollPane ownTribeScroll = new ScrollPane(ownTribePane);
             ownTribeScroll.setFitToHeight(true);
-            ownTribeScroll.setPrefHeight(CARD_H + 40);
+            ownTribeScroll.setPrefHeight(CARD_H + 70);
             ownTribeScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
             ownTribeScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             ownTribeScroll.setStyle(
@@ -377,7 +369,7 @@ public class GUIView implements ViewInterface {
                     "-fx-text-fill: #e8c46a; -fx-font-size: 12; -fx-font-weight: bold;"
             );
 
-            VBox ownTribeSection = new VBox(4, ownTribeTitle, ownTribeScroll);
+            VBox ownTribeSection = new VBox(18, ownTribeTitle, ownTribeScroll);
             ownTribeSection.setPadding(new Insets(8, 16, 4, 16));
             ownTribeSection.setStyle(
                     "-fx-background-color: rgba(0,0,0,0.35); -fx-background-radius: 8;"
@@ -447,7 +439,6 @@ public class GUIView implements ViewInterface {
             actionBar.setVisible(false);
             actionBar.setManaged(false);
 
-            // ── ASSEMBLY ─────────────────────────────────────────────────
             HBox mainArea = new HBox(cardScroll, rightPanel);
             VBox.setVgrow(mainArea, Priority.ALWAYS);
 
@@ -682,20 +673,20 @@ public class GUIView implements ViewInterface {
             List<CharacterCard> cards = tribe.get(type);
             if (cards == null || cards.isEmpty()) continue;
 
-            ImageView typeIcon = icon(CHAR_ICONS.getOrDefault(type, type.name().toLowerCase()));
-            typeIcon.setFitWidth(32);
-            typeIcon.setFitHeight(32);
+            ImageView typeIcon = icon(type.name().toLowerCase());
+            typeIcon.setFitWidth(48);
+            typeIcon.setFitHeight(48);
 
             Label countLabel = new Label("×" + cards.size());
             countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 12;");
 
-            VBox col = new VBox(6, typeIcon, countLabel);
+            VBox col = new VBox(8, typeIcon, countLabel);
             col.setAlignment(Pos.TOP_CENTER);
 
             for (CharacterCard card : cards) {
                 ImageView img = cardImage(card.getImage());
-                img.setFitWidth(90);
-                img.setFitHeight(130);
+                img.setFitWidth(100);
+                img.setFitHeight(145);
                 col.getChildren().add(img);
             }
             tribeContent.getChildren().add(col);
@@ -703,7 +694,7 @@ public class GUIView implements ViewInterface {
 
         ScrollPane scroll = new ScrollPane(tribeContent);
         scroll.setFitToHeight(true);
-        scroll.setPrefHeight(420);
+        scroll.setPrefHeight(630);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
 
@@ -1039,12 +1030,60 @@ public class GUIView implements ViewInterface {
         Platform.runLater(() -> {
             if (ownTribePane == null) return;
             ownTribePane.getChildren().clear();
+/**
+            Map<String, List<CharacterCard>> groupedByImage = new HashMap<>();
 
-            for (CharacterEnum type : CharacterEnum.values()) {
+            for (List<CharacterCard> cardList : tribe.values()) {
+                if (cardList == null) continue;
+                for (CharacterCard card : cardList) {
+                    String imageName = card.getImage(); // es: "hunter_hunt" o "hunter_no_hunt"
+                    groupedByImage.computeIfAbsent(imageName, k -> new ArrayList<>()).add(card);
+                }
+            }
+                    for (Map.Entry<String, List<CharacterCard>> entry : groupedByImage.entrySet()) {
+                        List<CharacterCard> cards = entry.getValue();
+                        if (cards.isEmpty()) continue;
+
+                        // Prendi la prima carta per sapere il tipo e l'immagine
+                        CharacterCard firstCard = cards.get(0);
+                        CharacterEnum type = firstCard.getCharacterType();
+
+                        // Icona del personaggio
+                        ImageView typeIcon = icon(type.name().toLowerCase());
+                        typeIcon.setFitWidth(48);
+                        typeIcon.setFitHeight(48);
+
+                        Label countLabel = new Label("× " + cards.size());
+                        countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 11;");
+
+                        VBox header = new VBox(2, typeIcon, countLabel);
+                        header.setAlignment(Pos.CENTER);
+
+                        // Colonna con le carte
+                        VBox cardColumn = new VBox(4);
+                        cardColumn.setAlignment(Pos.TOP_CENTER);
+                        for (CharacterCard card : cards) {
+                            cardColumn.getChildren().add(cardImage(card.getImage()));
+                        }
+
+                        VBox typeGroup = new VBox(4, header, cardColumn);
+                        typeGroup.setAlignment(Pos.TOP_CENTER);
+                        typeGroup.setPadding(new Insets(4, 6, 4, 6));
+                        typeGroup.setStyle(
+                                "-fx-background-color: rgba(255,255,255,0.06); " +
+                                        "-fx-background-radius: 6; "
+                        );
+                        ownTribePane.getChildren().add(typeGroup);
+                    }
+
+*/
+           for (CharacterEnum type : CharacterEnum.values()) {
                 List<CharacterCard> cards = tribe.get(type);
                 if (cards == null || cards.isEmpty()) continue;
 
-                ImageView typeIcon = icon(CHAR_ICONS.getOrDefault(type, type.name().toLowerCase()));
+                ImageView typeIcon = icon(type.name().toLowerCase());
+                typeIcon.setFitHeight(42);
+                typeIcon.setFitWidth(42);
                 Label countLabel = new Label("×" + cards.size());
                 countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 11;");
                 VBox header = new VBox(2, typeIcon, countLabel);
@@ -1065,6 +1104,7 @@ public class GUIView implements ViewInterface {
                 );
                 ownTribePane.getChildren().add(typeGroup);
             }
+
             if (buildings != null && !buildings.isEmpty()) {
                 Label buildingTitle = new Label("BUILDINGS");
                 buildingTitle.setStyle(
