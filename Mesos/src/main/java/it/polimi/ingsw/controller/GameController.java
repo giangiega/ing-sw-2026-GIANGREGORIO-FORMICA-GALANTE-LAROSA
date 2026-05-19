@@ -411,7 +411,7 @@ public class GameController {
         suspensionFuture = scheduler.schedule(() -> {
             synchronized (this) {
                 // Check if someone reconnected
-                if (getConnectedPlayersCount() >= 1) return;
+                if (getConnectedPlayersCount() >= 2) return;
                 System.out.println("Server: no reconnection during timeout, game is over.");
                 // Declare the last connected player as winner
                 endGame();
