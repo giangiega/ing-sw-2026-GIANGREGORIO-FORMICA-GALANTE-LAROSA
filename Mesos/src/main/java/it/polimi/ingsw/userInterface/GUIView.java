@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.cards.tribe.TribeCard;
+import it.polimi.ingsw.model.cards.tribe.characters.Builder;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.network.clientInterface.ChooseCardOperation;
 import it.polimi.ingsw.network.clientInterface.LoginOperation;
@@ -458,7 +459,6 @@ public class GUIView implements ViewInterface {
     }
 
     private void showToast(String message) {
-        System.out.println("showToast called, sceneRoot: " + sceneRoot);
         if (sceneRoot == null) return;
 
         Label toast = new Label("⚠  " + message);
@@ -474,7 +474,6 @@ public class GUIView implements ViewInterface {
         StackPane.setAlignment(toast, Pos.TOP_CENTER);
         StackPane.setMargin(toast, new Insets(20,0,0,0));
         sceneRoot.getChildren().add(toast);
-        System.out.println("Toast aggiunto, figli in sceneRoot: " + sceneRoot.getChildren().size());
 
         new Thread(() -> {
             try { Thread.sleep(3500); } catch (InterruptedException ignored) {}
@@ -877,17 +876,40 @@ public class GUIView implements ViewInterface {
     private void renderBuildingRowSelectable(HBox pane, List<BuildingCard> cards,
                                              List<Integer> selectedIndices) {
         pane.getChildren().clear();
+        int builderDiscount = calculateBuilderDiscount();
+
         for (int i = 0; i < cards.size(); i++) {
             final int index = i;
-            ImageView iv = cardImage(cards.get(i).getImage());
+            BuildingCard card = cards.get(i);
+            ImageView iv = cardImage(card.getImage());
 
-            iv.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, gold, 6, 0.3, 0, 0);");
-            iv.setOnMouseEntered(e -> { if (!selectedIndices.contains(index)) iv.setOpacity(0.75); });
-            iv.setOnMouseExited(e  -> { if (!selectedIndices.contains(index)) iv.setOpacity(1.0); });
+            int effectiveCost = Math.max(0, card.getBaseFC() - builderDiscount);
+            boolean canAfford = myFood >= effectiveCost;
+
+            if (!canAfford) {
+                iv.setOpacity(0.45);
+            }
+
+            iv.setStyle("-fx-cursor: hand;");
+            iv.setOnMouseEntered(e -> {
+                if (!selectedIndices.contains(index)) iv.setOpacity(canAfford ? 0.75 : 0.35);
+            });
+            iv.setOnMouseExited(e -> {
+                if (!selectedIndices.contains(index)) iv.setOpacity(canAfford ? 1.0 : 0.45);
+            });
             iv.setOnMouseClicked(e -> {
+                if (!canAfford) {
+                    String msg = builderDiscount > 0
+                            ? "Need " + effectiveCost + " food (base " + card.getBaseFC()
+                            + " - builder discount " + builderDiscount + ") — you have " + myFood
+                            : "Need " + effectiveCost + " food — you have " + myFood;
+                    showToast(msg);
+                    return;
+                }
                 handleCardSelection(iv, index, selectedIndices, Integer.MAX_VALUE);
                 tryConfirmSelection();
             });
+
             pane.getChildren().add(iv);
         }
     }
@@ -906,8 +928,10 @@ public class GUIView implements ViewInterface {
     }
 
     private void tryConfirmSelection() {
-        if (selectedUpperIndices.size() == pendingUpperCount
-                && selectedLowerIndices.size() == pendingLowerCount) {
+        int totalUpper = selectedUpperIndices.size() + selectedBuildingUpperIndices.size();
+        int totalLower = selectedLowerIndices.size() + selectedBuildingLowerIndices.size();
+
+        if (totalUpper == pendingUpperCount && totalLower == pendingLowerCount) {
             sender.sendOperation(new ChooseCardOperation(
                     new ArrayList<>(selectedUpperIndices),
                     new ArrayList<>(selectedLowerIndices),
@@ -915,7 +939,7 @@ public class GUIView implements ViewInterface {
                     new ArrayList<>(selectedBuildingLowerIndices)
             ));
             actionBar.setVisible(false);
-            // rimuovi i click handler dalle righe
+            actionBar.setManaged(false);
             clearRowHandlers(upperRowPane);
             clearRowHandlers(lowerRowPane);
             clearRowHandlers(buildingUpperPane);
@@ -1133,4 +1157,15 @@ public class GUIView implements ViewInterface {
     public void showReconnectedTotem(ColorEnum totemColor) {
        //Messaggio che dice al player che il suo totem originale era di quel colore;
     }
+    private int calculateBuilderDiscount() {
+        List<CharacterCard> builders = myTribe.get(CharacterEnum.BUILDER);
+        if (builders == null || builders.isEmpty()) return 0;
+
+        int discount = 0;
+        for (CharacterCard card : builders) {
+            discount += ((Builder) card).getWingCount();
+        }
+        return discount;
+    }
 }
+
