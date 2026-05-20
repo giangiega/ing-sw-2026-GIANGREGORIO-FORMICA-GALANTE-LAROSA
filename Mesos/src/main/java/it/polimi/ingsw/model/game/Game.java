@@ -114,6 +114,21 @@ public class Game {
     }
 
     /**
+     * @author Giuse
+     * This method gets called at the end of endRound. It removes the totems
+     * left from disconnecting players
+     */
+    private void forceUnplaceRemainingTotems() {
+        for (OfferTile tile : board.getOfferTrack()) {
+            if (!tile.getFreeOfferTile() && tile.getOccupant() != null) {
+                Player player = tile.getOccupant();
+                tile.setOccupant(null);
+                board.getTurnOrderTile().totemIn(player);
+            }
+        }
+    }
+
+    /**
      * This method use 2 local list to pick every event into the lowerRow. Sustenance are divided by
      * other type of event because sustenance has to be resolved at the end, after all others events.
      * So the first for cycle is done for others List, then the second cycle for Sustenance.
@@ -153,6 +168,7 @@ public class Game {
             s.resolve(players, board);
 
         board.rowsEndRound();
+        forceUnplaceRemainingTotems();//Remove totems left by disconnecting players
         currentRound++;
     }
 
