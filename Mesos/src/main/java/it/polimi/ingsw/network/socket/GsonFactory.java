@@ -8,10 +8,11 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.polimi.ingsw.model.cards.buildings.*;
 import it.polimi.ingsw.model.cards.tribe.*;
 import it.polimi.ingsw.model.cards.tribe.characters.*;
-import it.polimi.ingsw.model.cards.tribe.events.EventCavePainting;
-import it.polimi.ingsw.model.cards.tribe.events.EventHunt;
-import it.polimi.ingsw.model.cards.tribe.events.EventShamanRitual;
-import it.polimi.ingsw.model.cards.tribe.events.EventSustenance;
+import it.polimi.ingsw.model.cards.tribe.events.*;
+import it.polimi.ingsw.model.eraLogic.EraTransition;
+import it.polimi.ingsw.model.eraLogic.TransitionEraII;
+import it.polimi.ingsw.model.eraLogic.TransitionEraIII;
+import it.polimi.ingsw.model.game.*;
 import it.polimi.ingsw.network.clientInterface.*;
 import it.polimi.ingsw.network.serverInterface.*;
 
@@ -109,4 +110,70 @@ public class GsonFactory {
                 .registerTypeAdapterFactory(characterCardFactory)
                 .registerTypeAdapterFactory(buildingFactory).create();
     }
+
+    public static Gson persistenceGson(){
+        RuntimeTypeAdapterFactory<TribeCard> tribeFactory =
+                RuntimeTypeAdapterFactory
+                        .of(TribeCard.class, "typeTribeCard")
+                        .registerSubtype(Hunter.class)
+                        .registerSubtype(Gatherer.class)
+                        .registerSubtype(Shaman.class)
+                        .registerSubtype(Builder.class)
+                        .registerSubtype(Artist.class)
+                        .registerSubtype(Inventor.class)
+                        .registerSubtype(EventCavePainting.class)
+                        .registerSubtype(EventShamanRitual.class)
+                        .registerSubtype(EventSustenance.class)
+                        .registerSubtype(EventHunt.class);
+
+        RuntimeTypeAdapterFactory<CharacterCard> characterCardFactory =
+                RuntimeTypeAdapterFactory
+                        .of(CharacterCard.class, "typeTribeCard")
+                        .registerSubtype(Hunter.class)
+                        .registerSubtype(Gatherer.class)
+                        .registerSubtype(Shaman.class)
+                        .registerSubtype(Builder.class)
+                        .registerSubtype(Artist.class)
+                        .registerSubtype(Inventor.class);
+
+        RuntimeTypeAdapterFactory<BuildingEffect> buildingFactory =
+                RuntimeTypeAdapterFactory
+                        .of(BuildingEffect.class, "typeBuilding")
+                        .registerSubtype(BuildingFoodSet.class)
+                        .registerSubtype(BuildingDiscountFood.class)
+                        .registerSubtype(BuildingSaveShamanPP.class)
+                        .registerSubtype(BuildingBonusTotem.class)
+                        .registerSubtype(BuildingBonusSameInventors.class)
+                        .registerSubtype(BuildingBonusStarShaman.class)
+                        .registerSubtype(BuildingBonusDoubleShamanPP.class)
+                        .registerSubtype(BuildingBonusHunt.class)
+                        .registerSubtype(BuildingDoubleBuilderPP.class)
+                        .registerSubtype(BuildingBonusArtist.class)
+                        .registerSubtype(BuildingPPForSet.class)
+                        .registerSubtype(BuildingBonusForCharacterType.class)
+                        .registerSubtype(BuildingCardUpperRow.class)
+                        .registerSubtype(BuildingFinal25PP.class);
+
+        RuntimeTypeAdapterFactory<GameConfig> gameConfigFactory =
+                RuntimeTypeAdapterFactory
+                        .of(GameConfig.class, "typeGame")
+                        .registerSubtype(GameConfig2.class)
+                        .registerSubtype(GameConfig3.class)
+                        .registerSubtype(GameConfig4.class)
+                        .registerSubtype(GameConfig5.class);
+
+        RuntimeTypeAdapterFactory<EraTransition> eraFactory =
+                RuntimeTypeAdapterFactory
+                        .of(EraTransition.class, "typeEra")
+                        .registerSubtype(TransitionEraII.class)
+                        .registerSubtype(TransitionEraIII.class);
+
+        return new GsonBuilder().registerTypeAdapterFactory(tribeFactory)
+                .registerTypeAdapterFactory(characterCardFactory)
+                .registerTypeAdapterFactory(buildingFactory)
+                .registerTypeAdapterFactory(gameConfigFactory)
+                .registerTypeAdapterFactory(eraFactory)
+                .create();
+    }
+
 }

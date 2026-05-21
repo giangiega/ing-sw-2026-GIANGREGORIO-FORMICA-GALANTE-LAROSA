@@ -10,10 +10,7 @@ import it.polimi.ingsw.model.eraLogic.TransitionEraII;
 import it.polimi.ingsw.model.eraLogic.TransitionEraIII;
 import it.polimi.ingsw.model.game.GameConfig;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Ric
@@ -56,10 +53,9 @@ public class Board {
         this.buildingLowerRow = new ArrayList<>();
 
         this.currentEra = EraEnum.I;
-        this.transitions = Map.of(
-                EraEnum.II, new TransitionEraII(),
-                EraEnum.III, new TransitionEraIII()
-        );
+        this.transitions = new HashMap<>();
+        transitions.put(EraEnum.II, new TransitionEraII());
+        transitions.put(EraEnum.III, new TransitionEraIII());
 
         initializeRows();
     }

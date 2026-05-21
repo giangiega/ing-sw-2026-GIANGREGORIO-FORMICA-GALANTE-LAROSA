@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
+import it.polimi.ingsw.persistence.TurnControllerSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -197,6 +198,22 @@ public class TurnController {
         } else {//Resolve phase: skip disconnected players
             advanceResolvePhase();
         }
+    }
+
+    public TurnControllerSnapshot getSnapshot() {
+        return new TurnControllerSnapshot(inResolvingPhase, totemPlacedCurrRound, resolveOrder,
+                idx, currentPlacementPlayer);
+    }
+
+    // updates the snapshot at the end of the round
+    public void restoreFromSnapshot(TurnControllerSnapshot snapshot) {
+        this.inResolvingPhase = snapshot.isInResolvingPhase();
+        this.totemPlacedCurrRound.clear();
+        this.totemPlacedCurrRound.addAll(snapshot.getTotemPlacedCurrRound());
+        this.resolveOrder.clear();
+        this.resolveOrder.addAll(snapshot.getResolveOrder());
+        this.idx = snapshot.getIdx();
+        this.currentPlacementPlayer = snapshot.getCurrentPlacementPlayer();
     }
 
 }

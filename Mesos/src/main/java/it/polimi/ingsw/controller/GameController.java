@@ -15,7 +15,9 @@ import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.game.GameConfig;
 import it.polimi.ingsw.network.ClientConnection;
 import it.polimi.ingsw.network.serverInterface.*;
+import it.polimi.ingsw.persistence.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +37,8 @@ public class GameController {
     private DatabaseManager database;
 
     private List<String> disconnectedPlayers;
+    private Set<String> playersRequiredToResume = new HashSet<>();
+    private boolean isRecoveryMode = false;
     /**
      * Timer used when only one player is left connected.
      * If no one reconnects within SUSPENSION_TIMEOUT_SECONDS, the sole
@@ -168,6 +172,14 @@ public class GameController {
         } catch (InvalidPlayerActionException e) {
             broadcastEvent(new InvalidChoiceEvent("Can't end round"));
         }
+
+        try {
+            TurnControllerSnapshot snap = turnController.getSnapshot();
+            PersistenceManager.save(new SavedGameState(game, snap, disconnectedPlayers));
+        } catch (IOException e) {
+            System.err.println("[Persistence] Failed to save game state: " + e.getMessage());
+        }
+
         if (game.getCurrentRound() > 10) {
             endGame();
         } else {
@@ -240,6 +252,7 @@ public class GameController {
 
     private void endGame() {
         gameOver = true;//No more reconnection if the game has ended
+        PersistenceManager.clear();
         Map<Player, Integer> finalScores = game.calculateFinalScores();
         List<Player> listOfToRemovePlayers =  new ArrayList<>();
         for(Player p : finalScores.keySet()) {
@@ -399,11 +412,28 @@ public class GameController {
             }
 
             if (wasSuspended) {
-                broadcastEvent(new GameResumedEvent());
-                turnController.resumeAfterSuspension(
-                        game.getBoard().getTurnOrderTile(),
-                        game.getBoard().getOfferTrack()
-                );
+                if (isRecoveryMode) {
+                    playersRequiredToResume.remove(playerName);
+                    if (!playersRequiredToResume.isEmpty()) {
+                        newCm.sendEvent(new GameResumedEvent());
+                        // player_n now knows that the game is resuming, but it has to wait others
+                    } else {
+                        // the game restart
+                        isRecoveryMode = false;
+                        broadcastEvent(new GameResumedEvent());
+                        turnController.resumeAfterSuspension(
+                                game.getBoard().getTurnOrderTile(),
+                                game.getBoard().getOfferTrack()
+                        );
+                    }
+                } else {
+                    // only one player alone in game
+                    broadcastEvent(new GameResumedEvent());
+                    turnController.resumeAfterSuspension(
+                            game.getBoard().getTurnOrderTile(),
+                            game.getBoard().getOfferTrack()
+                    );
+                }
             }
         }
     }
@@ -441,5 +471,25 @@ public class GameController {
                 endGame();
             }
         }, SUSPENSION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+    }
+
+    public void restoreGame(SavedGameState state) {
+        this.game = state.getGame();
+        this.isRecoveryMode = true;
+        this.isSuspended = true;
+
+        // Restore pre-crash disconnections exactly as they were
+        this.disconnectedPlayers = new ArrayList<>(state.getDisconnectedPlayers());
+
+        // Players required to resume = those who were connected at crash time
+        for (Player p : players) {
+            if (!disconnectedPlayers.contains(p.getName())) {
+                playersRequiredToResume.add(p.getName());
+            }
+        }
+
+        this.turnController = new TurnController(this, players.size());
+        turnController.restoreFromSnapshot(state.getTurnSnapshot());
+        this.database = DatabaseManager.getDatabase();
     }
 }

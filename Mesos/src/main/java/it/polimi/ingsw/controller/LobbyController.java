@@ -124,9 +124,16 @@ public class LobbyController {
                 for (Player p : lobbyPlayers) playerNames.add(p.getName());
                 cm.sendEvent(new LoggedEvent(true, name, originalColor, playerNames));
 
-                if (lobbyPlayers.size() == numPlayers) {
-                    gameStarted = true;
-                    server.fullLobby(lobbyPlayers, clientManagers);
+                if (ServerClass.isRecoveryPending()) {
+                    if (lobbyPlayers.size() == ServerClass.getRequiredPlayersToResume()) {
+                        gameStarted = true;
+                        server.restoreFromSave(lobbyPlayers, clientManagers);
+                    }
+                } else {
+                    if (lobbyPlayers.size() == numPlayers) {
+                        gameStarted = true;
+                        server.fullLobby(lobbyPlayers, clientManagers);
+                    }
                 }
                 return;
             }
