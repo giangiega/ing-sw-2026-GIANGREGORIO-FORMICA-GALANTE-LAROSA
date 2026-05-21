@@ -63,8 +63,7 @@ public class GUIView implements ViewInterface {
     private final List<Integer> selectedBuildingUpperIndices = new ArrayList<>();
     private final List<Integer> selectedBuildingLowerIndices = new ArrayList<>();
     private int totalPlayers = 0;
-    private Label loginErrorLabel;
-    private String pendingLoginError = null;
+
     private HBox ownTribePane;
     private Accordion otherTribesAccordion;
     private StackPane sceneRoot;
@@ -185,20 +184,6 @@ public class GUIView implements ViewInterface {
         HBox centeredColorBox = new HBox(colorBox);
         centeredColorBox.setAlignment(Pos.CENTER);
 
-        // error
-        loginErrorLabel = new Label();
-        loginErrorLabel.setStyle("-fx-text-fill: #ff6b6b; -fx-font-size: 12;");
-        loginErrorLabel.setWrapText(true);
-        if (pendingLoginError != null) {
-            loginErrorLabel.setText("⚠  " + pendingLoginError);
-            loginErrorLabel.setVisible(true);
-            loginErrorLabel.setManaged(true);
-            pendingLoginError = null; // consumato
-        } else {
-            loginErrorLabel.setVisible(false);
-            loginErrorLabel.setManaged(false);
-        }
-
         // login button
         Button confirmBtn = new Button("Login");
         confirmBtn.setStyle(
@@ -206,11 +191,11 @@ public class GUIView implements ViewInterface {
                         "-fx-font-size: 14; -fx-padding: 8 24; -fx-background-radius: 6;"
         );
         confirmBtn.setOnAction(e -> handleLogin(
-                isFirst, numField, nameField, colorGroup, loginErrorLabel
+                isFirst, numField, nameField, colorGroup
         ));
 
         form.getChildren().addAll(numBox, nameLabel, nameField, colorLabel,
-                centeredColorBox, loginErrorLabel, confirmBtn);
+                centeredColorBox, confirmBtn);
 
         Region spacer = new Region();
         spacer.setPrefHeight(288);
@@ -219,37 +204,37 @@ public class GUIView implements ViewInterface {
         verticalLayout.setAlignment(Pos.TOP_CENTER);
         verticalLayout.getChildren().addAll(spacer, form);
 
-        StackPane root = new StackPane(background, verticalLayout);
+        sceneRoot = new StackPane(background, verticalLayout);
 
-        Scene scene = new Scene(root, 1280, 720);
+        Scene scene = new Scene(sceneRoot, 1280, 720);
         primaryStage.setScene(scene);
 
     }
 
     private void handleLogin(boolean isFirst, TextField numField,
-                             TextField nameField, ToggleGroup colorGroup,
-                             Label errorLabel) {
+                             TextField nameField, ToggleGroup colorGroup) {
         String name = nameField.getText().trim();
         Toggle selectedColor = colorGroup.getSelectedToggle();
 
         // Validazione
         if (name.isEmpty()) {
-            errorLabel.setText("Insert your name.");
+            showToast("Please insert your name");
             return;
         }
         if (selectedColor == null) {
-            errorLabel.setText("Choose a color.");
+            showToast("Please select a color");
             return;
         }
 
         if (isFirst) {
             String numText = numField.getText().trim();
             int num;
-            try {
+            try{
                 num = Integer.parseInt(numText);
                 if (num < 2 || num > 5) throw new NumberFormatException();
-            } catch (NumberFormatException ex) {
-                errorLabel.setText("Insert a number between to 2 and 5.");
+
+            } catch (NumberFormatException e) {
+                showToast("Invalid number.");
                 return;
             }
             sender.sendOperation(new NumPlayersOperation(num));
@@ -1091,21 +1076,28 @@ public class GUIView implements ViewInterface {
             actionBar.setManaged(true);
 
             for (var node : offerTrackPane.getChildren()) {
-                if (node instanceof VBox tileBox) {
-                    OfferTile tile = (OfferTile) tileBox.getUserData();
-                    char letter = tile.getLetter();
-                    if (freeSlots.contains(letter)) {
-                        tileBox.setStyle(
-                                "-fx-background-color: rgba(200,150,0,0.75);" +
-                                        "-fx-background-radius: 8; -fx-cursor: hand;"
-                        );
-                        tileBox.setOnMouseEntered(e -> tileBox.setOpacity(0.75));
-                        tileBox.setOnMouseExited(e  -> tileBox.setOpacity(1.0));
-                        tileBox.setOnMouseClicked(e -> {
-                            sender.sendOperation(new PlaceTotemOperation(letter));
-                            actionBar.setVisible(false);
-                            clearOfferTrackHandlers();
-                        });
+                if (node != null && node.getClass().equals(VBox.class)) {
+                    VBox tileBox = (VBox) node;
+
+                    Object userData = tileBox.getUserData();
+
+                    if (userData != null && userData.getClass().equals(OfferTile.class)) {
+                        OfferTile tile = (OfferTile) userData;
+                        char letter = tile.getLetter();
+
+                        if (freeSlots.contains(letter)) {
+                            tileBox.setStyle(
+                                    "-fx-background-color: rgba(200,150,0,0.75);" +
+                                            "-fx-background-radius: 8; -fx-cursor: hand;"
+                            );
+                            tileBox.setOnMouseEntered(e -> tileBox.setOpacity(0.75));
+                            tileBox.setOnMouseExited(e  -> tileBox.setOpacity(1.0));
+                            tileBox.setOnMouseClicked(e -> {
+                                sender.sendOperation(new PlaceTotemOperation(letter));
+                                actionBar.setVisible(false);
+                                clearOfferTrackHandlers();
+                            });
+                        }
                     }
                 }
             }
@@ -1134,15 +1126,6 @@ public class GUIView implements ViewInterface {
     @Override
     public void invalidChoice(String message) {
         Platform.runLater(() -> {
-            if (actionBar == null) {
-                pendingLoginError = message;
-                if (loginErrorLabel != null) {
-                    loginErrorLabel.setText("⚠  " + message);
-                    loginErrorLabel.setVisible(true);
-                    loginErrorLabel.setManaged(true);
-                }
-                return;
-            }
             showToast(message);
         });
     }

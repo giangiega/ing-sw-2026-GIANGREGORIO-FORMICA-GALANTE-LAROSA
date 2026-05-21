@@ -193,6 +193,11 @@ public class GameController {
             game.getBoard().getTurnOrderTile().moveDisconnectedToEnd(toMoveToEnd);
 
             reconnectedThisRound.clear();
+            // per essere sicuro che i totem tornino al loro posto
+            broadcastEvent(new UpdateOfferTrackEvent(
+                    game.getBoard().getOfferTrack(),
+                    game.getBoard().getTurnOrderTile()
+            ));
 
             turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
         }

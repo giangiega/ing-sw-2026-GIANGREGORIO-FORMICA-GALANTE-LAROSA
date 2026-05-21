@@ -29,7 +29,7 @@ public class LoggedEvent implements ServerEvent {
                 view.invalidChoice("The lobby is full");
             else {
                 view.invalidChoice("Name or color already used");
-                view.askLogin();
+              //  view.askLogin();
             }
 
         }
