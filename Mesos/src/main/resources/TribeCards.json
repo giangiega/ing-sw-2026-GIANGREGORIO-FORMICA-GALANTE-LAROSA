@@ -40,14 +40,14 @@
       "numPlayer": 4,
       "type": "INVENTOR",
       "iconType": "BOWL",
-      "image": "hunter_era1_07"
+      "image": "inventor_era1_07"
     },
     {
       "era": "I",
       "numPlayer": 4,
       "type": "INVENTOR",
       "iconType": "STRAW",
-      "image": "hunter_era1_06"
+      "image": "inventor_era1_06"
 
     },
     {
@@ -55,7 +55,7 @@
       "numPlayer": 1,
       "type": "INVENTOR",
       "iconType": "POINTER",
-      "image": "hunter_era1_03"
+      "image": "inventor_era1_03"
 
     },
     {
@@ -63,7 +63,7 @@
       "numPlayer": 1,
       "type": "INVENTOR",
       "iconType": "BOAT",
-      "image": "hunter_era1_02"
+      "image": "inventor_era1_02"
 
     },
     {
@@ -71,7 +71,7 @@
       "numPlayer": 1,
       "type": "INVENTOR",
       "iconType": "BREAD",
-      "image": "hunter_era1_04"
+      "image": "inventor_era1_04"
 
     },
     {
@@ -79,7 +79,7 @@
       "numPlayer": 4,
       "type": "INVENTOR",
       "iconType": "KNOT",
-      "image": "hunter_era1_05"
+      "image": "inventor_era1_05"
 
     },
     {
@@ -87,7 +87,7 @@
       "numPlayer": 1,
       "type": "INVENTOR",
       "iconType": "LEATHER",
-      "image": "hunter_era1_01"
+      "image": "inventor_era1_01"
 
     },
     {
@@ -131,7 +131,7 @@
       "type": "BUILDER",
       "wingCount": 1,
       "endGamePP": 3,
-      "image": "gatherer_era1_01"
+      "image": "builder_era1_01"
 
     },
     {
@@ -140,7 +140,7 @@
       "type": "BUILDER",
       "wingCount": 1,
       "endGamePP": 2,
-      "image": "gatherer_era1_04"
+      "image": "builder_era1_04"
 
     },
     {
@@ -149,7 +149,7 @@
       "type": "BUILDER",
       "wingCount": 2,
       "endGamePP": 0,
-      "image": "gatherer_era1_02"
+      "image": "builder_era1_02"
 
     },
     {
@@ -391,21 +391,21 @@
       "era": "II",
       "numPlayer": 1,
       "type": "ARTIST",
-      "image": "builder_era2_02"
+      "image": "artist_era2_02"
 
     },
     {
       "era": "II",
       "numPlayer": 1,
       "type": "ARTIST",
-      "image": "builder_era2_03"
+      "image": "artist_era2_03"
 
     },
     {
       "era": "II",
       "numPlayer": 1,
       "type": "ARTIST",
-      "image": "builder_era2_04"
+      "image": "artist_era2_04"
 
     },
     {

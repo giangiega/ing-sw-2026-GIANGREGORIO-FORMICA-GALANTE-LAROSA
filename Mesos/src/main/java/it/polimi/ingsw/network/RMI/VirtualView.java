@@ -73,8 +73,7 @@ public interface VirtualView extends Remote {
     void onEndGame(List<String> winners, Map<String, Integer> finalScores, List<RankingRow> ranking, Map<String, Integer> playersPosition) throws RemoteException;
 
     void onUpdateAllTribes(List<String> names,
-                           List<Map<CharacterEnum, List<CharacterCard>>> tribes)
-            throws RemoteException;
+                           List<Map<CharacterEnum, List<CharacterCard>>> tribes, List<List<BuildingCard>> buildings) throws RemoteException;
 
     /** A player has disconnected mid-game. */
     void onPlayerDisconnected(String playerName) throws RemoteException;

@@ -332,9 +332,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onUpdateAllTribes(List<String> names,
-                                  List<Map<CharacterEnum, List<CharacterCard>>> tribes)
+                                  List<Map<CharacterEnum, List<CharacterCard>>> tribes, List<List<BuildingCard>> buildings)
             throws RemoteException {
-        view.getUIDispatcher().accept(() -> view.updateAllTribes(names, tribes));
+        view.getUIDispatcher().accept(() -> view.updateAllTribes(names, tribes,buildings));
     }
 
     /**

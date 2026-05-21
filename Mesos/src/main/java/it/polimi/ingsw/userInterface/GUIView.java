@@ -42,6 +42,7 @@ public class GUIView implements ViewInterface {
 
 
     private final Map<String, Map<CharacterEnum, List<CharacterCard>>> allTribesData = new HashMap<>();
+    private final Map<String, List<BuildingCard>> allBuildingsData = new HashMap<>();
 
 
     private HBox upperRowPane;
@@ -51,6 +52,8 @@ public class GUIView implements ViewInterface {
     private HBox offerTrackPane;
     private VBox playersStatus;
     private Label roundLabel;
+    private Label eraLabel;
+    private EraEnum currentMaxEra = EraEnum.I;
     private VBox turnOrderPane;
     private HBox actionBar;
     private int pendingUpperCount = 0;
@@ -68,6 +71,11 @@ public class GUIView implements ViewInterface {
     private String myName;
     private Map<CharacterEnum, List<CharacterCard>> myTribe = new HashMap<>();
     private int myFood = 0;
+    private int errorCountE = 0;
+    private int errorCountB = 0;
+    private List<RankingRow> globalRanking;
+    private Map<String, Integer> globalPlayersPosition;
+
 
     /**
      * CountDownLatch saves GUI from race condition between main Thread and JavaFX Thread
@@ -313,10 +321,10 @@ public class GUIView implements ViewInterface {
             lowerRowPane.setAlignment(Pos.CENTER);
 
             buildingUpperPane = new HBox(12);
-            buildingUpperPane.setAlignment(Pos.CENTER_LEFT);
+            buildingUpperPane.setAlignment(Pos.BOTTOM_LEFT);
 
             buildingLowerPane = new HBox(12);
-            buildingLowerPane.setAlignment(Pos.CENTER_LEFT);
+            buildingLowerPane.setAlignment(Pos.BOTTOM_LEFT);
 
             // building in colonna a destra della upperRow
             VBox buildingRows = new VBox(12, buildingUpperPane, buildingLowerPane);
@@ -357,7 +365,7 @@ public class GUIView implements ViewInterface {
             ownTribePane.setPadding(new Insets(8));
 
             ScrollPane ownTribeScroll = new ScrollPane(ownTribePane);
-            ownTribeScroll.setFitToHeight(true);
+            ownTribeScroll.setFitToHeight(false);
             ownTribeScroll.setPrefHeight(CARD_H + 70);
             ownTribeScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
             ownTribeScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -402,8 +410,10 @@ public class GUIView implements ViewInterface {
                     "-fx-text-fill: #f5e6c8; -fx-font-size: 15; -fx-font-weight: bold;"
             );
 
-            Label eraLabel = new Label("Era I");
+            eraLabel = new Label("Era I");
             eraLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 13;");
+            HBox eraRoundBox = new HBox(10, eraLabel, roundLabel);
+            eraRoundBox.setAlignment(Pos.CENTER_LEFT);
 
             playersStatus = new VBox(10);
 
@@ -420,7 +430,7 @@ public class GUIView implements ViewInterface {
             );
 
             VBox rightPanel = new VBox(12,
-                    eraLabel,
+                    eraRoundBox,
                     roundLabel,
                     new Separator(),
                     playersTitle,
@@ -487,11 +497,27 @@ public class GUIView implements ViewInterface {
     public void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
                            List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow) {
         Platform.runLater(() -> {
-            if(upperRowPane == null) return; // quando la board non è pronta
+            if(upperRowPane == null) return;
             renderTribeRow(upperRowPane, upperRow, false);
             renderTribeRow(lowerRowPane, lowerRow, false);
             renderBuildingRow(buildingUpperPane, buildingUpperRow, false);
             renderBuildingRow(buildingLowerPane, buildingLowerRow, false);
+
+            EraEnum highestVisibleEra = EraEnum.I;
+            if (upperRow != null && !upperRow.isEmpty()) {
+                highestVisibleEra = upperRow.get(0).getEra();
+            }
+            if (buildingUpperRow != null && !buildingUpperRow.isEmpty()) {
+                EraEnum buildingEra = buildingUpperRow.get(0).getEra();
+
+                if (buildingEra.compareTo(highestVisibleEra) > 0) {
+                    highestVisibleEra = buildingEra;
+                }
+            }
+            if (highestVisibleEra.compareTo(currentMaxEra) > 0) {
+                currentMaxEra = highestVisibleEra;
+                updateEra(currentMaxEra);
+            }
 
         });
 
@@ -627,11 +653,13 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void updateAllTribes(List<String> names,
-                                List<Map<CharacterEnum, List<CharacterCard>>> tribes) {
+                                List<Map<CharacterEnum, List<CharacterCard>>> tribes, List<List<BuildingCard>> buildings) {
         Platform.runLater(() -> {
             allTribesData.clear();
+            allBuildingsData.clear();
             for (int i = 0; i < names.size(); i++) {
                 allTribesData.put(names.get(i), tribes.get(i));
+                allBuildingsData.put(names.get(i), buildings.get(i));
             }
             refreshPlayerButtons(names);
         });
@@ -639,24 +667,41 @@ public class GUIView implements ViewInterface {
 
     private void refreshPlayerButtons(List<String> names) {
         if (playersStatus == null) return;
+
         for (var node : playersStatus.getChildren()) {
-            if (node instanceof VBox playerBox && playerBox.getUserData() instanceof String name) {
-                if (playerBox.getChildren().size() > 2) continue;
-                if (!name.equals(myName) && allTribesData.containsKey(name)) {
-                    Button viewBtn = new Button("👁 View tribe");
-                    viewBtn.setStyle(
-                            "-fx-background-color: rgba(200,150,0,0.5); -fx-text-fill: #f5e6c8;" +
-                                    "-fx-font-size: 10; -fx-padding: 3 8; -fx-background-radius: 4; -fx-cursor: hand;"
-                    );
-                    String captureName = name;
-                    viewBtn.setOnAction(e -> showTribePopup(captureName, allTribesData.get(captureName)));
-                    playerBox.getChildren().add(viewBtn);
+            // Controlla il tipo del nodo usando getClass()
+            if (node != null && node.getClass().equals(VBox.class)) {
+                VBox playerBox = (VBox) node;
+                Object userData = playerBox.getUserData();
+
+                // Controlla il tipo dello UserData usando getClass()
+                if (userData != null && userData.getClass().equals(String.class)) {
+                    String name = (String) userData;
+
+                    if (playerBox.getChildren().size() > 2) continue;
+
+                    if (!name.equals(myName) && allTribesData.containsKey(name)) {
+                        Button viewBtn = new Button("👁 View tribe");
+                        viewBtn.setStyle(
+                                "-fx-background-color: rgba(200,150,0,0.5); -fx-text-fill: #f5e6c8;" +
+                                        "-fx-font-size: 10; -fx-padding: 3 8; -fx-background-radius: 4; -fx-cursor: hand;"
+                        );
+
+                        String captureName = name;
+                        viewBtn.setOnAction(e -> showTribePopup(
+                                captureName,
+                                allTribesData.get(captureName),
+                                allBuildingsData.get(captureName)
+                        ));
+
+                        playerBox.getChildren().add(viewBtn);
+                    }
                 }
             }
         }
     }
 
-    private void showTribePopup(String playerName, Map<CharacterEnum, List<CharacterCard>> tribe) {
+    private void showTribePopup(String playerName, Map<CharacterEnum, List<CharacterCard>> tribe, List<BuildingCard> buildings) {
         if (sceneRoot == null) return;
         Region dim = new Region();
         dim.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
@@ -692,6 +737,26 @@ public class GUIView implements ViewInterface {
             }
             tribeContent.getChildren().add(col);
         }
+        if (buildings != null && !buildings.isEmpty()) {
+            Region spacer = new Region();
+            spacer.setPrefWidth(20);
+            tribeContent.getChildren().add(spacer);
+
+            Label bTitle = new Label("BUILDINGS");
+            bTitle.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 16; -fx-font-weight: bold;");
+
+            VBox bCol = new VBox(32, bTitle);
+            bCol.setAlignment(Pos.TOP_CENTER);
+            bCol.setPadding(new Insets(14, 0, 0, 0));
+
+            for (BuildingCard card : buildings) {
+                ImageView img = cardImage(card.getImage());
+                img.setFitWidth(100);
+                img.setFitHeight(145);
+                bCol.getChildren().add(img);
+            }
+            tribeContent.getChildren().add(bCol);
+        }
 
         ScrollPane scroll = new ScrollPane(tribeContent);
         scroll.setFitToHeight(true);
@@ -709,7 +774,7 @@ public class GUIView implements ViewInterface {
         VBox popup = new VBox(16, title, scroll, closeBtn);
         popup.setAlignment(Pos.TOP_CENTER);
         popup.setPadding(new Insets(24));
-        popup.setMaxWidth(860);
+        popup.setMaxWidth(1000);
         popup.setStyle(
                 "-fx-background-color: rgba(20,10,5,0.97);" +
                         "-fx-background-radius: 12;"
@@ -735,10 +800,20 @@ public class GUIView implements ViewInterface {
 
     }
 
+    public void updateEra(EraEnum era) {
+        Platform.runLater(() -> {
+            if (eraLabel == null) return;
+            eraLabel.setText("Era " + era.name());
+        });
+    }
+
+
     @Override
     public void updateTurnOrder(TurnOrderTile turnOrder) {
         Platform.runLater(() -> {
             if (turnOrderPane == null) return;
+            errorCountE = 0;
+            errorCountB = 0;
             turnOrderPane.getChildren().clear();
 
             List<Player> slots = turnOrder.getSlots();
@@ -824,46 +899,97 @@ public class GUIView implements ViewInterface {
         Platform.runLater(() -> {
             if (upperRowPane == null) return;
 
-            pendingUpperCount = upperCount;
-            pendingLowerCount = lowerCount;
+            int pickableUpper = countPickableTribeCards(upperRow);
+            int pickableLower = countPickableTribeCards(lowerRow);
+            int actualUpper = Math.min(upperCount, pickableUpper);
+            int actualLower = Math.min(lowerCount, pickableLower);
+
+            if(actualUpper == 0 && actualLower == 0) {
+                showToast(" No cards available. Skipping turn.");
+                sender.sendOperation(new ChooseCardOperation( // cosi mandando un operazione con liste vuote mi salta il turno
+                        new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
+                return;
+            }
+            pendingUpperCount = actualUpper;
+            pendingLowerCount = actualLower;
             selectedUpperIndices.clear();
             selectedLowerIndices.clear();
             selectedBuildingUpperIndices.clear();
             selectedBuildingLowerIndices.clear();
-            renderTribeRowSelectable(upperRowPane, upperRow, selectedUpperIndices, upperCount);
-            renderTribeRowSelectable(lowerRowPane, lowerRow, selectedLowerIndices, lowerCount);
+            renderTribeRowSelectable(upperRowPane, upperRow, selectedUpperIndices, actualUpper);
+            renderTribeRowSelectable(lowerRowPane, lowerRow, selectedLowerIndices, actualLower);
             renderBuildingRowSelectable(buildingUpperPane, buildingUpperRow, selectedBuildingUpperIndices);
             renderBuildingRowSelectable(buildingLowerPane, buildingLowerRow, selectedBuildingLowerIndices);
             actionBar.getChildren().clear();
             Label msg = new Label(
-                    "Select " + upperCount + " from upper row  |  " + lowerCount + " from lower row"
+                    "Select " + actualUpper + " from upper row  |  " + actualLower + " from lower row"
             );
             msg.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
             actionBar.getChildren().add(msg);
             actionBar.setVisible(true);
             actionBar.setManaged(true);
+
+            tryConfirmSelection();
         });
+
     }
 
+    private int countPickableTribeCards(List<TribeCard> cards) {
+        if (cards == null) return 0;
+        int count = 0;
+        for (TribeCard card : cards) {
+            if (card.isPickable()) {
+                count++;
+            }
+        }
+        return count;
+    }
     private void renderTribeRowSelectable(HBox pane, List<TribeCard> cards,
                                           List<Integer> selectedIndices, int maxSelectable) {
         pane.getChildren().clear();
         for (int i = 0; i < cards.size(); i++) {
             final int index = i;
+            TribeCard card = cards.get(i);
             ImageView iv = cardImage(cards.get(i).getImage());
+            iv.setStyle("-fx-cursor: hand;");
+            iv.setOpacity(1);
+            iv.setOnMouseEntered(e -> {
+                if (!selectedIndices.contains(index)) iv.setOpacity(0.85);
+            });
+            iv.setOnMouseExited(e -> {
+                if (!selectedIndices.contains(index)) iv.setOpacity(1.0);
+            });
+            iv.setOnMouseClicked(e -> {
+                // 1. Eventi: cliccabili ma bloccati con toast
+                if (!card.isPickable()) {
+                    if(errorCountE<5){
+                        showToast(" Events cannot be selected.");
+                    }else{
+                        showToast(" Are you dumb ??? You cannot pick an event card!!!");
+                    }
+                    errorCountE ++;
+                    return;
+                }
 
-            if (maxSelectable > 0) {
-                iv.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, gold, 6, 0.3, 0, 0);");
-                iv.setOnMouseEntered(e -> { if (!selectedIndices.contains(index)) iv.setOpacity(0.75); });
-                iv.setOnMouseExited(e  -> { if (!selectedIndices.contains(index)) iv.setOpacity(1.0); });
-                iv.setOnMouseClicked(e -> {
+                // 2. Riga che non richiede carte: visibile ma non ci faccio niente
+                if (maxSelectable == 0) {
+                    showToast(" No cards required from this row.");
+                    return;
+                }
+
+                // 3. Requisito già soddisfatto
+                if (selectedIndices.contains(index) || selectedIndices.size()< maxSelectable) {
                     handleCardSelection(iv, index, selectedIndices, maxSelectable);
                     tryConfirmSelection();
-                });
-            }
+                }else {
+                    showToast(" Requirement for this row is already met.");
+                }
+
+            });
             pane.getChildren().add(iv);
         }
     }
+
 
     private void renderBuildingRowSelectable(HBox pane, List<BuildingCard> cards,
                                              List<Integer> selectedIndices) {
@@ -878,23 +1004,25 @@ public class GUIView implements ViewInterface {
             int effectiveCost = Math.max(0, card.getBaseFC() - builderDiscount);
             boolean canAfford = myFood >= effectiveCost;
 
-           // if (!canAfford) {
-           //     iv.setOpacity(0.45);
-           //  }
 
             iv.setStyle("-fx-cursor: hand;");
             iv.setOnMouseEntered(e -> {
-                if (!selectedIndices.contains(index)) iv.setOpacity(canAfford ? 0.75 : 0.35);
+                if (!selectedIndices.contains(index)) iv.setOpacity(0.85);
             });
             iv.setOnMouseExited(e -> {
-                if (!selectedIndices.contains(index)) iv.setOpacity(canAfford ? 1.0 : 0.45);
+                if (!selectedIndices.contains(index)) iv.setOpacity(1.0);
             });
             iv.setOnMouseClicked(e -> {
+                errorCountB++;
+                if(errorCountB >= 5){
+                    showToast("Are you dumb ??? You are poor !!!");
+                }
                 if (!canAfford) {
                     String msg = builderDiscount > 0
                             ? "Need " + effectiveCost + " food (base " + card.getBaseFC()
                             + " - builder discount " + builderDiscount + ") — you have " + myFood
                             : "Need " + effectiveCost + " food — you have " + myFood;
+
                     showToast(msg);
                     return;
                 }
@@ -912,10 +1040,10 @@ public class GUIView implements ViewInterface {
             selectedIndices.remove((Integer) index);
             iv.setOpacity(1.0);
             iv.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, gold, 6, 0.3, 0, 0);");
-        } else if (selectedIndices.size() < maxSelectable) {
+        } else{
             selectedIndices.add(index);
-            iv.setOpacity(0.5);
-            iv.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, #00ff88, 10, 0.6, 0, 0);");
+            iv.setOpacity(0.6);
+            iv.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, #00ff88, 12, 0.7, 0, 0);");
         }
     }
 
@@ -1021,122 +1149,259 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void showFinalScore(List<String> winners, Map< String , Integer> finalScores) {
+        Platform.runLater(() -> {
+            var bgUrl = getClass().getResource("/images/screen/background.png");
+            ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
+            background.setPreserveRatio(false);
+            background.fitWidthProperty().bind(primaryStage.widthProperty());
+            background.fitHeightProperty().bind(primaryStage.heightProperty());
 
+            String winnerText = winners.size() == 1 ? "🏆  " + winners.get(0) + " wins!"
+                    : "🏆  Draw: " + String.join(", ", winners);
+            Label winnerLabel = new Label(winnerText);
+            winnerLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 28; -fx-font-weight: bold;"
+            );
+
+            List<Map.Entry<String, Integer>> sorted = new ArrayList<>(finalScores.entrySet());
+            sorted.sort((a, b) -> b.getValue() - a.getValue());
+
+            VBox scoreboard = new VBox(8);
+            scoreboard.setAlignment(Pos.CENTER);
+
+            int rank = 1;
+            for (Map.Entry<String, Integer> entry : sorted) {
+                String name  = entry.getKey();
+                int    score = entry.getValue();
+                boolean isWinner = winners.contains(name);
+
+                Label rankLabel = new Label(rank + ".");
+                rankLabel.setStyle("-fx-text-fill: #aaa; -fx-font-size: 14;");
+                rankLabel.setPrefWidth(30);
+
+                Label nameLabel = new Label(name);
+                nameLabel.setPrefWidth(200);
+                nameLabel.setStyle(isWinner
+                        ? "-fx-text-fill: #e8c46a; -fx-font-size: 16; -fx-font-weight: bold;"
+                        : "-fx-text-fill: #f5e6c8; -fx-font-size: 16;"
+                );
+
+                Label scoreLabel = new Label(score + " PP");
+                scoreLabel.setStyle(isWinner
+                        ? "-fx-text-fill: #e8c46a; -fx-font-size: 16; -fx-font-weight: bold;"
+                        : "-fx-text-fill: #f5e6c8; -fx-font-size: 16;"
+                );
+
+                HBox row = new HBox(16, rankLabel, nameLabel, scoreLabel);
+                row.setAlignment(Pos.CENTER_LEFT);
+                row.setPadding(new Insets(8, 16, 8, 16));
+                row.setStyle(isWinner
+                        ? "-fx-background-color: rgba(200,150,0,0.25); -fx-background-radius: 8;"
+                        : "-fx-background-color: rgba(255,255,255,0.06);  -fx-background-radius: 8;"
+                );
+
+                scoreboard.getChildren().add(row);
+                rank++;
+            }
+
+            Label subtitle = new Label("Final Scores — End of Round 10");
+            subtitle.setStyle("-fx-text-fill: #888; -fx-font-size: 12;");
+
+            Button rankingBtn = new Button("🌍 View Global Ranking");
+            rankingBtn.setStyle(
+                    "-fx-background-color: #2980b9; -fx-text-fill: white;" +
+                            "-fx-font-size: 14; -fx-padding: 8 24;" +
+                            "-fx-background-radius: 6; -fx-cursor: hand;"
+            );
+            rankingBtn.setOnAction(e -> showRankingPopup());
+
+            VBox content = new VBox(20, winnerLabel, subtitle, new Separator(), scoreboard, rankingBtn);
+            content.setAlignment(Pos.CENTER);
+            content.setPadding(new Insets(40));
+            content.setMaxWidth(520);
+            content.setStyle(
+                    "-fx-background-color: rgba(20,10,5,0.92);" +
+                            "-fx-background-radius: 16;"
+            );
+
+            sceneRoot = new StackPane(background, content);
+            primaryStage.setScene(new Scene(sceneRoot,
+                    primaryStage.getWidth(), primaryStage.getHeight()));
+
+
+        });
+
+    }
+    private void showRankingPopup() {
+        if (sceneRoot == null || globalRanking == null) {
+            showToast("Ranking data not available yet.");
+            return;
+        }
+        Region dim = new Region();
+        dim.setStyle("-fx-background-color: rgba(0,0,0,0.85);");
+
+        Label title = new Label("Global Leaderboard");
+        title.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 24; -fx-font-weight: bold;");
+
+        VBox rowsBox = new VBox(8);
+        rowsBox.setAlignment(Pos.CENTER);
+
+        HBox header = new HBox(15);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(10, 16, 10, 16));
+        header.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-background-radius: 6;");
+
+        Label hPos = new Label("Pos"); hPos.setPrefWidth(40); hPos.setStyle("-fx-text-fill: #f5e6c8; -fx-font-weight: bold;");
+        Label hName = new Label("Nickname"); hName.setPrefWidth(150); hName.setStyle("-fx-text-fill: #f5e6c8; -fx-font-weight: bold;");
+        Label hWins = new Label("Wins"); hWins.setPrefWidth(60); hWins.setStyle("-fx-text-fill: #f5e6c8; -fx-font-weight: bold;");
+        Label hScore = new Label("Total PP"); hScore.setPrefWidth(70); hScore.setStyle("-fx-text-fill: #f5e6c8; -fx-font-weight: bold;");
+
+        header.getChildren().addAll(hPos, hName, hWins, hScore);
+        rowsBox.getChildren().add(header);
+
+        for (RankingRow row : globalRanking) {
+            HBox rowBox = new HBox(15);
+            rowBox.setAlignment(Pos.CENTER_LEFT);
+            rowBox.setPadding(new Insets(8, 16, 8, 16));
+
+            // Evidenzia la riga se è il giocatore corrente
+            boolean isMe = row.getNickname().equals(myName);
+            rowBox.setStyle(isMe
+                    ? "-fx-background-color: rgba(200,150,0,0.3); -fx-background-radius: 6;"
+                    : "-fx-background-color: rgba(255,255,255,0.06); -fx-background-radius: 6;");
+
+            Label rPos = new Label("#" + row.getPosition());
+            rPos.setPrefWidth(40);
+            rPos.setStyle("-fx-text-fill: #aaa; -fx-font-size: 14;");
+
+            Label rName = new Label(row.getNickname());
+            rName.setPrefWidth(150);
+            rName.setStyle(isMe ? "-fx-text-fill: #e8c46a; -fx-font-weight:bold; -fx-font-size: 14;" : "-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
+
+            Label rWins = new Label(String.valueOf(row.getTotalWin()));
+            rWins.setPrefWidth(60);
+            rWins.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
+
+            Label rScore = new Label(String.valueOf(row.getScore()));
+            rScore.setPrefWidth(70);
+            rScore.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
+
+            rowBox.getChildren().addAll(rPos, rName, rWins, rScore);
+            rowsBox.getChildren().add(rowBox);
+        }
+
+        ScrollPane scroll = new ScrollPane(rowsBox);
+        scroll.setFitToWidth(true);
+        scroll.setPrefHeight(350);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+
+        Button closeBtn = new Button("✕ Close");
+        closeBtn.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-size: 14; -fx-padding: 8 24; -fx-background-radius: 6; -fx-cursor: hand;");
+
+        VBox popup = new VBox(20, title, scroll, closeBtn);
+        popup.setAlignment(Pos.CENTER);
+        popup.setPadding(new Insets(30));
+        popup.setMaxWidth(450);
+        popup.setStyle("-fx-background-color: rgba(20,10,5,0.98); -fx-background-radius: 12; -fx-border-color: #e8c46a; -fx-border-radius: 12; -fx-border-width: 2;");
+
+        StackPane overlay = new StackPane(dim, popup);
+        overlay.setAlignment(Pos.CENTER);
+
+        closeBtn.setOnAction(e -> sceneRoot.getChildren().remove(overlay));
+        dim.setOnMouseClicked(e -> sceneRoot.getChildren().remove(overlay));
+
+        sceneRoot.getChildren().add(overlay);
     }
 
     @Override
     public void showLeaderboard(List<RankingRow> ranking, Map<String, Integer> playersPosition){
+        Platform.runLater(() -> {
+            this.globalRanking = ranking;
+            this.globalPlayersPosition = playersPosition;
+        });
 
     }
-
     @Override
     public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe, List<BuildingCard> buildings) {
-        this.myTribe = tribe;
+        // la race condition potrebbe dare problemi quindi uso questa copia per evitare sovrascrizioni
+        Map<CharacterEnum, List<CharacterCard>> tribeSnapshot = new HashMap<>();
+        if (tribe != null) {
+            for (Map.Entry<CharacterEnum, List<CharacterCard>> entry : tribe.entrySet()) {
+                tribeSnapshot.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+            }
+        }
+        this.myTribe = tribeSnapshot;
+
+        final Map<CharacterEnum, List<CharacterCard>> safeTribe = tribeSnapshot;
+        final List<BuildingCard> safeBuildings = (buildings != null) ? new ArrayList<>(buildings) : new ArrayList<>();
+
         Platform.runLater(() -> {
             if (ownTribePane == null) return;
             ownTribePane.getChildren().clear();
-/**
-            Map<String, List<CharacterCard>> groupedByImage = new HashMap<>();
 
-            for (List<CharacterCard> cardList : tribe.values()) {
-                if (cardList == null) continue;
-                for (CharacterCard card : cardList) {
-                    String imageName = card.getImage(); // es: "hunter_hunt" o "hunter_no_hunt"
-                    groupedByImage.computeIfAbsent(imageName, k -> new ArrayList<>()).add(card);
-                }
-            }
-                    for (Map.Entry<String, List<CharacterCard>> entry : groupedByImage.entrySet()) {
-                        List<CharacterCard> cards = entry.getValue();
-                        if (cards.isEmpty()) continue;
-
-                        // Prendi la prima carta per sapere il tipo e l'immagine
-                        CharacterCard firstCard = cards.get(0);
-                        CharacterEnum type = firstCard.getCharacterType();
-
-                        // Icona del personaggio
-                        ImageView typeIcon = icon(type.name().toLowerCase());
-                        typeIcon.setFitWidth(48);
-                        typeIcon.setFitHeight(48);
-
-                        Label countLabel = new Label("× " + cards.size());
-                        countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 11;");
-
-                        VBox header = new VBox(2, typeIcon, countLabel);
-                        header.setAlignment(Pos.CENTER);
-
-                        // Colonna con le carte
-                        VBox cardColumn = new VBox(4);
-                        cardColumn.setAlignment(Pos.TOP_CENTER);
-                        for (CharacterCard card : cards) {
-                            cardColumn.getChildren().add(cardImage(card.getImage()));
-                        }
-
-                        VBox typeGroup = new VBox(4, header, cardColumn);
-                        typeGroup.setAlignment(Pos.TOP_CENTER);
-                        typeGroup.setPadding(new Insets(4, 6, 4, 6));
-                        typeGroup.setStyle(
-                                "-fx-background-color: rgba(255,255,255,0.06); " +
-                                        "-fx-background-radius: 6; "
-                        );
-                        ownTribePane.getChildren().add(typeGroup);
-                    }
-
-*/
-           for (CharacterEnum type : CharacterEnum.values()) {
-                List<CharacterCard> cards = tribe.get(type);
+            for (CharacterEnum type : CharacterEnum.values()) {
+                List<CharacterCard> cards = safeTribe.get(type);
                 if (cards == null || cards.isEmpty()) continue;
 
-                ImageView typeIcon = icon(type.name().toLowerCase());
-                typeIcon.setFitHeight(42);
-                typeIcon.setFitWidth(42);
-                Label countLabel = new Label("×" + cards.size());
-                countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 11;");
-                VBox header = new VBox(2, typeIcon, countLabel);
-                header.setAlignment(Pos.CENTER);
-
-                VBox cardColumn = new VBox(4);
-                cardColumn.setAlignment(Pos.TOP_CENTER);
-                for (CharacterCard card : cards) {
-                    cardColumn.getChildren().add(cardImage(card.getImage()));
-                }
-
-                VBox typeGroup = new VBox(4, header, cardColumn);
-                typeGroup.setAlignment(Pos.TOP_CENTER);
-                typeGroup.setPadding(new Insets(4, 6, 4, 6));
-                typeGroup.setStyle(
-                        "-fx-background-color: rgba(255,255,255,0.06);" +
-                                "-fx-background-radius: 6;"
-                );
+                VBox typeGroup = createCharacterGroup(type, cards);
                 ownTribePane.getChildren().add(typeGroup);
             }
 
-            if (buildings != null && !buildings.isEmpty()) {
-                Label buildingTitle = new Label("BUILDINGS");
-                buildingTitle.setStyle(
-                        "-fx-text-fill: #e8c46a; -fx-font-size: 11; -fx-font-weight: bold;"
-                );
-
-                VBox buildingColumn = new VBox(4);
-                buildingColumn.setAlignment(Pos.TOP_CENTER);
-                for (BuildingCard card : buildings) {
-                    buildingColumn.getChildren().add(cardImage(card.getImage()));
-                }
-
-                VBox buildingGroup = new VBox(4, buildingTitle, buildingColumn);
-                buildingGroup.setAlignment(Pos.TOP_CENTER);
-                buildingGroup.setPadding(new Insets(4, 6, 4, 6));
-                buildingGroup.setStyle(
-                        "-fx-background-color: rgba(255,255,255,0.06);" +
-                                "-fx-background-radius: 6;"
-                );
+            if (!safeBuildings.isEmpty()) {
+                VBox buildingGroup = createBuildingGroup(safeBuildings);
                 ownTribePane.getChildren().add(buildingGroup);
             }
         });
     }
 
+    private VBox createCharacterGroup(CharacterEnum type, List<CharacterCard> cards) {
+        ImageView typeIcon = icon(type.name().toLowerCase());
+        typeIcon.setFitHeight(42);
+        typeIcon.setFitWidth(42);
+
+        Label countLabel = new Label("× " + cards.size());
+        countLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 11; ");
+
+        VBox header = new VBox(2, typeIcon, countLabel);
+        header.setAlignment(Pos.CENTER);
+
+        VBox cardColumn = new VBox(4);
+        cardColumn.setAlignment(Pos.TOP_CENTER);
+        for (CharacterCard card : cards) {
+            cardColumn.getChildren().add(cardImage(card.getImage()));
+        }
+
+        VBox typeGroup = new VBox(4, header, cardColumn);
+        typeGroup.setAlignment(Pos.TOP_CENTER);
+        typeGroup.setPadding(new Insets(4, 6, 4, 6));
+        typeGroup.setStyle("-fx-background-color: rgba(255,255,255,0.06); -fx-background-radius: 6; ");
+
+        return typeGroup;
+    }
+
+    private VBox createBuildingGroup(List<BuildingCard> buildings) {
+        Label buildingTitle = new Label("BUILDINGS ");
+        buildingTitle.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 14; -fx-font-weight: bold; ");
+
+        VBox buildingColumn = new VBox(4);
+        buildingColumn.setAlignment(Pos.TOP_CENTER);
+        for (BuildingCard card : buildings) {
+            buildingColumn.getChildren().add(cardImage(card.getImage()));
+        }
+
+        VBox buildingGroup = new VBox(29, buildingTitle, buildingColumn);
+        buildingGroup.setAlignment(Pos.TOP_CENTER);
+        buildingGroup.setPadding(new Insets(12, 6, 4, 6));
+        buildingGroup.setStyle("-fx-background-color: rgba(255,255,255,0.06); -fx-background-radius: 6; ");
+
+        return buildingGroup;
+    }
+
+
+
     /**
      * @author daniele
-     * The following 3 methods are used to render the card face , with the addition of a hand that follows the mouse movement
+     * The following 3 methods are used to render the card face
      * @param image
      * @return
      */

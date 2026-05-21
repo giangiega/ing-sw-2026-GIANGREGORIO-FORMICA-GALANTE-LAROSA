@@ -63,7 +63,7 @@
       "era": "II",
       "baseFoodCost": 6,
       "basePrestigePoints": 4,
-      "image": "buildingBonusStarShaman_era2"
+      "image": "buildingBonusStar_era2"
 
     },
     {
@@ -71,7 +71,7 @@
       "era": "II",
       "baseFoodCost": 7,
       "basePrestigePoints": 0,
-      "image": "buildingBonusDoubleShamanPP_era2"
+      "image": "buildingDoubleShamanPP_era2"
 
     },
     {
