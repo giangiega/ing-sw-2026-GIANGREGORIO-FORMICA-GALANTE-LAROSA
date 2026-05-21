@@ -173,16 +173,15 @@ public class GameController {
             broadcastEvent(new InvalidChoiceEvent("Can't end round"));
         }
 
-        try {
-            TurnControllerSnapshot snap = turnController.getSnapshot();
-            PersistenceManager.save(new SavedGameState(game, snap, disconnectedPlayers));
-        } catch (IOException e) {
-            System.err.println("[Persistence] Failed to save game state: " + e.getMessage());
-        }
-
         if (game.getCurrentRound() > 10) {
             endGame();
         } else {
+            try {
+                TurnControllerSnapshot snap = turnController.getSnapshot();
+                PersistenceManager.save(new SavedGameState(game, snap, disconnectedPlayers));
+            } catch (IOException e) {
+                System.err.println("[Persistence] Failed to save game state: " + e.getMessage());
+            }
             broadcastEvent(new UpdateRoundEvent(game.getCurrentRound()));
             broadcastEvent(new UpdateAllPlayersEvent(players));
             broadcastEvent(new UpdateAllTribesEvent(players));
@@ -386,10 +385,10 @@ public class GameController {
 
         boolean wasSuspended = isSuspended;
 
-        cancelSuspensionTimer();
+        if(!isRecoveryMode)
+            cancelSuspensionTimer();
 
         newCm.sendEvent(new ReconnectedTotemEvent(getPlayerByName(playerName).getTotemColor()));
-
         broadcastEvent(new PlayerReconnectedEvent(playerName));
 
         // Send the full current game state to the reconnected client so their
@@ -411,29 +410,25 @@ public class GameController {
                 newCm.sendEvent(new ValidCardsEvent(p.getTribe(),p.getBuildingCards()));
             }
 
-            if (wasSuspended) {
-                if (isRecoveryMode) {
-                    playersRequiredToResume.remove(playerName);
-                    if (!playersRequiredToResume.isEmpty()) {
-                        newCm.sendEvent(new GameResumedEvent());
-                        // player_n now knows that the game is resuming, but it has to wait others
-                    } else {
-                        // the game restart
-                        isRecoveryMode = false;
-                        broadcastEvent(new GameResumedEvent());
-                        turnController.resumeAfterSuspension(
-                                game.getBoard().getTurnOrderTile(),
-                                game.getBoard().getOfferTrack()
-                        );
-                    }
-                } else {
-                    // only one player alone in game
+            if (isRecoveryMode) {
+                playersRequiredToResume.remove(playerName);
+                if (playersRequiredToResume.isEmpty()) {
+                    isRecoveryMode = false;
+                    cancelSuspensionTimer();
                     broadcastEvent(new GameResumedEvent());
                     turnController.resumeAfterSuspension(
                             game.getBoard().getTurnOrderTile(),
                             game.getBoard().getOfferTrack()
                     );
+                } else {
+                    newCm.sendEvent(new WaitingRecoveryEvent(playersRequiredToResume.size())); // notify the player, server is back
                 }
+            } else if (wasSuspended) {
+                broadcastEvent(new GameResumedEvent());
+                turnController.resumeAfterSuspension(
+                        game.getBoard().getTurnOrderTile(),
+                        game.getBoard().getOfferTrack()
+                );
             }
         }
     }
@@ -485,6 +480,7 @@ public class GameController {
         for (Player p : players) {
             if (!disconnectedPlayers.contains(p.getName())) {
                 playersRequiredToResume.add(p.getName());
+                disconnectedPlayers.add(p.getName());
             }
         }
 

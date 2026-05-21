@@ -386,4 +386,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onPing() throws RemoteException {}
+
+    @Override
+    public void onWaitingForRecovery(int playersStillNeeded) throws RemoteException {
+        view.showWaitingForRecovery(playersStillNeeded);
+    }
+
 }

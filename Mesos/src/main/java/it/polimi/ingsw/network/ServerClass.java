@@ -46,6 +46,10 @@ abstract public class ServerClass {
         gameController = new GameController(lobbyPlayers, clientManagers);
         gameController.restoreGame(pendingSave);
         pendingSave = null;
+
+        for (Player p : lobbyPlayers){
+            gameController.handleReconnection(p.getName(), clientManagers.get(p.getName()));
+        }
     }
 
     public static boolean isRecoveryPending() {
@@ -63,6 +67,12 @@ abstract public class ServerClass {
             }
         }
         return required;
+    }
+
+    public static boolean isOriginalPlayer(String name) {
+        if (pendingSave == null) return false;
+        return pendingSave.getGame().getPlayers().stream()
+                .anyMatch(p -> p.getName().equals(name));
     }
 
     public void handleDisconnection(String playerName){};

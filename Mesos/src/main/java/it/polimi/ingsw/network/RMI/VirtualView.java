@@ -96,4 +96,6 @@ public interface VirtualView extends Remote {
 
     /**Heartbeat server->client: if it fails, the connection is lost*/
     void onPing() throws RemoteException;
+
+    void onWaitingForRecovery(int playersStillNeeded) throws RemoteException;
 }

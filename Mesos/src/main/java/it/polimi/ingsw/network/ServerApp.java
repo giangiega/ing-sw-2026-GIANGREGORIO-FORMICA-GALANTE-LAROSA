@@ -19,6 +19,8 @@ public class ServerApp {
         int socketPort = Integer.parseInt(args[0]);
         int rmiPort    = Integer.parseInt(args[1]);
 
+       //PersistenceManager.clear(); // use this line if you want to cancel previous game (testing)
+
         try { // concezione sbagliata del numero di giocatori
             SavedGameState save = PersistenceManager.load();
             if (save != null) {

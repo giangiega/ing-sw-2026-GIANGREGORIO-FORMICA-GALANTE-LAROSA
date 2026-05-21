@@ -37,6 +37,8 @@ public interface ViewInterface {
     void invalidChoice(String message);
     void showFinalScore(List<String> winners, Map< String , Integer> finalScores);
     void showLeaderboard(List<RankingRow> ranking, Map<String, Integer> playersPosition);
+    default void showWaitingForRecovery(int playersStillNeeded) {}
+    //da cambiare, fatto solo per non dare errore nell'override della GUI. Se tocco la GUI fa merging
 
     /**
      * This two methods are defined as default because TUI doesn't need them.

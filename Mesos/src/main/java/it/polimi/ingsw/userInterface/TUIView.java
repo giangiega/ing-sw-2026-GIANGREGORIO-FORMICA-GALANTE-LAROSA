@@ -396,5 +396,12 @@ public class TUIView implements ViewInterface {
     public void showReconnectedTotem(ColorEnum totemColor) {
         System.out.println(YELLOW + "\nYour original totem was " + totemColor + RESET);
     }
+
+    @Override
+    public void showWaitingForRecovery(int playersStillNeeded) {
+        System.out.println(YELLOW + BOLD + "\nServer recovered! Waiting for "
+                + playersStillNeeded + " more player(s) to reconnect..." + RESET);
+    }
+
 }
 

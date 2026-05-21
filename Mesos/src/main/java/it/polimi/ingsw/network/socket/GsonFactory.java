@@ -61,7 +61,8 @@ public class GsonFactory {
                         .registerSubtype(PlayerReconnectedEvent.class)
                         .registerSubtype(GameSuspendedEvent.class)
                         .registerSubtype(GameResumedEvent.class)
-                        .registerSubtype(ReconnectedTotemEvent.class);
+                        .registerSubtype(ReconnectedTotemEvent.class)
+                        .registerSubtype(WaitingRecoveryEvent.class);
 
         RuntimeTypeAdapterFactory<TribeCard> tribeFactory =
                 RuntimeTypeAdapterFactory

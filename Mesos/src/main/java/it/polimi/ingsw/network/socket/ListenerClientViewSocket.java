@@ -72,7 +72,7 @@ public class ListenerClientViewSocket implements Runnable {
      * If the game is truly over the server will reject the reconnection attempt.
      */
     private void handleServerClosedConnection(){
-        System.out.println("From ListenerClientViewSocket: connection closed by the server");
+        System.out.println("\nFrom ListenerClientViewSocket: connection closed by the server");
         uiDispatcher.accept(() ->
                 view.showPlayerDisconnected("server"));
         onServerLost.run();
