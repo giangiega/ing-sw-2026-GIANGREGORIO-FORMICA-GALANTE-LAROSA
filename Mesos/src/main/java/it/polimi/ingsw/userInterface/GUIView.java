@@ -14,7 +14,10 @@ import it.polimi.ingsw.network.clientInterface.LoginOperation;
 import it.polimi.ingsw.network.clientInterface.NumPlayersOperation;
 import it.polimi.ingsw.network.ClientSender;
 import it.polimi.ingsw.network.clientInterface.PlaceTotemOperation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,6 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,6 +78,8 @@ public class GUIView implements ViewInterface {
     private int errorCountB = 0;
     private List<RankingRow> globalRanking;
     private Map<String, Integer> globalPlayersPosition;
+    private Dialog<Void> suspendedDialog;
+    private Timeline countdownTimeline;
 
 
     /**
@@ -1429,47 +1435,84 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void showPlayerDisconnected(String playerName) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Player " + playerName + " has disconnected.");
-            alert.setTitle("Connection Lost");
-            alert.setHeaderText(null);
-            alert.show();
-        });
+        Platform.runLater(() -> showToast( playerName + " has disconnected."));
     }
 
     @Override
     public void showPlayerReconnected(String playerName) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Player " + playerName + " has reconnected.");
-            alert.setTitle("Player Returned");
-            alert.setHeaderText(null);
-            alert.show();
-        });
+        Platform.runLater(() -> showToast( playerName + " has reconnected."));
     }
 
     @Override
     public void showGameSuspended(int timeoutSeconds) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.WARNING,
-                    "Game suspended. Waiting for other players to reconnect. Timeout: " + timeoutSeconds + "s.");
-            alert.setTitle("Game Suspended");
-            alert.setHeaderText(null);
-            alert.show();
+            if (suspendedDialog != null) suspendedDialog.close();
+            if (countdownTimeline != null) countdownTimeline.stop();
+
+            suspendedDialog = new Dialog<>();
+            suspendedDialog.setTitle("Game Suspended");
+            suspendedDialog.setHeaderText("Waiting for players to reconnect...");
+
+            Label countdownLabel = new Label("Time remaining: " + timeoutSeconds + "s");
+            countdownLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+
+            VBox content = new VBox(10,
+                    new Label("Only one player is connected."),
+                    countdownLabel
+            );
+            content.setAlignment(Pos.CENTER);
+
+            suspendedDialog.getDialogPane().setContent(content);
+
+            // Serve almeno un ButtonType altrimenti non può funzionare
+            suspendedDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+            suspendedDialog.getDialogPane()
+                    .lookupButton(ButtonType.CLOSE)
+                    .setVisible(false);
+
+            suspendedDialog.setOnCloseRequest(Event::consume);
+
+            // Countdown che aggiorna il label ogni secondo
+            int[] remaining = {timeoutSeconds};
+            countdownTimeline = new Timeline(
+                    new KeyFrame(Duration.seconds(1), e -> {
+                        remaining[0]--;
+                        countdownLabel.setText("Time remaining: " + remaining[0] + "s");
+                    })
+            );
+            countdownTimeline.setCycleCount(timeoutSeconds);
+            countdownTimeline.play();
+
+            suspendedDialog.show();
         });
     }
 
     @Override
     public void showGameResumed() {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "All players are back. Game is resuming!");
-            alert.setTitle("Game Resumed");
-            alert.setHeaderText(null);
-            alert.show();
+            if (countdownTimeline != null) {
+                countdownTimeline.stop();
+                countdownTimeline = null;
+            }
+            if (suspendedDialog != null) {
+                suspendedDialog.close();
+                suspendedDialog = null;
+            }
+            showToast("All players are back — game is resuming!");
         });
     }
     @Override
     public void showReconnectedTotem(ColorEnum totemColor) {
-       //Messaggio che dice al player che il suo totem originale era di quel colore;
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Totem Restored");
+            alert.setHeaderText("Your totem color has been reassigned");
+            alert.setContentText(
+                    "Since the game has already started, your original totem color " +
+                            totemColor.name() + " has been restored and assigned to you."
+            );
+            alert.showAndWait(); // bloccante: il player deve leggere questo
+        });
     }
     private int calculateBuilderDiscount() {
         List<CharacterCard> builders = myTribe.get(CharacterEnum.BUILDER);
