@@ -35,6 +35,10 @@ public class RmiServer extends ServerClass implements VirtualServer {
         Registry registry = LocateRegistry.createRegistry(port);
         registry.rebind(serverName, stub);
         System.out.println("Server listening on port " + port);
+
+        if (ServerClass.isRecoveryPending() && lobbyController != null)
+            getLobbyController().setServer(this);
+
     }
 
     /**
@@ -86,7 +90,7 @@ public class RmiServer extends ServerClass implements VirtualServer {
 
         cmRef.set(cm);
         clientManagerMap.put(client, cm);
-        cm.sendEvent(new AckEvent(connected == 0));
+        cm.sendEvent(new AckEvent(connected == 0 && !ServerClass.isRecoveryPending()));
         connected++;
 
     }

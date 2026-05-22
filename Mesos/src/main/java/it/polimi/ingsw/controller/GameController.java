@@ -388,14 +388,15 @@ public class GameController {
         Player p = getPlayerByName(playerName);
         if (p == null) return;
 
-        //boolean wasSuspended = isSuspended;
-        //boolean isRecovering = isRecoveryMode;
+        boolean wasSuspended = isSuspended;
+        boolean wasRecovering = isRecoveryMode;
+
         newCm.sendEvent(new ReconnectedTotemEvent(p.getTotemColor()));
         broadcastEvent(new PlayerReconnectedEvent(playerName));
 
         // Send the full current game state to the reconnected client so their
         // view is up-to-date before they need to act.
-        if (isRecoveryMode) {
+        if (wasRecovering) {
             playersRequiredToResume.remove(playerName);
             if (playersRequiredToResume.isEmpty()) {
                 isRecoveryMode = false;
@@ -420,7 +421,7 @@ public class GameController {
         } else {
             cancelSuspensionTimer();
             sendFullStateToClient(newCm, playerName);
-            if (isSuspended) {
+            if (wasSuspended) {
                 broadcastEvent(new GameResumedEvent());
                 turnController.resumeAfterSuspension(
                         game.getBoard().getTurnOrderTile(),

@@ -89,4 +89,8 @@ abstract public class ServerClass {
         connected = 0;
         needReset = false;
     }
+
+    public static void setPendingSave() {
+        pendingSave = null;
+    }
 }

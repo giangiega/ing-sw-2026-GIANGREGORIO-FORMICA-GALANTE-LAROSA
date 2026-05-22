@@ -4,6 +4,7 @@ import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.network.ClientConnection;
 import it.polimi.ingsw.network.ServerClass;
+import it.polimi.ingsw.network.serverInterface.InvalidChoiceEvent;
 import it.polimi.ingsw.network.socket.ClientManagerSocket;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.serverInterface.LoggedEvent;
@@ -95,9 +96,25 @@ public class LobbyController {
             return;
         }
 
-        // Bug 3 fix: in recovery mode reject anyone not in the original game
+        // if namePlayer was not in the previous game, a new game starts
         if (ServerClass.isRecoveryPending() && !ServerClass.isOriginalPlayer(name)) {
-            cm.sendEvent(new LoggedEvent(false, name, color, new ArrayList<>()));
+
+            for (ClientConnection cms : clientManagers.values()) {
+                cms.sendEvent(new InvalidChoiceEvent(
+                        "Recovery aborted: '" + name + "' was not in the previous game. " +
+                                "Disconnect and reconnect to start a new game."));
+            }
+
+            lobbyPlayers.clear();
+            clientManagers.clear();
+
+            ServerClass.setPendingSave();
+            server.resetServer(); // connected=0, lobbyController=null, gameController=null
+
+
+            cm.sendEvent(new InvalidChoiceEvent(
+                    "Recovery aborted: your name was not in the previous game. " +
+                            "Disconnect and reconnect to start a new game."));
             return;
         }
 

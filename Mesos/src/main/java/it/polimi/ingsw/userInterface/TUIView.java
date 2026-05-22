@@ -512,9 +512,9 @@ public class TUIView implements ViewInterface {
     @Override
     public void showFinalScore(List<String> winners, Map< String , Integer> finalScores) {
         synchronized (OUT_LOCK) {
-            System.out.println(YELLOW + BOLD + "\n╔══════════════════════════╗");
-            System.out.println("║       GAME OVER!         ║");
-            System.out.println("╚══════════════════════════╝" + RESET);
+            System.out.println(YELLOW + BOLD + "\n╔════════════════════════════╗");
+            System.out.println("║         GAME OVER!         ║");
+            System.out.println("╚════════════════════════════╝" + RESET);
 
             System.out.println(YELLOW + BOLD + "Winner(s): " + RESET + winners);
 
@@ -531,7 +531,7 @@ public class TUIView implements ViewInterface {
     public void showLeaderboard(List<RankingRow> ranking, Map<String, Integer> playersPosition){
         if (ranking != null && !ranking.isEmpty()) {
             synchronized (OUT_LOCK) {
-                System.out.println(CYAN + BOLD + "\n--- Global Leaderboard (" +
+                System.out.println(BLUE + BOLD + "\n--- Global Leaderboard (" +
                         ranking.get(0).getNumPlayers() + " players) ---" + RESET);
                 System.out.printf("  %-4s %-15s %6s  %s%n", "Rank", "Player", "totalWins", "totalScore");
                 System.out.println("  " + "-".repeat(46));
@@ -540,7 +540,7 @@ public class TUIView implements ViewInterface {
                             "#" + row.getPosition(), row.getNickname(),
                             row.getTotalWin(), row.getScore());
                     if(row.getNickname().equals(nickname)){
-                        System.out.println(GREEN + BOLD + line + RESET);
+                        System.out.println(MAGENTA + BOLD + line + RESET);
                     }else {
                         System.out.println(line);
                     }

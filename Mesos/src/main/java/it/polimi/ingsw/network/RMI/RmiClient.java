@@ -189,7 +189,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             if (lobbyPlayers.size() >= 2)
                 view.getUIDispatcher().accept(() -> view.invalidChoice("The lobby is full"));
             else {
-                view.getUIDispatcher().accept(() -> view.invalidChoice("Name or color already used"));
+                view.getUIDispatcher().accept(() -> view.invalidChoice("login error"));
                 view.getUIDispatcher().accept(() -> view.askLogin());
             }
         }
