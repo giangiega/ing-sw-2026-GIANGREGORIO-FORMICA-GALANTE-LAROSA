@@ -48,6 +48,7 @@ public interface ViewInterface {
      */
     default void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe, List<BuildingCard> buildings) {};
     default void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes){};
+    default void resetInputState(){}; // cambiare con la GUI !!!
 
     /**
      * @author Giuse

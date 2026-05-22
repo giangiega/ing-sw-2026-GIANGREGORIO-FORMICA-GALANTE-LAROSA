@@ -216,4 +216,9 @@ public class TurnController {
         this.currentPlacementPlayer = snapshot.getCurrentPlacementPlayer();
     }
 
+    public void restoreBoard(TurnOrderTile tile, List<OfferTile> offerTrack) {
+        this.savedTurnOrderTile = tile;
+        this.savedOfferTrack = offerTrack != null ? new ArrayList<>(offerTrack) : new ArrayList<>();
+    }
+
 }

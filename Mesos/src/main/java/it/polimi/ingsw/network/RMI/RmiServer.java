@@ -24,7 +24,8 @@ public class RmiServer extends ServerClass implements VirtualServer {
 
     public synchronized void initLobbyRmi(int numPlayers) throws RemoteException {
         this.initLobby(numPlayers);
-        getLobbyController().setServer(this);
+        if(lobbyController != null)
+            getLobbyController().setServer(this);
     }
 
     public void startListening(int port) throws RemoteException {
@@ -91,7 +92,7 @@ public class RmiServer extends ServerClass implements VirtualServer {
     }
 
     @Override
-    public void numPlayerChoice(int numPlayers) throws RemoteException{
+    public void numPlayerChoice(int numPlayers) throws RemoteException {
         if (numPlayers < 2 || numPlayers > 5) return;
         this.initLobbyRmi(numPlayers);
     }

@@ -19,15 +19,19 @@ public class ServerApp {
         int socketPort = Integer.parseInt(args[0]);
         int rmiPort    = Integer.parseInt(args[1]);
 
+        // reset useful for first player at the first run or recovery
+        ServerClass.connected = 0;
+        ServerClass.pendingSave = null;
+        Server server = new Server();
+
        //PersistenceManager.clear(); // use this line if you want to cancel previous game (testing)
 
-        try { // concezione sbagliata del numero di giocatori
+        try {
             SavedGameState save = PersistenceManager.load();
             if (save != null) {
                 ServerClass.pendingSave = save;
-                // Game starts logically with numPlayers, but actually without disconnected ones.
                 int numPlayers = save.getGame().getPlayers().size();
-                new Server().initLobby(numPlayers);
+                server.initLobby(numPlayers); // Usa la stessa istanza
                 System.out.println("[Recovery] Found saved game with " + numPlayers + " players. Waiting for reconnections.");
             }
         } catch (IOException e) {
@@ -35,7 +39,7 @@ public class ServerApp {
         }
 
         new Thread(() -> {
-            new Server().startListening(socketPort);
+            server.startListening(socketPort); // Usa la stessa istanza
         }, "socket-server").start();
 
         new Thread(() -> {

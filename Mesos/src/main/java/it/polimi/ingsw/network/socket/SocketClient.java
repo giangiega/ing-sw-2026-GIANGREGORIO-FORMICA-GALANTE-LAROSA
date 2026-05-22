@@ -21,6 +21,8 @@ public class SocketClient {
     private final String host;
     private final int port;
 
+    private volatile boolean isReconnecting = false;
+
     private static final int INITIAL_RETRY_DELAY_MS = 2_000;
     private static final int MAX_RETRY_DELAY_MS = 30_000;
     private ViewInterface view;
@@ -71,23 +73,31 @@ public class SocketClient {
      * the server's LobbyController will recognise the nickname as a reconnection and resume the game.
      */
     private void scheduleReconnect() {
+        if (isReconnecting) return; // manages run condition
+        isReconnecting = true;
+
         new Thread(() -> {
             int delayMs = INITIAL_RETRY_DELAY_MS;
-            while (true) {
-                System.out.println("[SocketClient] reconnecting in " + delayMs / 1000 + "s …");
-                try {
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    System.out.println("[SocketClient] reconnecting in " + delayMs / 1000 + "s … ");
                     Thread.sleep(delayMs);
-                    doConnect();
-                    // Connection re-established: ask the player to re-enter credentials
-                    view.getUIDispatcher().accept(view::askLogin);
-                    return;
-                } catch (IOException e) {
-                    System.err.println("[SocketClient] reconnect failed: " + e.getMessage());
-                    delayMs = Math.min(delayMs * 2, MAX_RETRY_DELAY_MS);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
+
+                    try {
+                        view.resetInputState();
+                        doConnect();
+                        // Connection re-established: ask the player to re-enter credentials
+                        // view.getUIDispatcher().accept(view::askLogin); SBAGLIATO, doppio AckEvent
+                        return;
+                    } catch (IOException e) {
+                        System.err.println("[SocketClient] reconnect failed: " + e.getMessage());
+                        delayMs = Math.min(delayMs * 2, MAX_RETRY_DELAY_MS);
+                    }
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                isReconnecting = false;
             }
         }, "socket-reconnect").start();
     }

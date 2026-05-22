@@ -20,7 +20,8 @@ public class Server extends ServerClass{
 
     public synchronized void initLobbySocket(int numPlayers) {
         this.initLobby(numPlayers);
-        getLobbyController().setServer(this);
+        if(lobbyController != null)
+            getLobbyController().setServer(this);
     }
 
     /**
@@ -29,28 +30,46 @@ public class Server extends ServerClass{
      * @param port
      */
     public void startListening(int port) {
+        // Recovery: setServer was never called since NumPlayersOperation is skipped
+        if (ServerClass.isRecoveryPending() && lobbyController != null) {
+            getLobbyController().setServer(this);
+        }
+        ServerClass.connected = 0; // reset for first player
+
         //when all players are connected this try close the serverSocket to refuse other eventual connections
-        try(ServerSocket serverSocket = new ServerSocket(port)){
-           System.out.println("Server listening on port " + port);
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("Server listening on port " + port);
 
-           while (true){
-               Socket clientSocket = serverSocket.accept();
-               ClientManagerSocket clientManagerSocket = new ClientManagerSocket(clientSocket);
-               ListenerClientManagerSocket listenerClientManagerSocket = new ListenerClientManagerSocket(this, clientSocket, clientManagerSocket);
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    ClientManagerSocket clientManagerSocket = new ClientManagerSocket(clientSocket);
+                    ListenerClientManagerSocket listener = new ListenerClientManagerSocket(this, clientSocket, clientManagerSocket);
 
-               new Thread(() -> {
-                   try{
-                       listenerClientManagerSocket.startClientListener();
-                   }catch (IOException e){
-                       throw new RuntimeException("Client disconnected");
-                   }
-               }).start();
+                    new Thread(() -> {
+                        try {
+                            listener.startClientListener();
+                        } catch (IOException e) {
+                            System.err.println("[Server] Client handler I/O error: " + e.getMessage());
+                        } finally {
+                            if (clientManagerSocket.getPlayerName() != null) {
+                                this.handleDisconnection(clientManagerSocket.getPlayerName());
+                            }
+                            try { clientSocket.close(); } catch (IOException ignored) {}
+                        }
+                    }, "client-handler-" + clientSocket.getPort()).start();
 
-               clientManagerSocket.sendEvent(new AckEvent(connected == 0));
-               connected++; // only first player receive "true" , he inserts numPlayers
-           }
-        }catch (IOException e){
-            System.err.println("Server error: " + e.getMessage());
+                    boolean isFirst = ServerClass.connected == 0 && !ServerClass.isRecoveryPending();
+                    clientManagerSocket.sendEvent(new AckEvent(isFirst));
+                    ServerClass.connected++;
+                } catch (IOException e) {
+                    if (!Thread.currentThread().isInterrupted()) {
+                        System.err.println("[Server] Accept error: " + e.getMessage());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("[Server] Fatal socket error: " + e.getMessage());
         }
     }
 

@@ -176,12 +176,6 @@ public class GameController {
         if (game.getCurrentRound() > 10) {
             endGame();
         } else {
-            try {
-                TurnControllerSnapshot snap = turnController.getSnapshot();
-                PersistenceManager.save(new SavedGameState(game, snap, disconnectedPlayers));
-            } catch (IOException e) {
-                System.err.println("[Persistence] Failed to save game state: " + e.getMessage());
-            }
             broadcastEvent(new UpdateRoundEvent(game.getCurrentRound()));
             broadcastEvent(new UpdateAllPlayersEvent(players));
             broadcastEvent(new UpdateAllTribesEvent(players));
@@ -190,6 +184,14 @@ public class GameController {
                     game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
                     game.getBoard().getBuildingLowerRow()));
             turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
+            // update before snapshot so the round logic in recovery is correct
+
+            try {
+                TurnControllerSnapshot snap = turnController.getSnapshot();
+                PersistenceManager.save(new SavedGameState(game, snap, disconnectedPlayers));
+            } catch (IOException e) {
+                System.err.println("[Persistence] Failed to save game state: " + e.getMessage());
+            }
         }
     }
 
@@ -383,55 +385,62 @@ public class GameController {
         disconnectedPlayers.remove(playerName);
         clientManagers.put(playerName, newCm);
 
-        boolean wasSuspended = isSuspended;
+        Player p = getPlayerByName(playerName);
+        if (p == null) return;
 
-        if(!isRecoveryMode)
-            cancelSuspensionTimer();
-
-        newCm.sendEvent(new ReconnectedTotemEvent(getPlayerByName(playerName).getTotemColor()));
+        //boolean wasSuspended = isSuspended;
+        //boolean isRecovering = isRecoveryMode;
+        newCm.sendEvent(new ReconnectedTotemEvent(p.getTotemColor()));
         broadcastEvent(new PlayerReconnectedEvent(playerName));
 
         // Send the full current game state to the reconnected client so their
         // view is up-to-date before they need to act.
-        if (game != null) {
-            newCm.sendEvent(new UpdateRoundEvent(game.getCurrentRound()));
-            newCm.sendEvent(new UpdateOfferTrackEvent(
-                    game.getBoard().getOfferTrack(),
-                    game.getBoard().getTurnOrderTile()));
-            newCm.sendEvent(new UpdateRowsEvent(
-                    game.getBoard().getUpperRow(),
-                    game.getBoard().getLowerRow(),
-                    game.getBoard().getBuildingUpperRow(),
-                    game.getBoard().getBuildingLowerRow()));
-            newCm.sendEvent(new UpdateAllPlayersEvent(players));
-            newCm.sendEvent(new UpdateAllTribesEvent(players));
-            Player p = getPlayerByName(playerName);
-            if (p != null) {
-                newCm.sendEvent(new ValidCardsEvent(p.getTribe(),p.getBuildingCards()));
-            }
+        if (isRecoveryMode) {
+            playersRequiredToResume.remove(playerName);
+            if (playersRequiredToResume.isEmpty()) {
+                isRecoveryMode = false;
+                isSuspended = false;
+                cancelSuspensionTimer();
+                broadcastEvent(new GameResumedEvent());
 
-            if (isRecoveryMode) {
-                playersRequiredToResume.remove(playerName);
-                if (playersRequiredToResume.isEmpty()) {
-                    isRecoveryMode = false;
-                    cancelSuspensionTimer();
-                    broadcastEvent(new GameResumedEvent());
-                    turnController.resumeAfterSuspension(
-                            game.getBoard().getTurnOrderTile(),
-                            game.getBoard().getOfferTrack()
-                    );
-                } else {
-                    newCm.sendEvent(new WaitingRecoveryEvent(playersRequiredToResume.size())); // notify the player, server is back
+                for (ClientConnection cm : clientManagers.values()) {
+                    String name = cm.getPlayerName();
+                    if (name != null && !disconnectedPlayers.contains(name)) {
+                        sendFullStateToClient(cm, name);
+                    }
                 }
-            } else if (wasSuspended) {
+
+                turnController.resumeAfterSuspension(
+                        game.getBoard().getTurnOrderTile(),
+                        game.getBoard().getOfferTrack());
+
+            } else {
+                newCm.sendEvent(new WaitingRecoveryEvent(playersRequiredToResume.size())); // notify the player, server is back
+            }
+        } else {
+            cancelSuspensionTimer();
+            sendFullStateToClient(newCm, playerName);
+            if (isSuspended) {
                 broadcastEvent(new GameResumedEvent());
                 turnController.resumeAfterSuspension(
                         game.getBoard().getTurnOrderTile(),
-                        game.getBoard().getOfferTrack()
-                );
+                        game.getBoard().getOfferTrack());
             }
         }
     }
+
+    private void sendFullStateToClient(ClientConnection cm, String playerName) {
+        cm.sendEvent(new UpdateRoundEvent(game.getCurrentRound()));
+        cm.sendEvent(new UpdateOfferTrackEvent(game.getBoard().getOfferTrack(), game.getBoard().getTurnOrderTile()));
+        cm.sendEvent(new UpdateRowsEvent(game.getBoard().getUpperRow(), game.getBoard().getLowerRow(),
+                game.getBoard().getBuildingUpperRow(), game.getBoard().getBuildingLowerRow()));
+        cm.sendEvent(new UpdateAllPlayersEvent(players));
+        cm.sendEvent(new UpdateAllTribesEvent(players));
+        Player p = getPlayerByName(playerName);
+        if (p != null)
+            cm.sendEvent(new ValidCardsEvent(p.getTribe(), p.getBuildingCards()));
+    }
+
     /**********Timer handling**********/
 
     /**
@@ -470,22 +479,31 @@ public class GameController {
 
     public void restoreGame(SavedGameState state) {
         this.game = state.getGame();
+        this.players.clear();
+        this.players.addAll(this.game.getPlayers());
+
         this.isRecoveryMode = true;
         this.isSuspended = true;
 
         // Restore pre-crash disconnections exactly as they were
-        this.disconnectedPlayers = new ArrayList<>(state.getDisconnectedPlayers());
+        this.disconnectedPlayers.clear();
+        for (Player p : this.players) {
+            this.disconnectedPlayers.add(p.getName());
+        }
 
         // Players required to resume = those who were connected at crash time
-        for (Player p : players) {
-            if (!disconnectedPlayers.contains(p.getName())) {
+        this.playersRequiredToResume.clear();
+        for (Player p : this.players) {
+            if (!state.getDisconnectedPlayers().contains(p.getName())) {
                 playersRequiredToResume.add(p.getName());
-                disconnectedPlayers.add(p.getName());
             }
         }
 
         this.turnController = new TurnController(this, players.size());
         turnController.restoreFromSnapshot(state.getTurnSnapshot());
+        turnController.restoreBoard(game.getBoard().getTurnOrderTile(),
+                game.getBoard().getOfferTrack());
+
         this.database = DatabaseManager.getDatabase();
     }
 }

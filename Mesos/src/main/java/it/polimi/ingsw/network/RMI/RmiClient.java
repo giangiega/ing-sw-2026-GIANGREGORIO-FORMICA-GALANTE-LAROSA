@@ -36,6 +36,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     private final String host;
     private final int port;
 
+    private volatile boolean isReconnecting = false;
+    // volatile = all threads can see changes to this variable
+
     // Set in connect(); used by all VirtualView callbacks
     private ViewInterface view;
 
@@ -132,21 +135,30 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      * the nickname as a reconnection and resume the game.
      */
     private void scheduleReconnect() {
+        if(isReconnecting)
+            return;
+        isReconnecting = true;
+
         new Thread(() -> {
             int delayS = INITIAL_RETRY_DELAY_S;
-            while (true) {
-                System.out.println("[RmiClient] reconnecting in " + delayS + "s …");
-                try {
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    System.out.println("[RmiClient] reconnecting in " + delayS + "s … ");
                     TimeUnit.SECONDS.sleep(delayS);
-                    doConnect();
-                    return;
-                } catch (IOException e) {
-                    System.err.println("[RmiClient] reconnect failed: " + e.getMessage());
-                    delayS = Math.min(delayS * 2, MAX_RETRY_DELAY_S);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
+
+                    try {
+                        view.resetInputState();
+                        doConnect();
+                        return;
+                    } catch (IOException e) {
+                        System.err.println("[RmiClient] reconnect failed: " + e.getMessage());
+                        delayS = Math.min(delayS * 2, MAX_RETRY_DELAY_S);
+                    }
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                isReconnecting = false;
             }
         }, "rmi-reconnect").start();
     }

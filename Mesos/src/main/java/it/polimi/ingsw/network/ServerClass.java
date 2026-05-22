@@ -41,14 +41,17 @@ abstract public class ServerClass {
 
     public void restoreFromSave(List<Player> lobbyPlayers,
                                 Map<String, ClientConnection> clientManagers) {
-        if (gameController != null || pendingSave == null)
-            return;
+        if (gameController != null || pendingSave == null) return;
+
         gameController = new GameController(lobbyPlayers, clientManagers);
         gameController.restoreGame(pendingSave);
-        pendingSave = null;
+        pendingSave = null;  // quick cancel so the method can't be used more than once
 
-        for (Player p : lobbyPlayers){
-            gameController.handleReconnection(p.getName(), clientManagers.get(p.getName()));
+        for (Player p : lobbyPlayers) {
+            ClientConnection cm = clientManagers.get(p.getName());
+            if (cm != null) {
+                gameController.handleReconnection(p.getName(), cm);
+            }
         }
     }
 
