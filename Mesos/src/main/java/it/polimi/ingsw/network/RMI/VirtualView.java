@@ -24,7 +24,7 @@ public interface VirtualView extends Remote {
 
     /** Result of a login attempt; on success the current lobby list is provided. */
     void onLogged(boolean result, String name, String color,
-                  List<String> lobbyPlayers) throws RemoteException;
+                  List<String> lobbyPlayers, boolean numPlayerChosen) throws RemoteException;
 
     /** Fired when all players are connected and the game begins. */
     void onGameStarted(List<OfferTile> offerTrack, TurnOrderTile tile,

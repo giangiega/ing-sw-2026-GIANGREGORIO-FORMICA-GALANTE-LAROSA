@@ -170,15 +170,18 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onLogged(boolean result, String name, String color,
-                         List<String> lobbyPlayers) throws RemoteException {
+                         List<String> lobbyPlayers, boolean numPlayerChosen) throws RemoteException {
         if (result) {
             view.getUIDispatcher().accept(() -> view.showLobby(lobbyPlayers));
         } else {
             if (lobbyPlayers.size() >= 2)
                 view.getUIDispatcher().accept(() -> view.invalidChoice("The lobby is full"));
-            else {
+            else if(!numPlayerChosen) {
+                view.getUIDispatcher().accept(() -> view.invalidChoice("Wait, the first client is choosing the number of players"));
+                view.getUIDispatcher().accept(() -> view.askLogin());
+            }else {
                 view.getUIDispatcher().accept(() -> view.invalidChoice("Name or color already used"));
-               // view.getUIDispatcher().accept(() -> view.askLogin());
+                view.getUIDispatcher().accept(() -> view.askLogin());
             }
         }
     }

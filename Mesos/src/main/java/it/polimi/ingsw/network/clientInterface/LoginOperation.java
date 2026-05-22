@@ -21,8 +21,10 @@ public class LoginOperation implements ClientOperation {
     @Override
     public void executeOp(Server server, ClientManagerSocket cm) {
         if (server.getLobbyController() == null) {
-            cm.sendEvent(new LoggedEvent(false, namePlayer,
-                    totemColor, new ArrayList<>()));
+            LoggedEvent loginWithoutNumPlayerChosen = new LoggedEvent(false, namePlayer,
+                    totemColor, new ArrayList<>());
+            loginWithoutNumPlayerChosen.setNumPlayersChosen(false);
+            cm.sendEvent(loginWithoutNumPlayerChosen);
             return;
         }
         server.getLobbyController().addPlayer(namePlayer,totemColor,cm);
