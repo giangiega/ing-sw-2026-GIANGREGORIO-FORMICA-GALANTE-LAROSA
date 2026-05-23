@@ -179,16 +179,26 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      * @param lobbyPlayers
      * @throws RemoteException
      */
+    /**
+     * @param result
+     * @param name
+     * @param color
+     * @param lobbyPlayers
+     * @throws RemoteException
+     */
     @Override
     public void onLogged(boolean result, String name, String color,
-                         List<String> lobbyPlayers) throws RemoteException {
+                         List<String> lobbyPlayers, boolean numPlayerChosen) throws RemoteException {
         if (result) {
             view.getUIDispatcher().accept(() -> view.showLobby(lobbyPlayers));
         } else {
             if (lobbyPlayers.size() >= 2)
                 view.getUIDispatcher().accept(() -> view.invalidChoice("The lobby is full"));
-            else {
-                view.getUIDispatcher().accept(() -> view.invalidChoice("login error"));
+            else if(!numPlayerChosen) {
+                view.getUIDispatcher().accept(() -> view.invalidChoice("Wait, the first client is choosing the number of players"));
+                view.getUIDispatcher().accept(() -> view.askLogin());
+            }else {
+                view.getUIDispatcher().accept(() -> view.invalidChoice("Name or color already used"));
                 view.getUIDispatcher().accept(() -> view.askLogin());
             }
         }
@@ -343,9 +353,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onUpdateAllTribes(List<String> names,
-                                  List<Map<CharacterEnum, List<CharacterCard>>> tribes)
+                                  List<Map<CharacterEnum, List<CharacterCard>>> tribes, List<List<BuildingCard>> buildings)
             throws RemoteException {
-        view.getUIDispatcher().accept(() -> view.updateAllTribes(names, tribes));
+        view.getUIDispatcher().accept(() -> view.updateAllTribes(names, tribes, buildings));
     }
 
     /**
