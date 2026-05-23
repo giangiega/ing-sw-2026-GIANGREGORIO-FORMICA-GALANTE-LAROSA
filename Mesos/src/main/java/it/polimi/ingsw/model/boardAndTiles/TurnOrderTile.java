@@ -45,6 +45,28 @@ public class TurnOrderTile implements Serializable {
         return List.copyOf(slots);
     }
 
+    /**
+     * @author Giuse
+     * @param disconnectedNames names of all currently disconnected players
+     * This method moves all disconnected players to the END of the slots list, preserving
+     * their relative order among themselves and keeping connected players first.
+     * Called at the start of every placement phase so that players who missed
+     * one or more rounds (and whose totems therefore never cycled through
+     * totemOut → totemIn) don't end up at the front of the order simply because
+     * they stayed in slots while everyone else rotated around them.
+     */
+    public void moveDisconnectedToEnd(List<String> disconnectedNames) {
+        List<Player> disconnected = new ArrayList<>();
+        slots.removeIf(p -> {
+            if (disconnectedNames.contains(p.getName())) {
+                disconnected.add(p);
+                return true;
+            }
+            return false;
+        });
+        slots.addAll(disconnected);
+    }
+
     //constructor has foodBonus from a GameConfig method
    public int getFoodBonusForSlot(int pos){
         return foodBonus[pos];

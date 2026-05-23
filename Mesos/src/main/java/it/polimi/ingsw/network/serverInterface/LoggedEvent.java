@@ -12,6 +12,7 @@ public class LoggedEvent implements ServerEvent {
     private final String color;
     private boolean result;
     private final List<String> lobbyPlayers;
+    private boolean numPlayersChosen = true;
 
     public LoggedEvent(boolean result, String name, ColorEnum color, List<String> lobbyPlayers) {
         this.name = name;
@@ -27,6 +28,10 @@ public class LoggedEvent implements ServerEvent {
         }else{
             if(lobbyPlayers.size() >= 2)
                 view.invalidChoice("The lobby is full");
+            else if(!numPlayersChosen){
+                view.invalidChoice("Wait, the first client is choosing the number of players");
+                view.askLogin();
+            }
             else {
                 view.invalidChoice("login error");
                 view.askLogin();
@@ -37,6 +42,10 @@ public class LoggedEvent implements ServerEvent {
 
     @Override
     public void updateViewRmi(VirtualView client) throws RemoteException {
-        client.onLogged(result, name, color, lobbyPlayers);
+        client.onLogged(result, name, color, lobbyPlayers, numPlayersChosen);
+    }
+
+    public void setNumPlayersChosen(boolean numPlayersChosen){
+        this.numPlayersChosen = numPlayersChosen;
     }
 }

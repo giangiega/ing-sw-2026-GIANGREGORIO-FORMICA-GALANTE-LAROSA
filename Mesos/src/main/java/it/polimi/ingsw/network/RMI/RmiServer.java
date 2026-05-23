@@ -107,8 +107,10 @@ public class RmiServer extends ServerClass implements VirtualServer {
         if(cm == null) return;
 
         if (lobbyController == null) {
-            cm.sendEvent(new LoggedEvent(false, cm.getPlayerName(),
-                    totemColor, new ArrayList<>()));
+            LoggedEvent loginWithoutNumPlayerChosen = new LoggedEvent(false, cm.getPlayerName(),
+                    totemColor, new ArrayList<>());
+            loginWithoutNumPlayerChosen.setNumPlayersChosen(false);
+            cm.sendEvent(loginWithoutNumPlayerChosen);
             return;
         }
 

@@ -40,6 +40,14 @@ public class GameController {
     private Set<String> playersRequiredToResume = new HashSet<>();
     private boolean isRecoveryMode = false;
     /**
+     * Players who reconnected during the current round (i.e. after their totem
+     * was already stuck in slots from a previous absence). They are no longer
+     * in disconnectedPlayers but still need to be pushed to the end of the
+     * TurnOrderTile at the start of the next placement phase.
+     * Cleared in endRound() after moveDisconnectedToEnd is applied.
+     */
+    private final List<String> reconnectedThisRound = new ArrayList<>();
+    /**
      * Timer used when only one player is left connected.
      * If no one reconnects within SUSPENSION_TIMEOUT_SECONDS, the sole
      * remaining player is declared the winner.
@@ -183,6 +191,19 @@ public class GameController {
                     game.getBoard().getTurnOrderTile(), game.getBoard().getUpperRow(),
                     game.getBoard().getLowerRow(), game.getBoard().getBuildingUpperRow(),
                     game.getBoard().getBuildingLowerRow()));
+
+            // Ensure disconnected players are last in placement order for the next round
+            List<String> toMoveToEnd = new ArrayList<>(disconnectedPlayers);
+            toMoveToEnd.addAll(reconnectedThisRound);
+            game.getBoard().getTurnOrderTile().moveDisconnectedToEnd(toMoveToEnd);
+
+            reconnectedThisRound.clear();
+            // per essere sicuro che i totem tornino al loro posto
+            broadcastEvent(new UpdateOfferTrackEvent(
+                    game.getBoard().getOfferTrack(),
+                    game.getBoard().getTurnOrderTile()
+            ));
+
             turnController.startPlacementPhase(game.getBoard().getTurnOrderTile());
             // update before snapshot so the round logic in recovery is correct
 
@@ -383,6 +404,7 @@ public class GameController {
         if (!disconnectedPlayers.contains(playerName)) return;//Wrong client
 
         disconnectedPlayers.remove(playerName);
+        reconnectedThisRound.add(playerName);
         clientManagers.put(playerName, newCm);
 
         Player p = getPlayerByName(playerName);
