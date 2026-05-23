@@ -38,7 +38,11 @@ public interface ViewInterface {
     void showFinalScore(List<String> winners, Map< String , Integer> finalScores);
     void showLeaderboard(List<RankingRow> ranking, Map<String, Integer> playersPosition);
     default void showWaitingForRecovery(int playersStillNeeded) {}
+    default void resetInputState(){};
+    default void showServerCrashed(){}; // questo di sicuro ti serve pure in GUI, togli default
     //da cambiare, fatto solo per non dare errore nell'override della GUI. Se tocco la GUI fa merging
+    // se provo a fare la persistenza adesso, non va perchè questo metodo non esiste in GUI
+    // Daniele quando risolvi cancella questi commenti
 
     /**
      * This two methods are defined as default because TUI doesn't need them.
@@ -48,7 +52,8 @@ public interface ViewInterface {
      */
     default void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe, List<BuildingCard> buildings) {};
     default void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes){};
-    default void resetInputState(){}; // cambiare con la GUI !!!
+    // se provo a fare la persistenza adesso, non va perchè questo metodo non esiste in GUI
+    // Daniele quando risolvi cancella questi commenti
 
     /**
      * @author Giuse

@@ -68,7 +68,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @throws IOException : if the registry lookup or remote call fails
+     * @throws IOException if the registry lookup or remote call fails
      * (Ri)Connects to the RMI server and wires up the full client stack: by
      * looking up the VirtualServer stub in the registry.
      * It also creates the ClientViewRMI and injects it into the view via
@@ -112,8 +112,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             } catch (RemoteException e) {
                 System.err.println("[RmiClient] heartbeat failed: " + e.getMessage());
                 stopHeartbeat();
-                view.getUIDispatcher().accept(() ->
-                        view.showPlayerDisconnected("server"));
+                view.getUIDispatcher().accept(view::showServerCrashed);
                 scheduleReconnect();
             }
         }, HEARTBEAT_INTERVAL_S, HEARTBEAT_INTERVAL_S, TimeUnit.SECONDS);

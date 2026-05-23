@@ -557,6 +557,13 @@ public class TUIView implements ViewInterface {
     }
 
     @Override
+    public void showServerCrashed() {
+        synchronized (OUT_LOCK) {
+            System.out.println(RED + BOLD + "\nConnection to server lost. Attempting to reconnect..." + RESET);
+        }
+    }
+
+    @Override
     public void showPlayerReconnected(String playerName) {
         System.out.println(GREEN + BOLD + "\nPlayer reconnected: " + RESET + playerName + RESET);
         reprintPromptIfActive();

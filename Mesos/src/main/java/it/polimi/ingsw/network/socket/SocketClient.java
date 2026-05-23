@@ -87,7 +87,7 @@ public class SocketClient {
                         view.resetInputState();
                         doConnect();
                         // Connection re-established: ask the player to re-enter credentials
-                        // view.getUIDispatcher().accept(view::askLogin); SBAGLIATO, doppio AckEvent
+                        // view.getUIDispatcher().accept(view::askLogin); ERROR, it calls AckEvent two times for every client
                         return;
                     } catch (IOException e) {
                         System.err.println("[SocketClient] reconnect failed: " + e.getMessage());

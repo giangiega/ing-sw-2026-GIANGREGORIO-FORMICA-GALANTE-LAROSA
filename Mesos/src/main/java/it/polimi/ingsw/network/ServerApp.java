@@ -24,14 +24,14 @@ public class ServerApp {
         ServerClass.pendingSave = null;
 
 
-        PersistenceManager.clear(); // use this line if you want to cancel previous game (testing)
+        //PersistenceManager.clear(); // use this line if you want to cancel previous game (testing)
 
         try {
             SavedGameState save = PersistenceManager.load();
             if (save != null) {
                 ServerClass.pendingSave = save;
                 int numPlayers = save.getGame().getPlayers().size();
-                new Server().initLobby(numPlayers); // Usa la stessa istanza
+                new Server().initLobby(numPlayers);
                 System.out.println("[Recovery] Found saved game with " + numPlayers + " players. Waiting for reconnections.");
             }
         } catch (IOException e) {
@@ -39,7 +39,7 @@ public class ServerApp {
         }
 
         new Thread(() -> {
-            new Server().startListening(socketPort); // Usa la stessa istanza
+            new Server().startListening(socketPort);
         }, "socket-server").start();
 
         new Thread(() -> {

@@ -73,8 +73,7 @@ public class ListenerClientViewSocket implements Runnable {
      */
     private void handleServerClosedConnection(){
         System.out.println("\nFrom ListenerClientViewSocket: connection closed by the server");
-        uiDispatcher.accept(() ->
-                view.showPlayerDisconnected("server"));
+        uiDispatcher.accept(view::showServerCrashed);
         onServerLost.run();
     }
 
