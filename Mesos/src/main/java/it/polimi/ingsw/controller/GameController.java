@@ -67,6 +67,10 @@ public class GameController {
         this.disconnectedPlayers = new ArrayList<>();
     }
 
+    public Game getGame(){
+        return this.game;
+    }
+
     /**
      * Initializes decks, board and model.
      * Creates GameConfig based on numPlayers and TurnController.
