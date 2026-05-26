@@ -313,160 +313,161 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void showGameStart() {
-        Platform.runLater(() -> {
+        Platform.runLater(this::buildGameScene);
+    }
 
-            // ── BACKGROUND ──────────────────────────────────────────────
-            var bgUrl = getClass().getResource("/images/screen/background.png");
-            ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
-            background.setPreserveRatio(false);
-            background.fitWidthProperty().bind(primaryStage.widthProperty());
-            background.fitHeightProperty().bind(primaryStage.heightProperty());
+    private void buildGameScene(){
+        // ── BACKGROUND ──────────────────────────────────────────────
+        var bgUrl = getClass().getResource("/images/screen/background.png");
+        ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
+        background.setPreserveRatio(false);
+        background.fitWidthProperty().bind(primaryStage.widthProperty());
+        background.fitHeightProperty().bind(primaryStage.heightProperty());
 
-            // ── RIGHE CARTE ─────────────────────────────────────────────
-            upperRowPane = new HBox(12);
-            upperRowPane.setAlignment(Pos.CENTER_LEFT);
+        // ── RIGHE CARTE ─────────────────────────────────────────────
+        upperRowPane = new HBox(12);
+        upperRowPane.setAlignment(Pos.CENTER_LEFT);
 
-            lowerRowPane = new HBox(12);
-            lowerRowPane.setAlignment(Pos.CENTER);
+        lowerRowPane = new HBox(12);
+        lowerRowPane.setAlignment(Pos.CENTER);
 
-            buildingUpperPane = new HBox(12);
-            buildingUpperPane.setAlignment(Pos.BOTTOM_LEFT);
+        buildingUpperPane = new HBox(12);
+        buildingUpperPane.setAlignment(Pos.BOTTOM_LEFT);
 
-            buildingLowerPane = new HBox(12);
-            buildingLowerPane.setAlignment(Pos.BOTTOM_LEFT);
+        buildingLowerPane = new HBox(12);
+        buildingLowerPane.setAlignment(Pos.BOTTOM_LEFT);
 
 
 
-            HBox topRow = new HBox(20, upperRowPane, buildingUpperPane);
-            topRow.setAlignment(Pos.BOTTOM_CENTER);
-            HBox lowerRow = new HBox(20,lowerRowPane, buildingLowerPane);
-            lowerRow.setAlignment(Pos.BOTTOM_CENTER);
+        HBox topRow = new HBox(20, upperRowPane, buildingUpperPane);
+        topRow.setAlignment(Pos.BOTTOM_CENTER);
+        HBox lowerRow = new HBox(20,lowerRowPane, buildingLowerPane);
+        lowerRow.setAlignment(Pos.BOTTOM_CENTER);
 
-            // ── OFFER TRACK ─────────────────────────────────────────────
-            offerTrackPane = new HBox(14);
-            offerTrackPane.setAlignment(Pos.CENTER);
-            offerTrackPane.setPadding(new Insets(10));
+        // ── OFFER TRACK ─────────────────────────────────────────────
+        offerTrackPane = new HBox(14);
+        offerTrackPane.setAlignment(Pos.CENTER);
+        offerTrackPane.setPadding(new Insets(10));
 
-            // ── TURN ORDER ──────────────────────────────────────────────
-            turnOrderPane = new VBox(8);
-            turnOrderPane.setAlignment(Pos.CENTER);
-            turnOrderPane.setPadding(new Insets(10, 16, 10, 16));
-            turnOrderPane.setStyle(
-                    "-fx-background-color: rgba(20,10,5,0.60);" +
-                            "-fx-background-radius: 8;"
-            );
+        // ── TURN ORDER ──────────────────────────────────────────────
+        turnOrderPane = new VBox(8);
+        turnOrderPane.setAlignment(Pos.CENTER);
+        turnOrderPane.setPadding(new Insets(10, 16, 10, 16));
+        turnOrderPane.setStyle(
+                "-fx-background-color: rgba(20,10,5,0.60);" +
+                        "-fx-background-radius: 8;"
+        );
 
-            Label turnOrderTitle = new Label("TURN ORDER");
-            turnOrderTitle.setStyle(
-                    "-fx-text-fill: #e8c46a; -fx-font-size: 11; -fx-font-weight: bold;"
-            );
-            VBox turnOrderSection = new VBox(6, turnOrderTitle, turnOrderPane);
-            turnOrderSection.setAlignment(Pos.CENTER);
+        Label turnOrderTitle = new Label("TURN ORDER");
+        turnOrderTitle.setStyle(
+                "-fx-text-fill: #e8c46a; -fx-font-size: 11; -fx-font-weight: bold;"
+        );
+        VBox turnOrderSection = new VBox(6, turnOrderTitle, turnOrderPane);
+        turnOrderSection.setAlignment(Pos.CENTER);
 
-            // ── RIGA CENTRALE: turn order + offer track ──────────────────
-            HBox middleRow = new HBox(30, turnOrderSection, offerTrackPane);
-            middleRow.setAlignment(Pos.CENTER);
-            middleRow.setPadding(new Insets(8, 0, 8, 0));
+        // ── RIGA CENTRALE: turn order + offer track ──────────────────
+        HBox middleRow = new HBox(30, turnOrderSection, offerTrackPane);
+        middleRow.setAlignment(Pos.CENTER);
+        middleRow.setPadding(new Insets(8, 0, 8, 0));
 
-            // ── SEZIONE PROPRIA TRIBÙ ────────────────────────────────────
-            ownTribePane = new HBox(16);
-            ownTribePane.setAlignment(Pos.CENTER_LEFT);
-            ownTribePane.setPadding(new Insets(8));
+        // ── SEZIONE PROPRIA TRIBÙ ────────────────────────────────────
+        ownTribePane = new HBox(16);
+        ownTribePane.setAlignment(Pos.CENTER_LEFT);
+        ownTribePane.setPadding(new Insets(8));
 
-            ScrollPane ownTribeScroll = new ScrollPane(ownTribePane);
-            ownTribeScroll.setFitToHeight(false);
-            ownTribeScroll.setPrefHeight(CARD_H + 70);
-            ownTribeScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-            ownTribeScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            ownTribeScroll.setStyle(
-                    "-fx-background: transparent; -fx-background-color: transparent;"
-            );
+        ScrollPane ownTribeScroll = new ScrollPane(ownTribePane);
+        ownTribeScroll.setFitToHeight(false);
+        ownTribeScroll.setPrefHeight(CARD_H + 70);
+        ownTribeScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        ownTribeScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        ownTribeScroll.setStyle(
+                "-fx-background: transparent; -fx-background-color: transparent;"
+        );
 
-            Label ownTribeTitle = new Label("YOUR TRIBE");
-            ownTribeTitle.setStyle(
-                    "-fx-text-fill: #e8c46a; -fx-font-size: 12; -fx-font-weight: bold;"
-            );
+        Label ownTribeTitle = new Label("YOUR TRIBE");
+        ownTribeTitle.setStyle(
+                "-fx-text-fill: #e8c46a; -fx-font-size: 12; -fx-font-weight: bold;"
+        );
 
-            VBox ownTribeSection = new VBox(18, ownTribeTitle, ownTribeScroll);
-            ownTribeSection.setPadding(new Insets(8, 16, 4, 16));
-            ownTribeSection.setStyle(
-                    "-fx-background-color: rgba(0,0,0,0.35); -fx-background-radius: 8;"
-            );
+        VBox ownTribeSection = new VBox(18, ownTribeTitle, ownTribeScroll);
+        ownTribeSection.setPadding(new Insets(8, 16, 4, 16));
+        ownTribeSection.setStyle(
+                "-fx-background-color: rgba(0,0,0,0.35); -fx-background-radius: 8;"
+        );
 
-            // ── ACCORDION TRIBÙ ALTRI GIOCATORI ──────────────────────────
-            otherTribesAccordion = new Accordion();
-            otherTribesAccordion.setStyle("-fx-background-color: transparent;");
+        // ── ACCORDION TRIBÙ ALTRI GIOCATORI ──────────────────────────
+        otherTribesAccordion = new Accordion();
+        otherTribesAccordion.setStyle("-fx-background-color: transparent;");
 
-            VBox tribeArea = new VBox(8, ownTribeSection, otherTribesAccordion);
-            tribeArea.setPadding(new Insets(8, 0, 0, 0));
+        VBox tribeArea = new VBox(8, ownTribeSection, otherTribesAccordion);
+        tribeArea.setPadding(new Insets(8, 0, 0, 0));
 
-            // ── CARD AREA COMPLETA ───────────────────────────────────────
-            VBox cardArea = new VBox(16, topRow, middleRow, lowerRow, tribeArea);
-            cardArea.setAlignment(Pos.CENTER);
-            cardArea.setPadding(new Insets(20));
+        // ── CARD AREA COMPLETA ───────────────────────────────────────
+        VBox cardArea = new VBox(16, topRow, middleRow, lowerRow, tribeArea);
+        cardArea.setAlignment(Pos.CENTER);
+        cardArea.setPadding(new Insets(20));
 
-            ScrollPane cardScroll = new ScrollPane(cardArea);
-            cardScroll.setFitToWidth(true);
-            cardScroll.setFitToHeight(false);
-            cardScroll.setStyle(
-                    "-fx-background: transparent; -fx-background-color: transparent;"
-            );
-            HBox.setHgrow(cardScroll, Priority.ALWAYS);
+        ScrollPane cardScroll = new ScrollPane(cardArea);
+        cardScroll.setFitToWidth(true);
+        cardScroll.setFitToHeight(false);
+        cardScroll.setStyle(
+                "-fx-background: transparent; -fx-background-color: transparent;"
+        );
+        HBox.setHgrow(cardScroll, Priority.ALWAYS);
 
-            // ── PANNELLO DESTRO ──────────────────────────────────────────
-            roundLabel = new Label("Round 1");
-            roundLabel.setStyle(
-                    "-fx-text-fill: #f5e6c8; -fx-font-size: 15; -fx-font-weight: bold;"
-            );
+        // ── PANNELLO DESTRO ──────────────────────────────────────────
+        roundLabel = new Label("Round 1");
+        roundLabel.setStyle(
+                "-fx-text-fill: #f5e6c8; -fx-font-size: 15; -fx-font-weight: bold;"
+        );
 
-            eraLabel = new Label("Era I");
-            eraLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 13;");
-            HBox eraRoundBox = new HBox(10, eraLabel, roundLabel);
-            eraRoundBox.setAlignment(Pos.CENTER_LEFT);
+        eraLabel = new Label("Era I");
+        eraLabel.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 13;");
+        HBox eraRoundBox = new HBox(10, eraLabel, roundLabel);
+        eraRoundBox.setAlignment(Pos.CENTER_LEFT);
 
-            playersStatus = new VBox(10);
+        playersStatus = new VBox(10);
 
-            ScrollPane playersScroll = new ScrollPane(playersStatus);
-            playersScroll.setFitToWidth(true);
-            playersScroll.setStyle(
-                    "-fx-background: transparent; -fx-background-color: transparent;"
-            );
-            VBox.setVgrow(playersScroll, Priority.ALWAYS);
+        ScrollPane playersScroll = new ScrollPane(playersStatus);
+        playersScroll.setFitToWidth(true);
+        playersScroll.setStyle(
+                "-fx-background: transparent; -fx-background-color: transparent;"
+        );
+        VBox.setVgrow(playersScroll, Priority.ALWAYS);
 
-            Label playersTitle = new Label("PLAYERS:");
-            playersTitle.setStyle(
-                    "-fx-text-fill: #f5e6c8; -fx-font-weight: bold;"
-            );
+        Label playersTitle = new Label("PLAYERS:");
+        playersTitle.setStyle(
+                "-fx-text-fill: #f5e6c8; -fx-font-weight: bold;"
+        );
 
-            VBox rightPanel = new VBox(12,
-                    eraRoundBox,
-                    roundLabel,
-                    new Separator(),
-                    playersTitle,
-                    playersScroll
-            );
-            rightPanel.setPadding(new Insets(12));
-            rightPanel.setPrefWidth(180);
-            rightPanel.setMinWidth(180);
-            rightPanel.setMaxWidth(180);
-            rightPanel.setStyle("-fx-background-color: rgba(20,10,5,0.80);");
+        VBox rightPanel = new VBox(12,
+                eraRoundBox,
+                roundLabel,
+                new Separator(),
+                playersTitle,
+                playersScroll
+        );
+        rightPanel.setPadding(new Insets(12));
+        rightPanel.setPrefWidth(180);
+        rightPanel.setMinWidth(180);
+        rightPanel.setMaxWidth(180);
+        rightPanel.setStyle("-fx-background-color: rgba(20,10,5,0.80);");
 
-            // ── ACTION BAR ───────────────────────────────────────────────
-            actionBar = new HBox(10);
-            actionBar.setPadding(new Insets(8, 16, 8, 16));
-            actionBar.setAlignment(Pos.CENTER);
-            actionBar.setStyle("-fx-background-color: rgba(180,40,20,0.85);");
-            actionBar.setVisible(false);
-            actionBar.setManaged(false);
+        // ── ACTION BAR ───────────────────────────────────────────────
+        actionBar = new HBox(10);
+        actionBar.setPadding(new Insets(8, 16, 8, 16));
+        actionBar.setAlignment(Pos.CENTER);
+        actionBar.setStyle("-fx-background-color: rgba(180,40,20,0.85);");
+        actionBar.setVisible(false);
+        actionBar.setManaged(false);
 
-            HBox mainArea = new HBox(cardScroll, rightPanel);
-            VBox.setVgrow(mainArea, Priority.ALWAYS);
+        HBox mainArea = new HBox(cardScroll, rightPanel);
+        VBox.setVgrow(mainArea, Priority.ALWAYS);
 
-            VBox rootLayout = new VBox(mainArea, actionBar);
-            sceneRoot = new StackPane(background, rootLayout);
+        VBox rootLayout = new VBox(mainArea, actionBar);
+        sceneRoot = new StackPane(background, rootLayout);
 
-            primaryStage.setScene(new Scene(sceneRoot, 1280, 720));
-        });
+        primaryStage.setScene(new Scene(sceneRoot, 1280, 720));
     }
 
     private void showToast(String message) {
@@ -1600,10 +1601,14 @@ public class GUIView implements ViewInterface {
             }
             showToast("All players are back — game is resuming!");
         });
+
     }
     @Override
     public void showReconnectedTotem(ColorEnum totemColor) {
         Platform.runLater(() -> {
+            if (upperRowPane == null) {
+                buildGameScene();
+            }
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Totem Restored");
             alert.setHeaderText("Your totem color has been reassigned");
