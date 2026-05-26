@@ -66,6 +66,8 @@ public class GUIView implements ViewInterface {
     private final List<Integer> selectedLowerIndices = new ArrayList<>();
     private final List<Integer> selectedBuildingUpperIndices = new ArrayList<>();
     private final List<Integer> selectedBuildingLowerIndices = new ArrayList<>();
+    private List<BuildingCard> renderedBuildingUpper = new ArrayList<>();
+    private List<BuildingCard> renderedBuildingLower = new ArrayList<>();
     private int totalPlayers = 0;
 
     private HBox ownTribePane;
@@ -78,8 +80,12 @@ public class GUIView implements ViewInterface {
     private int errorCountB = 0;
     private List<RankingRow> globalRanking;
     private Map<String, Integer> globalPlayersPosition;
+
+
     private Dialog<Void> suspendedDialog;
     private Timeline countdownTimeline;
+    private StackPane reconnectingOverlay;
+    private VBox suspendedOverlay;
 
 
     /**
@@ -111,6 +117,10 @@ public class GUIView implements ViewInterface {
         primaryStage.setHeight(720);
         primaryStage.setMinWidth(960);
         primaryStage.setMinHeight(600);
+        primaryStage.setOnCloseRequest(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
         primaryStage.show();
     }
 
@@ -126,12 +136,20 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void askNumPlayers() {
-        Platform.runLater(() -> showLoginScene(true));
+        Platform.runLater(() -> {
+            hideReconnectingOverlay();
+            closeSuspendedDialogIfOpen();
+            showLoginScene(true);
+        });
     }
 
     @Override
     public void askLogin() {
-        Platform.runLater(() -> showLoginScene(false));
+        Platform.runLater(() ->{
+            hideReconnectingOverlay();
+            closeSuspendedDialogIfOpen();
+            showLoginScene(false);
+        });
     }
 
     private void showLoginScene(boolean isFirst) {
@@ -317,12 +335,12 @@ public class GUIView implements ViewInterface {
             buildingLowerPane = new HBox(12);
             buildingLowerPane.setAlignment(Pos.BOTTOM_LEFT);
 
-            // building in colonna a destra della upperRow
-            VBox buildingRows = new VBox(12, buildingUpperPane, buildingLowerPane);
-            buildingRows.setAlignment(Pos.BOTTOM_LEFT);
 
-            HBox topRow = new HBox(20, upperRowPane, buildingRows);
+
+            HBox topRow = new HBox(20, upperRowPane, buildingUpperPane);
             topRow.setAlignment(Pos.BOTTOM_CENTER);
+            HBox lowerRow = new HBox(20,lowerRowPane, buildingLowerPane);
+            lowerRow.setAlignment(Pos.BOTTOM_CENTER);
 
             // ── OFFER TRACK ─────────────────────────────────────────────
             offerTrackPane = new HBox(14);
@@ -383,7 +401,7 @@ public class GUIView implements ViewInterface {
             tribeArea.setPadding(new Insets(8, 0, 0, 0));
 
             // ── CARD AREA COMPLETA ───────────────────────────────────────
-            VBox cardArea = new VBox(16, topRow, middleRow, lowerRowPane, tribeArea);
+            VBox cardArea = new VBox(16, topRow, middleRow, lowerRow, tribeArea);
             cardArea.setAlignment(Pos.CENTER);
             cardArea.setPadding(new Insets(20));
 
@@ -489,10 +507,6 @@ public class GUIView implements ViewInterface {
                            List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow) {
         Platform.runLater(() -> {
             if(upperRowPane == null) return;
-            renderTribeRow(upperRowPane, upperRow, false);
-            renderTribeRow(lowerRowPane, lowerRow, false);
-            renderBuildingRow(buildingUpperPane, buildingUpperRow, false);
-            renderBuildingRow(buildingLowerPane, buildingLowerRow, false);
 
             EraEnum highestVisibleEra = EraEnum.I;
             if (upperRow != null && !upperRow.isEmpty()) {
@@ -508,7 +522,12 @@ public class GUIView implements ViewInterface {
             if (highestVisibleEra.compareTo(currentMaxEra) > 0) {
                 currentMaxEra = highestVisibleEra;
                 updateEra(currentMaxEra);
+
             }
+
+            renderTribeRow(upperRowPane, upperRow, false);
+            renderTribeRow(lowerRowPane, lowerRow, false);
+            redistributeBuildings(buildingUpperRow, buildingLowerRow);
 
         });
 
@@ -909,8 +928,9 @@ public class GUIView implements ViewInterface {
             selectedBuildingLowerIndices.clear();
             renderTribeRowSelectable(upperRowPane, upperRow, selectedUpperIndices, actualUpper);
             renderTribeRowSelectable(lowerRowPane, lowerRow, selectedLowerIndices, actualLower);
-            renderBuildingRowSelectable(buildingUpperPane, buildingUpperRow, selectedBuildingUpperIndices);
-            renderBuildingRowSelectable(buildingLowerPane, buildingLowerRow, selectedBuildingLowerIndices);
+
+            renderBuildingRowSelectable(buildingUpperPane, renderedBuildingUpper, selectedBuildingUpperIndices);
+            renderBuildingRowSelectable(buildingLowerPane, renderedBuildingLower, selectedBuildingLowerIndices);
             actionBar.getChildren().clear();
             Label msg = new Label(
                     "Select " + actualUpper + " from upper row  |  " + actualLower + " from lower row"
@@ -1007,6 +1027,7 @@ public class GUIView implements ViewInterface {
                 errorCountB++;
                 if(errorCountB >= 5){
                     showToast("Are you dumb ??? You are poor !!!");
+                    return;
                 }
                 if (!canAfford) {
                     String msg = builderDiscount > 0
@@ -1023,6 +1044,25 @@ public class GUIView implements ViewInterface {
 
             pane.getChildren().add(iv);
         }
+    }
+
+    private void redistributeBuildings(List<BuildingCard> upper, List<BuildingCard> lower) {
+        List<BuildingCard> all = new ArrayList<>();
+        if (upper != null) all.addAll(upper);
+        if (lower != null) all.addAll(lower);
+
+        renderedBuildingUpper.clear();
+        renderedBuildingLower.clear();
+        int idx = currentMaxEra.ordinal();
+
+        for (BuildingCard b : all) {
+            int bIdx = b.getEra().ordinal();
+            if (bIdx == idx)       renderedBuildingUpper.add(b);
+            else if (bIdx == idx - 1) renderedBuildingLower.add(b);
+        }
+
+        renderBuildingRow(buildingUpperPane, renderedBuildingUpper, false);
+        renderBuildingRow(buildingLowerPane, renderedBuildingLower, false);
     }
 
     private void handleCardSelection(ImageView iv, int index,
@@ -1435,7 +1475,44 @@ public class GUIView implements ViewInterface {
 
     @Override
     public void showPlayerDisconnected(String playerName) {
-        Platform.runLater(() -> showToast( playerName + " has disconnected."));
+        Platform.runLater(() -> {
+            if("server".equals(playerName)){
+                showReconnectingOverlay(); // se io crasho
+            }else {
+                showToast(playerName + " has disconnected.");// se un altro player crasha
+            }
+        });
+    }
+
+    private void showReconnectingOverlay(){
+        if(reconnectingOverlay != null) return;
+
+        Label label = new Label("Connection lost. Reconnecting ...");
+        label.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
+
+        ProgressIndicator spinner = new ProgressIndicator();
+        spinner.setMaxSize(40,40);
+
+        VBox box = new VBox(15,spinner,label);
+        box.setAlignment(Pos.CENTER);
+        box.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-padding: 30;");
+
+        reconnectingOverlay = new StackPane(box);
+        reconnectingOverlay.setStyle("-fx-background-color: rgba(0,0,0,0.5);");
+
+        Pane currentRoot = (Pane) primaryStage.getScene().getRoot();
+        currentRoot.getChildren().add(reconnectingOverlay);
+
+    }
+
+    public void hideReconnectingOverlay(){
+        Platform.runLater(() -> {
+            if(reconnectingOverlay != null) {
+                Pane currentRoot = (Pane) primaryStage.getScene().getRoot();
+                currentRoot.getChildren().add(reconnectingOverlay);
+                reconnectingOverlay = null;
+            }
+        });
     }
 
     @Override
@@ -1443,47 +1520,65 @@ public class GUIView implements ViewInterface {
         Platform.runLater(() -> showToast( playerName + " has reconnected."));
     }
 
+    private void closeSuspendedDialogIfOpen(){
+        if(countdownTimeline!= null){
+            countdownTimeline.stop();
+            countdownTimeline = null;
+        }
+        if(suspendedDialog != null){
+            suspendedDialog.close();
+            suspendedDialog = null;
+        }
+    }
+
     @Override
     public void showGameSuspended(int timeoutSeconds) {
         Platform.runLater(() -> {
-            if (suspendedDialog != null) suspendedDialog.close();
-            if (countdownTimeline != null) countdownTimeline.stop();
+            if (sceneRoot == null) return;
+            if (suspendedOverlay != null) {
+                sceneRoot.getChildren().remove(suspendedOverlay);
+            }
 
-            suspendedDialog = new Dialog<>();
-            suspendedDialog.setTitle("Game Suspended");
-            suspendedDialog.setHeaderText("Waiting for players to reconnect...");
+            // --- overlay popUp sospensione ---
+            Label title = new Label("⚠️ Game Suspended");
+            title.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 18; -fx-font-weight: bold;");
 
-            Label countdownLabel = new Label("Time remaining: " + timeoutSeconds + "s");
-            countdownLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+            Label desc = new Label("Waiting for players...");
+            desc.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
 
-            VBox content = new VBox(10,
-                    new Label("Only one player is connected."),
-                    countdownLabel
+            Label timerLabel = new Label(timeoutSeconds + "s");
+            timerLabel.setStyle("-fx-text-fill: #f1c40f; -fx-font-size: 26; -fx-font-weight: bold;");
+
+            suspendedOverlay = new VBox(8, title, desc, timerLabel);
+            suspendedOverlay.setAlignment(Pos.CENTER);
+            suspendedOverlay.setPadding(new Insets(15, 25, 15, 25));
+
+            suspendedOverlay.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+            suspendedOverlay.setStyle(
+                    "-fx-background-color: rgba(20, 10, 5, 0.9);" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-border-color: #e74c3c; -fx-border-width: 2; -fx-border-radius: 8;"
             );
-            content.setAlignment(Pos.CENTER);
+            // Puoi cambiare Pos.BOTTOM_RIGHT in Pos.TOP_LEFT o Pos.TOP_RIGHT a tuo piacimento
+            StackPane.setAlignment(suspendedOverlay, Pos.BOTTOM_RIGHT);
+            StackPane.setMargin(suspendedOverlay, new Insets(20)); // Distanza dai bordi
+            sceneRoot.getChildren().add(suspendedOverlay);
+            final int[] timeRemaining = {timeoutSeconds};
 
-            suspendedDialog.getDialogPane().setContent(content);
+            if (countdownTimeline != null) {
+                countdownTimeline.stop();
+            }
 
-            // Serve almeno un ButtonType altrimenti non può funzionare
-            suspendedDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-            suspendedDialog.getDialogPane()
-                    .lookupButton(ButtonType.CLOSE)
-                    .setVisible(false);
-
-            suspendedDialog.setOnCloseRequest(Event::consume);
-
-            // Countdown che aggiorna il label ogni secondo
-            int[] remaining = {timeoutSeconds};
-            countdownTimeline = new Timeline(
-                    new KeyFrame(Duration.seconds(1), e -> {
-                        remaining[0]--;
-                        countdownLabel.setText("Time remaining: " + remaining[0] + "s");
-                    })
-            );
-            countdownTimeline.setCycleCount(timeoutSeconds);
+            countdownTimeline = new Timeline(new KeyFrame(javafx.util.Duration.seconds(1), e -> {
+                timeRemaining[0]--;
+                timerLabel.setText(timeRemaining[0] + "s");
+                if (timeRemaining[0] <= 0) {
+                    countdownTimeline.stop();
+                }
+            }));
+            countdownTimeline.setCycleCount(Timeline.INDEFINITE);
             countdownTimeline.play();
-
-            suspendedDialog.show();
         });
     }
 
@@ -1494,7 +1589,12 @@ public class GUIView implements ViewInterface {
                 countdownTimeline.stop();
                 countdownTimeline = null;
             }
+            if (suspendedOverlay != null && sceneRoot != null) {
+                sceneRoot.getChildren().remove(suspendedOverlay);
+                suspendedOverlay = null;
+            }
             if (suspendedDialog != null) {
+                suspendedDialog.setOnCloseRequest(null);
                 suspendedDialog.close();
                 suspendedDialog = null;
             }
