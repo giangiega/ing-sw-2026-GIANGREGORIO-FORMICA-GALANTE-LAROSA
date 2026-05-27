@@ -18,6 +18,7 @@ public class ClientManagerSocket implements ClientConnection {
     private final PrintWriter out;
     private String PlayerName;
     private final Gson gson;
+    private volatile boolean invalidated = false;
 
     /**
      * constructor with a RuntimeTypeAdapterFactory used for building the correct json message
@@ -45,5 +46,24 @@ public class ClientManagerSocket implements ClientConnection {
     }
     public String getPlayerName(){
         return PlayerName;
+    }
+
+    /**
+     * @author Giuse
+     * This method marks this manager as invalidated so that ListenerClientManagerSocket
+     * will not fire handleDisconnection() when the socket eventually closes.
+     * Called when the player reconnects via a different protocol.
+     */
+    @Override
+    public void stopSilently() {
+        this.invalidated = true;
+    }
+
+    /**
+     * @author Giuse
+     * @return invalidated
+     */
+    public boolean isInvalidated() {
+        return invalidated;
     }
 }

@@ -6,4 +6,5 @@ public interface ClientConnection {
     public void sendEvent(ServerEvent serverEvent);
     public void setPlayerName(String name);
     public String getPlayerName();
+    default void stopSilently(){}
 }

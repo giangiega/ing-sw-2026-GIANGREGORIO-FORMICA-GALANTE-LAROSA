@@ -409,6 +409,15 @@ public class GameController {
 
         disconnectedPlayers.remove(playerName);
         reconnectedThisRound.add(playerName);
+
+        // Silence the old connection's disconnect handler before replacing it.
+        // This prevents a race condition where a disconnect event from
+        // the previous socket or RMI heartbeat fires after the new connection
+        // is already active
+        ClientConnection oldCm = clientManagers.get(playerName);
+        if (oldCm != null && oldCm != newCm) {
+            oldCm.stopSilently();
+        }
         clientManagers.put(playerName, newCm);
 
         Player p = getPlayerByName(playerName);

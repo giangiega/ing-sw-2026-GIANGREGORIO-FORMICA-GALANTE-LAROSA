@@ -49,7 +49,12 @@ public class ListenerClientManagerSocket {
                 clientOperation.executeOp(server, clientManagerSocket);
             }
         }finally{
-            server.handleDisconnection(clientManagerSocket.getPlayerName());
+            //If stopSilently() was called because the player reconnected via a different
+            //protocol and a new ClientConnection replaced this one,
+            //no reconnection needed to avoid re-adding the player to disconnectedPlayers.
+            if (!clientManagerSocket.isInvalidated()){
+                server.handleDisconnection(clientManagerSocket.getPlayerName());
+            }
         }
     }
 }
