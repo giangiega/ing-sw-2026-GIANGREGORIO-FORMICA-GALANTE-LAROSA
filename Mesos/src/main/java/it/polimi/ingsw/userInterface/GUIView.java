@@ -86,6 +86,10 @@ public class GUIView implements ViewInterface {
     private StackPane reconnectingOverlay;
     private VBox suspendedOverlay;
 
+    private VBox loginNumBox;
+    private TextField loginNumField;
+    private boolean isFirstPlayer = false;
+
 
     /**
      * CountDownLatch saves GUI from race condition between main Thread and JavaFX Thread
@@ -138,7 +142,13 @@ public class GUIView implements ViewInterface {
         Platform.runLater(() -> {
             hideReconnectingOverlay();
             closeSuspendedDialogIfOpen();
-            showLoginScene(true);
+            this.isFirstPlayer = true;
+            if (loginNumBox != null && sceneRoot != null) {
+                loginNumBox.setVisible(true);
+                loginNumBox.setManaged(true);
+            } else {
+                showLoginScene(true);
+            }
         });
     }
 
@@ -147,11 +157,13 @@ public class GUIView implements ViewInterface {
         Platform.runLater(() ->{
             hideReconnectingOverlay();
             closeSuspendedDialogIfOpen();
+            this.isFirstPlayer = false;
             showLoginScene(false);
         });
     }
 
     private void showLoginScene(boolean isFirst) {
+        this.isFirstPlayer = isFirst;
         var bgUrl = getClass().getResource("/images/screen/login_screen.png");
         ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
         background.setFitWidth(1280);
@@ -170,17 +182,17 @@ public class GUIView implements ViewInterface {
                 "-fx-background-color: rgba(0,0,0,0.40);" +
                         "-fx-background-radius: 10;"
         );
+        this.loginNumBox = new VBox(6);
+        loginNumBox.setVisible(isFirstPlayer);
+        loginNumBox.setManaged(isFirstPlayer);
+        loginNumBox.setAlignment(Pos.CENTER);
 
-        VBox numBox = new VBox(6);
-        numBox.setVisible(isFirst);
-        numBox.setManaged(isFirst);
-        numBox.setAlignment(Pos.CENTER);
         Label numLabel = new Label("Number of players (2–5):");
         numLabel.setStyle("-fx-text-fill: #f5e6c8;");
-        TextField numField = new TextField();
-        numField.setPromptText("es. 3");
-        numField.setMaxWidth(50);
-        numBox.getChildren().addAll(numLabel, numField);
+        this.loginNumField = new TextField();
+        loginNumField.setPromptText("es. 3");
+        loginNumField.setMaxWidth(50);
+        loginNumBox.getChildren().addAll(numLabel, loginNumField);
 
         // Name
         Label nameLabel = new Label("Name:");
@@ -214,10 +226,10 @@ public class GUIView implements ViewInterface {
                         "-fx-font-size: 14; -fx-padding: 8 24; -fx-background-radius: 6;"
         );
         confirmBtn.setOnAction(e -> handleLogin(
-                isFirst, numField, nameField, colorGroup
+                this.isFirstPlayer, loginNumField, nameField, colorGroup
         ));
 
-        form.getChildren().addAll(numBox, nameLabel, nameField, colorLabel,
+        form.getChildren().addAll(loginNumBox, nameLabel, nameField, colorLabel,
                 centeredColorBox, confirmBtn);
 
         Region spacer = new Region();
@@ -1608,14 +1620,42 @@ public class GUIView implements ViewInterface {
             if (upperRowPane == null) {
                 buildGameScene();
             }
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Totem Restored");
-            alert.setHeaderText("Your totem color has been reassigned");
-            alert.setContentText(
-                    "Since the game has already started, your original totem color " +
-                            totemColor.name() + " has been restored and assigned to you."
+
+            if(sceneRoot== null) return;
+            Region dim = new Region();
+            dim.setStyle("-fx-background-color: rgba(0,0,0,0.65);");
+
+            Label title = new Label("🔄 Totem Restored");
+            title.setStyle("-fx-text-fill: #f1c40f; -fx-font-size: 18; -fx-font-weight: bold;"); // Giallo
+
+            Label desc = new Label("Your original totem color has been reassigned.");
+            desc.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
+
+            Label totemName = new Label(totemColor.name());
+            totemName.setStyle("-fx-text-fill: #e8c46a; -fx-font-size: 22; -fx-font-weight: bold;");
+
+            Button okBtn = new Button("OK");
+            okBtn.setStyle(
+                    "-fx-background-color: #2980b9; -fx-text-fill: white;" +
+                            "-fx-font-size: 14; -fx-padding: 6 24; -fx-background-radius: 6; -fx-cursor: hand;"
             );
-            alert.showAndWait(); // bloccante: il player deve leggere questo
+
+            VBox popup = new VBox(12, title, desc, totemName, okBtn);
+            popup.setAlignment(Pos.CENTER);
+            popup.setPadding(new Insets(20, 30, 20, 30));
+            popup.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+            popup.setStyle(
+                    "-fx-background-color: rgba(20, 10, 5, 0.95);" +
+                            "-fx-background-radius: 12;" +
+                            "-fx-border-color: #f1c40f; -fx-border-width: 2; -fx-border-radius: 12;"
+            );
+
+            StackPane overlay = new StackPane(dim, popup);
+            overlay.setAlignment(Pos.CENTER);
+
+            okBtn.setOnAction(e -> sceneRoot.getChildren().remove(overlay));
+
+            sceneRoot.getChildren().add(overlay);
         });
     }
     private int calculateBuilderDiscount() {
