@@ -17,7 +17,6 @@ import it.polimi.ingsw.network.clientInterface.PlaceTotemOperation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -26,7 +25,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1629,5 +1628,68 @@ public class GUIView implements ViewInterface {
         }
         return discount;
     }
+    @Override
+    public  void showWaitingForRecovery(int playersStillNeeded){
+        Platform.runLater(() -> {
+            if (sceneRoot == null) return;
+
+            if (suspendedOverlay != null) {
+                sceneRoot.getChildren().remove(suspendedOverlay);
+            }
+
+            Label title = new Label("🔄 Server Recovered");
+            title.setStyle("-fx-text-fill: #2ecc71; -fx-font-size: 18; -fx-font-weight: bold;");
+
+            Label desc = new Label("Waiting for " + playersStillNeeded + " player(s) to resume...");
+            desc.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
+
+            ProgressIndicator spinner = new ProgressIndicator();
+            spinner.setMaxSize(30, 30);
+
+            suspendedOverlay = new VBox(12, title, desc, spinner);
+            suspendedOverlay.setAlignment(Pos.CENTER);
+            suspendedOverlay.setPadding(new Insets(15, 25, 15, 25));
+            suspendedOverlay.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+            suspendedOverlay.setStyle(
+                    "-fx-background-color: rgba(20, 10, 5, 0.9);" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-border-color: #2ecc71; -fx-border-width: 2; -fx-border-radius: 8;"
+            );
+
+            StackPane.setAlignment(suspendedOverlay, Pos.BOTTOM_RIGHT);
+            StackPane.setMargin(suspendedOverlay, new Insets(20));
+            sceneRoot.getChildren().add(suspendedOverlay);
+        });
+
+    }
+
+    @Override
+    public void showServerCrashed(){
+        Platform.runLater(() -> {
+            showReconnectingOverlay();
+        });
+
+    }
+
+    @Override
+    public void resetInputState(){
+        Platform.runLater(() -> {
+            if (actionBar != null) {
+                actionBar.setVisible(false);
+                actionBar.setManaged(false);
+                actionBar.getChildren().clear();
+            }
+
+            if (upperRowPane != null) clearRowHandlers(upperRowPane);
+            if (lowerRowPane != null) clearRowHandlers(lowerRowPane);
+            if (buildingUpperPane != null) clearRowHandlers(buildingUpperPane);
+            if (buildingLowerPane != null) clearRowHandlers(buildingLowerPane);
+            if (offerTrackPane != null) clearOfferTrackHandlers();
+
+            closeSuspendedDialogIfOpen();
+        });
+    }
+
 }
 
