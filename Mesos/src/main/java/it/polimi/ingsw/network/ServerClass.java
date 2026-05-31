@@ -88,6 +88,7 @@ abstract public class ServerClass {
     public synchronized void resetServer() {
         lobbyController = null;
         gameController = null;
+        clientManagers.clear();
         connected = 0;
         needReset = false;
     }
