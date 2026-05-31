@@ -23,7 +23,7 @@ public class ServerApp {
         ServerClass.connected = 0;
         ServerClass.pendingSave = null;
 
-     //   PersistenceManager.clear(); // use this line if you want to cancel previous game (testing)
+        //PersistenceManager.clear(); // use this line if you want to cancel previous game (testing)
 
         try {
             SavedGameState save = PersistenceManager.load();
