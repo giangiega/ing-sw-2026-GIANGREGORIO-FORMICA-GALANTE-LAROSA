@@ -168,7 +168,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      */
     @Override
     public void onAck(boolean isFirst) throws RemoteException {
-        if (isFirst) view.getUIDispatcher().accept(() -> view.askNumPlayers());
+        if (isFirst){
+            view.getUIDispatcher().accept(() -> view.resetInputState());
+            view.getUIDispatcher().accept(() -> view.askNumPlayers());
+        }
         else view.getUIDispatcher().accept(() -> view.askLogin());
     }
 

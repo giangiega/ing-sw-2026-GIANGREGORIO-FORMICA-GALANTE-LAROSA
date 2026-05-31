@@ -52,7 +52,7 @@ public class GameController {
      * If no one reconnects within SUSPENSION_TIMEOUT_SECONDS, the sole
      * remaining player is declared the winner.
      */
-    private static final int SUSPENSION_TIMEOUT_SECONDS = 60;
+    private static final int SUSPENSION_TIMEOUT_SECONDS = 15;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture<?> suspensionFuture;
 
@@ -541,5 +541,9 @@ public class GameController {
                 game.getBoard().getOfferTrack());
 
         this.database = DatabaseManager.getDatabase();
+    }
+
+    public boolean getRecoveryMode(){
+        return this.isRecoveryMode;
     }
 }

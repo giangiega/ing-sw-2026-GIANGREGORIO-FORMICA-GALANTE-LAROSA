@@ -181,8 +181,8 @@ public class LobbyController {
         }
     }
 
-    public void setServer(ServerClass server){
-        if(this.server != null)
+    public void setServer(ServerClass server) {
+        if (this.server != null)
             return;
         this.server = server;
     }

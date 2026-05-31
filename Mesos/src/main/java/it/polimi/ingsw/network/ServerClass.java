@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.persistence.SavedGameState;
 
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ abstract public class ServerClass {
     protected static int connected = 0;
     protected static boolean needReset = false;
     protected static SavedGameState pendingSave = null;
+    protected static Map<Integer, ClientConnection> clientManagers = new HashMap<>();
 
     public LobbyController getLobbyController(){
         return lobbyController;

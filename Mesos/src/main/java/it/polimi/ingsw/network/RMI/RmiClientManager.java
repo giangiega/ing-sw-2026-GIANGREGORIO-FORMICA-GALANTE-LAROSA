@@ -102,7 +102,7 @@ public class RmiClientManager implements ClientConnection {
         stopped = true;
         heartbeat.shutdownNow();
         queueThread.interrupt();
-        if (playerName != null) {
+        if (onDisconnect != null) {
             onDisconnect.run();
         }
     }

@@ -611,6 +611,8 @@ public class TUIView implements ViewInterface {
         inputQueue.clear();
         inputSuspended = false;
         currentPrompt = null;
+
+        System.out.println();
     }
 
 }

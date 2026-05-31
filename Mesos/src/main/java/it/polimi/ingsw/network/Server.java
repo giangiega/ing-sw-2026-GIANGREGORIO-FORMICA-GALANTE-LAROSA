@@ -43,8 +43,12 @@ public class Server extends ServerClass{
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     Socket clientSocket = serverSocket.accept();
+                    int id = ServerClass.connected;
                     ClientManagerSocket clientManagerSocket = new ClientManagerSocket(clientSocket);
                     ListenerClientManagerSocket listener = new ListenerClientManagerSocket(this, clientSocket, clientManagerSocket);
+                    synchronized (ServerClass.clientManagers){
+                        ServerClass.clientManagers.put(id, clientManagerSocket);
+                    }
 
                     new Thread(() -> {
                         try {
@@ -52,9 +56,8 @@ public class Server extends ServerClass{
                         } catch (IOException e) {
                             System.err.println("[Server] Client handler I/O error: " + e.getMessage());
                         } finally {
-                            if (clientManagerSocket.getPlayerName() != null) {
-                                this.handleDisconnection(clientManagerSocket.getPlayerName());
-                            }
+                            handleSocketClientDrop(clientManagerSocket, id);
+
                             try { clientSocket.close(); } catch (IOException ignored) {}
                         }
                     }, "client-handler-" + clientSocket.getPort()).start();
@@ -92,16 +95,56 @@ public class Server extends ServerClass{
     @Override
     public void handleDisconnection(String playerName){
         if (playerName == null) {
-            if (lobbyController == null) {
+            /*if (lobbyController == null) {
                 needReset = true;
                 resetServer();
-            }
+            }*/
             return;
         }
         if (gameController != null) {
             gameController.handleDisconnection(playerName);
         } else if (lobbyController != null) {
             lobbyController.handleLobbyDisconnection(playerName);
+        }
+    }
+
+    private void handleSocketClientDrop(ClientManagerSocket cm, int id) {
+        String name = cm != null ? cm.getPlayerName() : null;
+        boolean wasMaster = false;
+
+        //Rimuoviamo il client disconnesso dalla mappa del server
+        synchronized (ServerClass.clientManagers) {
+            if (!ServerClass.clientManagers.isEmpty()) {
+                wasMaster = (id == java.util.Collections.min(ServerClass.clientManagers.keySet()));
+            }
+
+            ServerClass.clientManagers.remove(id);
+        }
+
+        //Se era loggato, usiamo la disconnessione standard
+        if (name != null) {
+            handleDisconnection(name);
+        }
+        //Se NON era loggato (pre-lobby)
+        else if (lobbyController == null && !gameController.getRecoveryMode()) {
+            synchronized (ServerClass.clientManagers) {
+                if (!ServerClass.clientManagers.isEmpty()) {
+                    if (wasMaster) {
+                        // Troviamo il giocatore rimasto con l'ID più basso e lo promuoviamo
+                        int nextMasterId = java.util.Collections.min(ServerClass.clientManagers.keySet());
+                        ClientConnection nextMaster = ServerClass.clientManagers.get(nextMasterId);
+
+                        if (nextMaster != null) {
+                            // Gli mandiamo TRUE per sbloccargli la schermata del numero giocatori
+                            nextMaster.sendEvent(new AckEvent(true));
+                        }
+                    }
+                } else {
+                    // Non è rimasto nessuno, reset del server
+                    needReset = true;
+                    resetServer();
+                }
+            }
         }
     }
 }

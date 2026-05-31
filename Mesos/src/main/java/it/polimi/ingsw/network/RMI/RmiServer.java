@@ -1,6 +1,7 @@
 package it.polimi.ingsw.network.RMI;
 
 import it.polimi.ingsw.enums.ColorEnum;
+import it.polimi.ingsw.network.ClientConnection;
 import it.polimi.ingsw.network.ServerClass;
 import it.polimi.ingsw.network.serverInterface.AckEvent;
 import it.polimi.ingsw.network.serverInterface.LoggedEvent;
@@ -49,16 +50,60 @@ public class RmiServer extends ServerClass implements VirtualServer {
     @Override
     public void handleDisconnection(String playerName) {
         if (playerName == null) {
-            if (lobbyController == null) {
+            /*if (lobbyController == null) {
                 needReset = true;
                 resetServer();
-            }
+            }*/
             return;
         }
         if (gameController != null) {
             gameController.handleDisconnection(playerName);
         } else if (lobbyController != null) {
             lobbyController.handleLobbyDisconnection(playerName);
+        }
+    }
+
+    private void handleClientDrop(RmiClientManager droppedCm, int id) {
+        String name = droppedCm != null ? droppedCm.getPlayerName() : null;
+        boolean wasMaster = false;
+
+        // Rimuoviamo il client disconnesso dalle mappe del server
+        synchronized (ServerClass.clientManagers) {
+            if (!ServerClass.clientManagers.isEmpty()) {
+                wasMaster = (id == java.util.Collections.min(ServerClass.clientManagers.keySet()));
+            }
+
+            ServerClass.clientManagers.remove(id);
+        }
+        if (droppedCm != null) {
+            clientManagerMap.values().remove(droppedCm);
+        }
+
+        if (name != null) {
+            // Se aveva un nome, era loggato
+            handleDisconnection(name);
+        } else {
+            // DISCONNESSIONE PRE LOGIN
+            if (lobbyController == null) {
+                synchronized (ServerClass.clientManagers) {
+                    if (!ServerClass.clientManagers.isEmpty()) {
+                        if(wasMaster) {
+                            // Troviamo il giocatore rimasto con l'ID più basso (il prossimo in coda)
+                            int nextMasterId = java.util.Collections.min(ServerClass.clientManagers.keySet());
+                            ClientConnection nextMaster = ServerClass.clientManagers.get(nextMasterId);
+
+                            // Inviamo l'AckEvent(true) per fargli scegliere il numero di giocatori
+                            if (nextMaster != null) {
+                                nextMaster.sendEvent(new AckEvent(true));
+                            }
+                        }
+                    } else {
+                        // Non è rimasto più nessuno, resettiamo il server
+                        needReset = true;
+                        resetServer();
+                    }
+                }
+            }
         }
     }
 
@@ -82,11 +127,18 @@ public class RmiServer extends ServerClass implements VirtualServer {
 
         AtomicReference<RmiClientManager> cmRef = new AtomicReference<>();
 
+        int id = ServerClass.connected;
+
         //Using cm to avoid race condition: map has already been updated by reconnection
         RmiClientManager cm = new RmiClientManager(client, () -> {
             RmiClientManager self = cmRef.get();
-            handleDisconnection(self != null ? self.getPlayerName() : null);
+            handleClientDrop(self, id);
+            //handleDisconnection(self != null ? self.getPlayerName() : null);
         });
+
+        synchronized (ServerClass.clientManagers) {
+            ServerClass.clientManagers.put(id, cm);
+        }
 
         cmRef.set(cm);
         clientManagerMap.put(client, cm);
