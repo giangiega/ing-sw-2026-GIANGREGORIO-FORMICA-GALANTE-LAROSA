@@ -163,6 +163,7 @@ public class GUIView implements ViewInterface {
     }
 
     private void showLoginScene(boolean isFirst) {
+        this.upperRowPane = null;
         this.isFirstPlayer = isFirst;
         var bgUrl = getClass().getResource("/images/screen/login_screen.png");
         ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
@@ -283,6 +284,7 @@ public class GUIView implements ViewInterface {
     @Override
     public void showLobby(List<String> lobby) {
         Platform.runLater(() -> {
+            this.upperRowPane = null;
             var bgUrl = getClass().getResource("/images/screen/login_screen.png");
             ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
             background.setPreserveRatio(false);
@@ -727,6 +729,7 @@ public class GUIView implements ViewInterface {
         if (sceneRoot == null) return;
         Region dim = new Region();
         dim.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
+
 
         Label title = new Label(playerName + "'s Tribe");
         title.setStyle(
@@ -1521,7 +1524,7 @@ public class GUIView implements ViewInterface {
         Platform.runLater(() -> {
             if(reconnectingOverlay != null) {
                 Pane currentRoot = (Pane) primaryStage.getScene().getRoot();
-                currentRoot.getChildren().add(reconnectingOverlay);
+                currentRoot.getChildren().remove(reconnectingOverlay);
                 reconnectingOverlay = null;
             }
         });
