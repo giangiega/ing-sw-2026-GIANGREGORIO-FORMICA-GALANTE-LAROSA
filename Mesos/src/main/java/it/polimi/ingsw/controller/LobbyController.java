@@ -181,6 +181,10 @@ public class LobbyController {
         }
     }
 
+    /**
+     * set the right server (socket or RMI) based network protocol type
+     * @param server
+     */
     public void setServer(ServerClass server) {
         if (this.server != null)
             return;

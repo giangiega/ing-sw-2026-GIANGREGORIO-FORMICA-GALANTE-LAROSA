@@ -32,7 +32,7 @@ public class RmiServer extends ServerClass implements VirtualServer {
     public void startListening(int port) throws RemoteException {
         final String serverName = "MesosServer";
 
-        VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(this, 0);
+        VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(this, port+1);
         Registry registry = LocateRegistry.createRegistry(port);
         registry.rebind(serverName, stub);
         System.out.println("Server listening on port " + port);
