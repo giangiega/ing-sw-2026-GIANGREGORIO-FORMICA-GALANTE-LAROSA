@@ -50,10 +50,6 @@ public class RmiServer extends ServerClass implements VirtualServer {
     @Override
     public void handleDisconnection(String playerName) {
         if (playerName == null) {
-            /*if (lobbyController == null) {
-                needReset = true;
-                resetServer();
-            }*/
             return;
         }
         if (gameController != null) {
@@ -63,11 +59,15 @@ public class RmiServer extends ServerClass implements VirtualServer {
         }
     }
 
+    /**
+     *
+     * @param droppedCm
+     * @param id
+     */
     private void handleClientDrop(RmiClientManager droppedCm, int id) {
         String name = droppedCm != null ? droppedCm.getPlayerName() : null;
         boolean wasMaster = false;
 
-        // Rimuoviamo il client disconnesso dalle mappe del server
         synchronized (ServerClass.clientManagers) {
             if (!ServerClass.clientManagers.isEmpty()) {
                 wasMaster = (id == java.util.Collections.min(ServerClass.clientManagers.keySet()));
@@ -80,25 +80,24 @@ public class RmiServer extends ServerClass implements VirtualServer {
         }
 
         if (name != null) {
-            // Se aveva un nome, era loggato
+            //if client was logged
             handleDisconnection(name);
         } else {
-            // DISCONNESSIONE PRE LOGIN
+            //pre-login disconnection
             if (lobbyController == null) {
                 synchronized (ServerClass.clientManagers) {
                     if (!ServerClass.clientManagers.isEmpty()) {
                         if(wasMaster) {
-                            // Troviamo il giocatore rimasto con l'ID più basso (il prossimo in coda)
                             int nextMasterId = java.util.Collections.min(ServerClass.clientManagers.keySet());
                             ClientConnection nextMaster = ServerClass.clientManagers.get(nextMasterId);
 
-                            // Inviamo l'AckEvent(true) per fargli scegliere il numero di giocatori
+                            //AckEvent for showing askNumPlayers
                             if (nextMaster != null) {
                                 nextMaster.sendEvent(new AckEvent(true));
                             }
                         }
                     } else {
-                        // Non è rimasto più nessuno, resettiamo il server
+                        //no players in lobby, reset server
                         needReset = true;
                         resetServer();
                     }

@@ -95,10 +95,6 @@ public class Server extends ServerClass{
     @Override
     public void handleDisconnection(String playerName){
         if (playerName == null) {
-            /*if (lobbyController == null) {
-                needReset = true;
-                resetServer();
-            }*/
             return;
         }
         if (gameController != null) {
@@ -112,7 +108,6 @@ public class Server extends ServerClass{
         String name = cm != null ? cm.getPlayerName() : null;
         boolean wasMaster = false;
 
-        //Rimuoviamo il client disconnesso dalla mappa del server
         synchronized (ServerClass.clientManagers) {
             if (!ServerClass.clientManagers.isEmpty()) {
                 wasMaster = (id == java.util.Collections.min(ServerClass.clientManagers.keySet()));
@@ -121,12 +116,11 @@ public class Server extends ServerClass{
             ServerClass.clientManagers.remove(id);
         }
 
-        //Se era loggato, usiamo la disconnessione standard
         if (name != null) {
             handleDisconnection(name);
         }
-        //Se NON era loggato (pre-lobby)
-        else if (lobbyController == null && !gameController.getRecoveryMode()) {
+        //disconnection pre-lobby
+        else if (lobbyController == null) {
             synchronized (ServerClass.clientManagers) {
                 if (!ServerClass.clientManagers.isEmpty()) {
                     if (wasMaster) {
@@ -140,7 +134,7 @@ public class Server extends ServerClass{
                         }
                     }
                 } else {
-                    // Non è rimasto nessuno, reset del server
+                    //no players in lobby, reset server
                     needReset = true;
                     resetServer();
                 }
