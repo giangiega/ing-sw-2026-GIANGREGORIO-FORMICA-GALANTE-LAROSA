@@ -18,14 +18,14 @@ public class ServerApp {
     public static void main(String[] args) {
         int socketPort = Integer.parseInt(args[0]);
         int rmiPort    = Integer.parseInt(args[1]);
-        String ip = args[2];
-        System.setProperty("java.rmi.server.hostname", ip);
+       /* String ip = args[2];
+        System.setProperty("java.rmi.server.hostname", ip);*/
 
         // reset useful for first player at the first run or recovery
         ServerClass.connected = 0;
         ServerClass.pendingSave = null;
 
-        //PersistenceManager.clear(); // use this line if you want to cancel previous game (testing)
+        PersistenceManager.clear(); // use this line if you want to cancel previous game (testing)
 
         try {
             SavedGameState save = PersistenceManager.load();

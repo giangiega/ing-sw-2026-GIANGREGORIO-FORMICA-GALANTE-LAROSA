@@ -98,6 +98,7 @@ public class LobbyController {
 
         // if namePlayer was not in the previous game, a new game starts
         if (ServerClass.isRecoveryPending() && !ServerClass.isOriginalPlayer(name)) {
+            clientManagers.put(name, cm); // in this way players can have the abort message
 
             for (ClientConnection cms : clientManagers.values()) {
                 cms.sendEvent(new InvalidChoiceEvent(
@@ -112,10 +113,10 @@ public class LobbyController {
             server.resetServer(); // connected=0, lobbyController=null, gameController=null
 
 
-            cm.sendEvent(new InvalidChoiceEvent(
+            /*cm.sendEvent(new InvalidChoiceEvent(
                     "Recovery aborted: your name was not in the previous game. " +
                             "Disconnect and reconnect to start a new game."));
-            return;
+            return;*/
         }
 
         if (ghostPlayers.containsKey(name)) {
