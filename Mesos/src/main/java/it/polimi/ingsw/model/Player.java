@@ -32,8 +32,6 @@ public class Player implements Serializable {
 
     /**
      * constructor
-     * @param name
-     * @param totemColor
      */
     public Player(String name, ColorEnum totemColor){
         this.name = name;
@@ -59,7 +57,6 @@ public class Player implements Serializable {
 
     /**
      * this method will add the building that a player draw from board
-     * @param card
      */
     public void addBuildingCard(BuildingCard card){
         buildings.add(card);
@@ -100,7 +97,7 @@ public class Player implements Serializable {
     /**
      *
      * @param type: CharacterEnum to get a specific list of character
-     * @return: list of a specific type of character
+     * @return list of a specific type of character
      */
     public List<CharacterCard> getCharacterByType(CharacterEnum type){
         return tribe.get(type);
@@ -140,7 +137,6 @@ public class Player implements Serializable {
 
     /**
      * when a player draw a shaman countShamanStar will be update using the number of star on the specific card
-     * @param numStar
      */
     public void updateTotalStarCount(int numStar){
         countShamanStar += numStar;
@@ -149,7 +145,6 @@ public class Player implements Serializable {
 
     /**
      * when a player draw a builder totalFoodDiscountBuilder will be update using the discount on the specific card
-     * @param discountBuilder
      */
     public void updateTotalFoodDiscountBuilder(int discountBuilder){
         totalFoodDiscountBuilder += discountBuilder;
@@ -167,13 +162,6 @@ public class Player implements Serializable {
         completedSetsCount++;
     }
 
-    public void updateEndGameBuilderPP(int PP){
-        endGameBuilderPP += PP;
-    }
-
-    public void updateTotalBuildingsPP(int PP){
-        totalBuildingsPP += PP;
-    }
     /**
      * @author Giuse
      * @param extraStars : number of extra stars given to the player

@@ -76,10 +76,4 @@ public class PersistenceManager {
         }
     }
 
-    /**
-     * @return true if a save file exists.
-     */
-    public static boolean hasSave() {
-        return Files.exists(Paths.get(SAVE_FILE));
-    }
 }

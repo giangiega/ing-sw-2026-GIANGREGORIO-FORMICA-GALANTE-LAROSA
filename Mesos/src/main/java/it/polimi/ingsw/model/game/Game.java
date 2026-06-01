@@ -137,11 +137,11 @@ public class Game {
      */
     public void endRound() throws InvalidPlayerActionException {
         List<EventCard> others = new ArrayList<>();
-        List<EventCard> sustenances = new ArrayList<>();
+        List<EventCard> sustenance = new ArrayList<>();
 
         for(TribeCard card : board.getLowerRow()) {
             if (card.isSustenance()) {
-                sustenances.add((EventCard) card);
+                sustenance.add((EventCard) card);
             } else if (card.isEventCard() && !card.isSustenance()) {
                 others.add((EventCard) card);
             }
@@ -149,7 +149,7 @@ public class Game {
         if(currentRound == 10) {
             for (TribeCard card : board.getUpperRow()) {
                 if (card.isSustenance()) {
-                    sustenances.add((EventCard) card);
+                    sustenance.add((EventCard) card);
                 } else if (card.isEventCard() && !card.isSustenance()) {
                     others.add((EventCard) card);
                 }
@@ -164,7 +164,7 @@ public class Game {
 
         for(EventCard event : others)
             event.resolve(players, board);
-        for(EventCard s : sustenances)
+        for(EventCard s : sustenance)
             s.resolve(players, board);
 
         board.rowsEndRound();

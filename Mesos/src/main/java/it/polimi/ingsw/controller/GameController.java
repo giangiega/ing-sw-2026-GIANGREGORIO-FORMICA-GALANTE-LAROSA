@@ -202,7 +202,6 @@ public class GameController {
             game.getBoard().getTurnOrderTile().moveDisconnectedToEnd(toMoveToEnd);
 
             reconnectedThisRound.clear();
-            // per essere sicuro che i totem tornino al loro posto
             broadcastEvent(new UpdateOfferTrackEvent(
                     game.getBoard().getOfferTrack(),
                     game.getBoard().getTurnOrderTile()
@@ -364,7 +363,7 @@ public class GameController {
 
     /**
      * @author Giuse
-     * @param playerName : name of the disconnected player
+     * @param playerName name of the disconnected player
      * This method put the player in the disconnected players' list and notify this to all other players
      * via PlayerDisconnectedEvent. After that, if there's only one player left in the lobby, it starts a countdown.
      * If no player reconnect, the only remaining one is proclaimed as winner and endGame() is called.
@@ -398,7 +397,7 @@ public class GameController {
 
     /**
      * @author Giuse
-     * @param playerName : player the returned
+     * @param playerName player the returned
      * This method remove the player's name from the disconnected list. After that, it updates his entry
      * in the clientManagers and stops the clock, if one had even started. It sends the current board state
      * to the player

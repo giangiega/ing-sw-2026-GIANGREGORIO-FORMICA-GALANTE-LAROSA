@@ -107,9 +107,6 @@ public class Board {
     public TurnOrderTile getTurnOrderTile() {
         return turnOrderTile;
     }
-    public EraEnum getCurrentEra() {
-        return currentEra;
-    }
 
     public void removeFromUpperRow(TribeCard card) {
         upperRow.remove(card);
@@ -130,7 +127,6 @@ public class Board {
      * called by rowsEndRound, every time I draw a card for the rows.
      * If the card's era attribute is a new era, applyTransition is called.
      * applyTransition() uses the last 3 helper methods defined on Board.
-     * @param newEra
      */
     public void checkEraSwitch(EraEnum newEra) {
       if (newEra != currentEra) {

@@ -117,7 +117,7 @@ public class TurnController {
     }
     /**
      * @author Giuse
-     * @param playerName : player who skipped his turn
+     * @param playerName player who skipped his turn
      * This method skips the player currently at idx in the resolve order because
      * they disconnected while it was their turn.  If the player is not the current
      * one this is a no-op, so callers don't need to guard against double-calls.

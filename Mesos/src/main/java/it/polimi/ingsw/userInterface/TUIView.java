@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.boardAndTiles.TurnOrderTile;
 import it.polimi.ingsw.model.cards.buildings.BuildingCard;
-import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.model.cards.tribe.TribeCard;
 import it.polimi.ingsw.network.ClientSender;
 import it.polimi.ingsw.network.clientInterface.*;
@@ -22,7 +21,6 @@ import java.util.function.Consumer;
 
 
 public class TUIView implements ViewInterface {
-    private final Scanner scanner = new Scanner(System.in);
     private ClientSender sender;
     private String nickname;
 
@@ -215,7 +213,6 @@ public class TUIView implements ViewInterface {
         try {
             sender.sendOperation(new LoginOperation(name, ColorEnum.valueOf(color)));
             this.nickname = name;
-            return;
         } catch (IllegalArgumentException e) {
             System.out.println(RED + BOLD + "err: Invalid color, try again." + RESET);
             doAskLogin();
@@ -532,7 +529,7 @@ public class TUIView implements ViewInterface {
         if (ranking != null && !ranking.isEmpty()) {
             synchronized (OUT_LOCK) {
                 System.out.println(BLUE + BOLD + "\n--- Global Leaderboard (" +
-                        ranking.get(0).getNumPlayers() + " players) ---" + RESET);
+                        ranking.getFirst().getNumPlayers() + " players) ---" + RESET);
                 System.out.printf("  %-4s %-15s %6s  %s%n", "Rank", "Player", "totalWins", "totalScore");
                 System.out.println("  " + "-".repeat(46));
                 for (RankingRow row : ranking) {

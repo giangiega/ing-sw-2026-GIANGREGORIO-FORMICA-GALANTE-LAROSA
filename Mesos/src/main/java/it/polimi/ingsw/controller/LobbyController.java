@@ -5,8 +5,6 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.network.ClientConnection;
 import it.polimi.ingsw.network.ServerClass;
 import it.polimi.ingsw.network.serverInterface.InvalidChoiceEvent;
-import it.polimi.ingsw.network.socket.ClientManagerSocket;
-import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.serverInterface.LoggedEvent;
 
 import java.util.ArrayList;
@@ -111,12 +109,6 @@ public class LobbyController {
 
             ServerClass.setPendingSave();
             server.resetServer(); // connected=0, lobbyController=null, gameController=null
-
-
-            /*cm.sendEvent(new InvalidChoiceEvent(
-                    "Recovery aborted: your name was not in the previous game. " +
-                            "Disconnect and reconnect to start a new game."));
-            return;*/
         }
 
         if (ghostPlayers.containsKey(name)) {
@@ -143,7 +135,7 @@ public class LobbyController {
             for (Player p : lobbyPlayers) playerNames.add(p.getName());
             cm.sendEvent(new LoggedEvent(true, name, originalColor, playerNames));
 
-            triggerStartIfReady(cm, color);
+            triggerStartIfReady();
             return;
         }
 
@@ -164,11 +156,11 @@ public class LobbyController {
         for (Player p : lobbyPlayers) playerNames.add(p.getName());
         cm.sendEvent(new LoggedEvent(true, name, color, playerNames));
 
-        triggerStartIfReady(cm, color);
+        triggerStartIfReady();
     }
 
     // Helper to avoid duplicating the recovery/normal start check
-    private void triggerStartIfReady(ClientConnection cm, ColorEnum color) {
+    private void triggerStartIfReady() {
         if (ServerClass.isRecoveryPending()) {
             if (lobbyPlayers.size() == ServerClass.getRequiredPlayersToResume()) {
                 gameStarted = true;
@@ -184,7 +176,6 @@ public class LobbyController {
 
     /**
      * set the right server (socket or RMI) based network protocol type
-     * @param server
      */
     public void setServer(ServerClass server) {
         if (this.server != null)
