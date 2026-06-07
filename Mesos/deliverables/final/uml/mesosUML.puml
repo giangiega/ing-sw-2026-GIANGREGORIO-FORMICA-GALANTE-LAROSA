@@ -1,0 +1,515 @@
+@startuml
+class it.polimi.ingsw.model.game.Game {
++ List<Player> players
+- GameConfig config
++ Board board
++ int currentRound
++ List<Player> getPlayers()
++ Board getBoard()
++ GameConfig getConfig()
++ int getCurrentRound()
++ void startGame()
++ void placeTotem(Player,OfferTile)
++ void resolveAction(OfferTile,List<Integer>,List<Integer>,List<Integer>,List<Integer>)
++ void unplaceTotem(Player)
+- void forceUnplaceRemainingTotems()
++ void endRound()
++ Map<Player,Integer> calculateFinalScores()
++ List<Player> getWinner(Map<Player,Integer>)
+}
+
+
+class it.polimi.ingsw.model.decks.CardFactory {
+- JsonObject loadJson(String)
++ Deck buildTribeDeck(GameConfig)
+- boolean isValidForConfig(JsonObject,GameConfig)
+- void addToEra(TribeCard,EraEnum,List<TribeCard>,List<TribeCard>,List<TribeCard>)
+- CharacterCard createCharacterCard(JsonObject)
+- EventCard createEventCard(JsonObject)
++ BuildingDeck buildBuildingDeck(EraEnum,GameConfig)
+- BuildingCard createBuildingCard(JsonObject)
+}
+
+class it.polimi.ingsw.model.cards.buildings.BuildingBonusStarShaman {
+- int firstAdd
+- {static} int BONUS_EXTRA_STARS
++ void applyEventShamanBonusStars(Player,Board)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.cards.buildings.BuildingDiscountFood {
+- {static} int DISCOUNT_PER_CHARACTER
+- CharacterEnum characterType
++ CharacterEnum getCharacterType()
++ void applyEventSustenance(Player,Board)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.cards.tribe.events.EventSustenance {
+- int ppPerUnfedCharacter
++ boolean isSustenance()
++ void resolve(List<Player>,Board)
++ int getPpPerUnfedCharacter()
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.cards.tribe.events.EventShamanRitual {
+- int gainedPP
+- int lostPP
++ void resolve(List<Player>,Board)
++ int getGainedPP()
++ int getLostPP()
++ String toString()
+}
+
+
+abstract class it.polimi.ingsw.model.game.GameConfig {
++ {static} GameConfig create(int)
++ int getInitialFood(int)
++ {abstract}int getUpperRowSize()
++ {abstract}int getLowerRowSize()
++ {abstract}Map<EraEnum,Integer> getBuildingCardsPerEra()
++ {abstract}List<OfferTile> getOfferTiles()
++ {abstract}int getNumPlayers()
++ {abstract}int[] getFoodBonuses()
+}
+
+class it.polimi.ingsw.model.game.GameConfig4 {
++ int getUpperRowSize()
++ int getLowerRowSize()
++ Map<EraEnum,Integer> getBuildingCardsPerEra()
++ List<OfferTile> getOfferTiles()
++ int getNumPlayers()
++ int[] getFoodBonuses()
+}
+
+class it.polimi.ingsw.model.boardAndTiles.TurnOrderTile {
+- int numPlayers
+- int[] foodBonus
+- List<Player> slots
++ void totemIn(Player)
++ void totemOut(Player)
++ List<Player> getOrder()
++ void moveDisconnectedToEnd(List<String>)
++ int getFoodBonusForSlot(int)
++ boolean isLastSlot(int)
++ List<Player> getSlots()
++ int getNumPlayers()
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.cards.buildings.BuildingBonusArtist {
+- {static} int BONUS_FOOD_PER_ARTIST
++ void applyEventCavePainting(Player,Board)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.cards.tribe.characters.Builder {
+- int wingCount
+- int endGamePP
++ void AddToPlayerTribe(Player,Board)
++ int getWingCount()
++ int getEndGamePP()
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.decks.Deck {
+- List<TribeCard> cards
++ TribeCard getFirstCard()
++ boolean isEmpty()
++ int size()
+}
+
+
+class it.polimi.ingsw.model.cards.tribe.characters.Artist {
++ void AddToPlayerTribe(Player,Board)
++ String toString()
+}
+
+class it.polimi.ingsw.model.cards.buildings.BuildingDeck {
+- EraEnum era
+- List<BuildingCard> cards
++ BuildingCard getFirstCard()
++ boolean isEmpty()
++ int size()
++ EraEnum getEra()
+}
+
+
+class it.polimi.ingsw.model.cards.buildings.BuildingBonusSameInventors {
+- {static} int SAME_INVENTORS_BONUS
+- int initialInventorsCouples
++ void applyOnCardAdded(Player,Board)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.game.GameConfig2 {
++ int getUpperRowSize()
++ int getLowerRowSize()
++ Map<EraEnum,Integer> getBuildingCardsPerEra()
++ List<OfferTile> getOfferTiles()
++ int getNumPlayers()
++ int[] getFoodBonuses()
+}
+
+class it.polimi.ingsw.model.cards.tribe.characters.Gatherer {
++ void AddToPlayerTribe(Player,Board)
++ String toString()
+}
+
+class it.polimi.ingsw.model.cards.buildings.BuildingBonusHunt {
+- {static} int BONUS_FOOD_PER_HUNTER
+- {static} int BONUS_PP_PER_HUNTER
++ void applyEventHunt(Player,Board)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.boardAndTiles.Board {
+- GameConfig config
+- Deck tribeDeck
+- BuildingDeck buildingDeckEra1
+- BuildingDeck buildingDeckEra2
+- BuildingDeck buildingDeckEra3
+- TurnOrderTile turnOrderTile
+- List<OfferTile> offerTrack
+- List<TribeCard> upperRow
+- List<TribeCard> lowerRow
+- List<BuildingCard> buildingUpperRow
+- List<BuildingCard> buildingLowerRow
+- EraEnum currentEra
+- Map<EraEnum,EraTransition> transitions
+- void initializeRows()
++ BuildingDeck getBuildingDeckEra1()
++ BuildingDeck getBuildingDeckEra2()
++ BuildingDeck getBuildingDeckEra3()
++ List<TribeCard> getUpperRow()
++ List<TribeCard> getLowerRow()
++ List<BuildingCard> getBuildingUpperRow()
++ List<BuildingCard> getBuildingLowerRow()
++ List<OfferTile> getOfferTrack()
++ TurnOrderTile getTurnOrderTile()
++ void removeFromUpperRow(TribeCard)
++ void removeFromLowerRow(TribeCard)
++ void removeFromBuildingUpperRow(BuildingCard)
++ void removeFromBuildingLowerRow(BuildingCard)
++ void checkEraSwitch(EraEnum)
++ void rowsEndRound()
++ void discardLowerRowBuildings()
++ void moveBuildingsToLowerRow()
++ void fillBuildingUpperRow(BuildingDeck)
+}
+
+
+class it.polimi.ingsw.model.cards.buildings.BuildingBonusTotem {
+- {static} int BONUS_FOOD_TOTEM
++ void applyEndTurn(Player,Board,int,boolean)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.cards.tribe.characters.Inventor {
+- IconEnum iconType
++ IconEnum getIconType()
++ void AddToPlayerTribe(Player,Board)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.game.GameConfig3 {
++ int getUpperRowSize()
++ int getLowerRowSize()
++ Map<EraEnum,Integer> getBuildingCardsPerEra()
++ List<OfferTile> getOfferTiles()
++ int getNumPlayers()
++ int[] getFoodBonuses()
+}
+
+abstract class it.polimi.ingsw.model.eraLogic.EraTransition {
++ {abstract}void applyTransition(Board)
+}
+
+abstract class it.polimi.ingsw.model.cards.tribe.TribeCard {
++ boolean isPickable()
++ boolean isEventCard()
++ boolean isSustenance()
+}
+
+class it.polimi.ingsw.model.cards.buildings.BuildingCard {
+- int baseFoodCost
+- int basePrestigePoints
+- BuildingEffect effect
++ int getBaseFC()
++ int getBasePP()
++ BuildingEffect getEffect()
++ int getCost(Player)
++ void applyEffect(Player,Board)
++ String toString()
++ String updateCard()
+}
+
+
+class it.polimi.ingsw.model.cards.buildings.BuildingFoodSet {
+- {static} int DISCOUNT_PER_SET
+- int initialSets
++ void applyOnCardAdded(Player,Board)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.cards.tribe.characters.Hunter {
+- boolean hunt
++ void AddToPlayerTribe(Player,Board)
++ boolean getHunt()
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.boardAndTiles.OfferTile {
+- char letter
+- int upperArrow
+- int lowerArrow
+- boolean isFree
+- Player occupant
++ char getLetter()
++ int getCountUpperArrow()
++ int getCountLowerArrow()
++ Player getOccupant()
++ boolean getFreeOfferTile()
++ void setOccupant(Player)
++ void playerMove(Player,Board,List<Integer>,List<Integer>,List<Integer>,List<Integer>)
+}
+
+
+abstract class it.polimi.ingsw.model.cards.Card {
+- EraEnum era
+- String image
++ EraEnum getEra()
++ String getImage()
++ void setImage(String)
+}
+
+
+class it.polimi.ingsw.model.cards.buildings.BuildingSaveShamanPP {
++ void applyEventShamanWinner(Player,Board,int,boolean)
++ String toString()
+}
+
+class it.polimi.ingsw.model.Player {
+- String name
+- ColorEnum totemColor
+- Map<CharacterEnum,List<CharacterCard>> tribe
+- List<BuildingCard> buildings
+- int food
+- int prestigePoints
+- int countShamanStar
+- int effectiveStars
+- int totalFoodDiscountBuilder
+- int distinctInventorsIcon
+- int coupleSameInventors
+- int completedSetsCount
+- int endGameBuilderPP
+- int totalBuildingsPP
++ void addCharacterCard(CharacterCard,Board)
++ void addBuildingCard(BuildingCard)
++ String getName()
++ ColorEnum getTotemColor()
++ void gainFood(int)
++ void payFood(int)
++ void gainPP(int)
++ void losePP(int)
++ int getFood()
++ int getPP()
++ List<CharacterCard> getCharacterByType(CharacterEnum)
++ List<BuildingCard> getBuildingCards()
++ int getTotalStarCount()
++ int getTotalFoodDiscountBuilder()
++ int getDistinctInventorsIcon()
++ int getCoupleSameInventors()
++ int getCompletedSetsCount()
++ int getEndGameBuildersPP()
++ int getTotalBuildingsPP()
++ void updateTotalStarCount(int)
++ void updateTotalFoodDiscountBuilder(int)
++ void updateDistinctInventorsIcon()
++ void updateCoupleSameInventors()
++ void updateCompletedSetsCount()
++ void setEffectiveStars(int)
++ int getEffectiveStars()
++ int getTotalCharactersCount()
++ Map<CharacterEnum,List<CharacterCard>> getTribe()
++ boolean checkCompletedSet()
+}
+
+
+class it.polimi.ingsw.model.cards.buildings.BuildingPPForSet {
+- {static} int BONUS_PER_FINAL_SET
++ void applyEndGame(Player,Board)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.cards.buildings.BuildingBonusDoubleShamanPP {
++ void applyEventShamanWinner(Player,Board,int,boolean)
++ String toString()
+}
+
+class it.polimi.ingsw.model.cards.buildings.BuildingCardUpperRow {
+- int chosenIndex
+- boolean chosenIsBuilding
++ void setChoice(int,boolean)
++ int getChosenIndex()
++ boolean getChosenIsBuilding()
++ boolean requiresChoice(Player,Board)
++ void applyEndTurn(Player,Board,int,boolean)
++ String toString()
+}
+
+
+abstract class it.polimi.ingsw.model.cards.buildings.BuildingEffect {
++ void applyOnCardAdded(Player,Board)
++ void applyEventSustenance(Player,Board)
++ void applyEventHunt(Player,Board)
++ void applyEventShamanBonusStars(Player,Board)
++ void applyEventShamanWinner(Player,Board,int,boolean)
++ void applyEventCavePainting(Player,Board)
++ void applyEndTurn(Player,Board,int,boolean)
++ void applyEndGame(Player,Board)
++ boolean requiresChoice(Player,Board)
++ void setChoice(int,boolean)
++ int getChosenIndex()
++ boolean getChosenIsBuilding()
+}
+
+class it.polimi.ingsw.model.cards.buildings.BuildingBonusForCharacterType {
+- int PP
+- CharacterEnum character
++ int getPP()
++ CharacterEnum getCharacter()
++ void applyEndGame(Player,Board)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.game.GameConfig5 {
++ int getUpperRowSize()
++ int getLowerRowSize()
++ Map<EraEnum,Integer> getBuildingCardsPerEra()
++ List<OfferTile> getOfferTiles()
++ int getNumPlayers()
++ int[] getFoodBonuses()
+}
+
+class it.polimi.ingsw.model.cards.buildings.BuildingFinal25PP {
+- {static} int END_GAME_POINTS
++ void applyEndGame(Player,Board)
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.cards.tribe.events.EventCavePainting {
+- int minArtist
+- int gainedPP
+- int lostPP
++ void resolve(List<Player>,Board)
++ int getGainedPP()
++ int getLostPP()
++ int getMinArtist()
++ String toString()
+}
+
+
+class it.polimi.ingsw.model.eraLogic.TransitionEraII {
++ void applyTransition(Board)
+}
+
+class it.polimi.ingsw.model.cards.buildings.BuildingDoubleBuilderPP {
++ void applyEndGame(Player,Board)
++ String toString()
+}
+
+class it.polimi.ingsw.model.eraLogic.TransitionEraIII {
++ void applyTransition(Board)
+}
+
+abstract class it.polimi.ingsw.model.cards.tribe.events.EventCard {
+- boolean isFinalEvent
++ {abstract}void resolve(List<Player>,Board)
++ boolean isFinalEvent()
++ boolean isPickable()
++ boolean isEventCard()
+}
+
+
+class it.polimi.ingsw.model.cards.tribe.events.EventHunt {
+- int ppPerHunter
++ void resolve(List<Player>,Board)
++ int getPpPerHunter()
++ String toString()
+}
+
+
+abstract class it.polimi.ingsw.model.cards.tribe.characters.CharacterCard {
+- int numPlayers
++ {abstract}void AddToPlayerTribe(Player,Board)
++ int getNumPlayers()
+}
+
+
+class it.polimi.ingsw.model.cards.tribe.characters.Shaman {
+- int StarCount
++ void AddToPlayerTribe(Player,Board)
++ int getStarCount()
++ String toString()
+}
+
+
+
+
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingBonusStarShaman
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingDiscountFood
+it.polimi.ingsw.model.cards.tribe.events.EventCard <|-- it.polimi.ingsw.model.cards.tribe.events.EventSustenance
+it.polimi.ingsw.model.cards.tribe.events.EventCard <|-- it.polimi.ingsw.model.cards.tribe.events.EventShamanRitual
+it.polimi.ingsw.model.game.GameConfig <|-- it.polimi.ingsw.model.game.GameConfig4
+java.io.Serializable <|.. it.polimi.ingsw.model.boardAndTiles.TurnOrderTile
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingBonusArtist
+it.polimi.ingsw.model.cards.tribe.characters.CharacterCard <|-- it.polimi.ingsw.model.cards.tribe.characters.Builder
+it.polimi.ingsw.model.cards.tribe.characters.CharacterCard <|-- it.polimi.ingsw.model.cards.tribe.characters.Artist
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingBonusSameInventors
+it.polimi.ingsw.model.game.GameConfig <|-- it.polimi.ingsw.model.game.GameConfig2
+it.polimi.ingsw.model.cards.tribe.characters.CharacterCard <|-- it.polimi.ingsw.model.cards.tribe.characters.Gatherer
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingBonusHunt
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingBonusTotem
+it.polimi.ingsw.model.cards.tribe.characters.CharacterCard <|-- it.polimi.ingsw.model.cards.tribe.characters.Inventor
+it.polimi.ingsw.model.game.GameConfig <|-- it.polimi.ingsw.model.game.GameConfig3
+it.polimi.ingsw.model.cards.Card <|-- it.polimi.ingsw.model.cards.tribe.TribeCard
+it.polimi.ingsw.model.cards.Card <|-- it.polimi.ingsw.model.cards.buildings.BuildingCard
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingFoodSet
+it.polimi.ingsw.model.cards.tribe.characters.CharacterCard <|-- it.polimi.ingsw.model.cards.tribe.characters.Hunter
+java.io.Serializable <|.. it.polimi.ingsw.model.boardAndTiles.OfferTile
+java.io.Serializable <|.. it.polimi.ingsw.model.cards.Card
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingSaveShamanPP
+java.io.Serializable <|.. it.polimi.ingsw.model.Player
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingPPForSet
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingBonusDoubleShamanPP
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingCardUpperRow
+java.io.Serializable <|.. it.polimi.ingsw.model.cards.buildings.BuildingEffect
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingBonusForCharacterType
+it.polimi.ingsw.model.game.GameConfig <|-- it.polimi.ingsw.model.game.GameConfig5
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingFinal25PP
+it.polimi.ingsw.model.cards.tribe.events.EventCard <|-- it.polimi.ingsw.model.cards.tribe.events.EventCavePainting
+it.polimi.ingsw.model.eraLogic.EraTransition <|-- it.polimi.ingsw.model.eraLogic.TransitionEraII
+it.polimi.ingsw.model.cards.buildings.BuildingEffect <|-- it.polimi.ingsw.model.cards.buildings.BuildingDoubleBuilderPP
+it.polimi.ingsw.model.eraLogic.EraTransition <|-- it.polimi.ingsw.model.eraLogic.TransitionEraIII
+it.polimi.ingsw.model.cards.tribe.TribeCard <|-- it.polimi.ingsw.model.cards.tribe.events.EventCard
+it.polimi.ingsw.model.cards.tribe.events.EventCard <|-- it.polimi.ingsw.model.cards.tribe.events.EventHunt
+it.polimi.ingsw.model.cards.tribe.TribeCard <|-- it.polimi.ingsw.model.cards.tribe.characters.CharacterCard
+it.polimi.ingsw.model.cards.tribe.characters.CharacterCard <|-- it.polimi.ingsw.model.cards.tribe.characters.Shaman
+@enduml

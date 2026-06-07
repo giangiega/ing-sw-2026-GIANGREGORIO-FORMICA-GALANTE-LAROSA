@@ -1,2 +1,16 @@
 # ing-sw-2026-GIANGREGORIO-FORMICA-GALANTE-LAROSA
 Sviluppo del gioco da tavolo MESOS (progetto ingegneria del software POLIMI 2026)
+
+RICCARDO FORMICA , 10901857
+GIUSEPPE MICHELE LA ROSA , 10919952
+ALESSANDRO GALANTE , 10928390
+DANIELE GIANGREGORIO , 10937103
+
+Regole Complete + TUI + GUI + RMI + Socket + 3 FA 
+
+FA 1 : Database
+FA 2 : Resilienza alle disconnessioni
+FA 3 : Persistenza
+
+
+ISTRUZIONI SU COME ESEGUIRE I FILE JAR :
