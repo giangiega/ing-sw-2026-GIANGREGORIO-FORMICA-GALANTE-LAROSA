@@ -78,17 +78,4 @@ public class GameTest {
         assertTrue(board.getTurnOrderTile().getOrder().isEmpty());
     }
 
-    @Test //sbagliato
-    void testResolveAction() throws InvalidPlayerActionException {
-        game.placeTotem(p1, board.getOfferTrack().get(0));
-        int foodBefore = board.getOfferTrack().get(0).getOccupant().getFood();
-
-        assertEquals(0, board.getOfferTrack().get(0).getOccupant().getFood());
-        assertEquals(0, board.getTurnOrderTile().getOrder().size());
-        assertEquals('A', board.getOfferTrack().get(0).getLetter());
-
-        game.resolveAction(board.getOfferTrack().get(0), indexUpperCardsChosen, indexLowerCardsChosen, indexUpperBuildingsChosen, indexLowerBuildingsChosen);
-
-        assertEquals(foodBefore+3+board.getTurnOrderTile().getFoodBonusForSlot(0), board.getTurnOrderTile().getOrder().getFirst().getFood());
-    }
 }

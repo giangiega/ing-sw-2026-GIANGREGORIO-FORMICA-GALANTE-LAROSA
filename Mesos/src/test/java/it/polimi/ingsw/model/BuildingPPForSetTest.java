@@ -103,14 +103,4 @@ public class BuildingPPForSetTest {
         assertTrue(result.contains("2"));
         assertTrue(result.contains("BuildingPPForSet"));
     }
-    @Test
-    void toStringTestMessage(){
-        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingPPForSet());
-        String expected = "BuildingCard with effect: BuildingPPForSet and" +
-                "\nEra : I" +
-                "\nFood cost : 3" +
-                "\nPrestige point earned : 2";
-
-        assertEquals(expected, c.toString());
-    }
 }

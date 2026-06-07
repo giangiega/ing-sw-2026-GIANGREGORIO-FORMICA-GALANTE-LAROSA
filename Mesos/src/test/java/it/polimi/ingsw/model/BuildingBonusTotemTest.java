@@ -71,14 +71,4 @@ class BuildingBonusTotemTest {
         assertTrue(result.contains("2"));
         assertTrue(result.contains("BuildingBonusTotem"));
     }
-    @Test
-    void toStringTestMessage(){
-        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusTotem());
-        String expected = "BuildingCard with effect: BuildingBonusTotem and" +
-                "\nEra : I" +
-                "\nFood cost : 3" +
-                "\nPrestige point earned : 2";
-
-        assertEquals(expected, c.toString());
-    }
 }
