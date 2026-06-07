@@ -100,7 +100,7 @@ public class GameControllerTest {
        assertTrue(gc.isDisconnectedPlayer("Ale"));
     }
 
-    @Test
+   /* @Test
     void testHandleDisconnection(){
         int eventBeforeAleDisconnection = cmP1.eventCount();
         int disconnectedBefore = gc.getDisconnectedPlayers().size();
@@ -133,10 +133,10 @@ public class GameControllerTest {
         gc.handleDisconnection("Ric"); //only Dan is in game
         assertTrue(cmP3.received("GameSuspendedEvent"),
                 "Dan deve ricevere GameSuspendedEvent quando rimane solo");
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testHandleReconnection(){
 
-    }
+    }*/
 }

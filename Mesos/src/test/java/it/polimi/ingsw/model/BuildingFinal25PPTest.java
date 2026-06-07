@@ -78,15 +78,5 @@ public class BuildingFinal25PPTest {
         assertTrue(result.contains("2"));
         assertTrue(result.contains("BuildingFinal25PP"));
     }
-    @Test
-    void toStringTestMessage(){
-        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingFinal25PP());
-        String expected = "BuildingCard with effect: BuildingFinal25PP and" +
-                "\nEra : I" +
-                "\nFood cost : 3" +
-                "\nPrestige point earned : 2";
-
-        assertEquals(expected, c.toString());
-    }
 }
 

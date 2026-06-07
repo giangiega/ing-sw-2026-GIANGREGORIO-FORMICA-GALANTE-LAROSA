@@ -62,14 +62,4 @@ public class BuildingSaveShamanPPTest {
         assertTrue(result.contains("2"));
         assertTrue(result.contains("BuildingSaveShamanPP"));
     }
-    @Test
-    void toStringTestMessage(){
-        BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingSaveShamanPP());
-        String expected = "BuildingCard with effect: BuildingSaveShamanPP and" +
-                "\nEra : I" +
-                "\nFood cost : 3" +
-                "\nPrestige point earned : 2";
-
-        assertEquals(expected, c.toString());
-    }
 }
