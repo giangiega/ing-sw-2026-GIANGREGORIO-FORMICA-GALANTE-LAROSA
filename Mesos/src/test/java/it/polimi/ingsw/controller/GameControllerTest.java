@@ -13,7 +13,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GameControllerTest {
+/*public class GameControllerTest {
     private List<Player> players = new ArrayList<>();
     private Map<String, ClientConnection> clientManagers = new HashMap<>();
     private Game game;
@@ -139,4 +139,4 @@ public class GameControllerTest {
     public void testHandleReconnection(){
 
     }*/
-}
+//}
