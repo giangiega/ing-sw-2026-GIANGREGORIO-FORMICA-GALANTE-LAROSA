@@ -71,6 +71,10 @@ public class GameController {
         return this.game;
     }
 
+    public TurnController getTurnController(){
+        return  this.turnController;
+    }
+
     /**
      * Initializes decks, board and model.
      * Creates GameConfig based on numPlayers and TurnController.
