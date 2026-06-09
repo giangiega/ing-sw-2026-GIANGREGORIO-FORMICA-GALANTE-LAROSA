@@ -1,7 +1,6 @@
 package it.polimi.ingsw.database;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 public class RankingRow implements Serializable{
     private final int position;

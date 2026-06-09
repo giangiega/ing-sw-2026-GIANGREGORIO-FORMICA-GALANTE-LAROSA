@@ -37,8 +37,8 @@ public class DatabaseManager {
     /**
      * this method use classes from standard java sql library to get Connection
      * from mysql driver
-     * @return
-     * @throws SQLException
+     * @return new connection
+     * @throws SQLException standard library exception
      */
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url, user, password);
@@ -74,15 +74,14 @@ public class DatabaseManager {
 
     /**
      * saves result in the table "game"
-     * @param nickname
-     * @param score
-     * @param numPlayers
-     * @param winner
+     * @param nickname player's name
+     * @param score achieved score
+     * @param numPlayers number of players in the game
+     * @param winner the player was a winner
      */
     public void saveResult(String nickname, int score, int numPlayers, boolean winner) {
         String sql = "INSERT INTO game(nickname, score, num_players, winner) VALUES (?, ?, ?, ?)";
-        /*PreparedStatement is used to prevent SQLInjection, ps
-         * treats parameters as pure data, never as real SQL code*/
+        /*PreparedStatement is used to prevent SQLInjection: they are pure data*/
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             /*these lines setups the PreparedStatement to add a rows in the table*/
@@ -98,8 +97,8 @@ public class DatabaseManager {
 
     /**
      * builds the ranking (for a specific numPlayers games) from database data
-     * @param numPlayers
-     * @return
+     * @param numPlayers number of players in the game
+     * @return ranking
      */
     public List<RankingRow> getRanking(int numPlayers) {
         String sql = """
@@ -155,9 +154,9 @@ public class DatabaseManager {
      * return position of a specific player in the ranking of games with number of
      * players equals numPlayers.
      * If two or more player have the same score they are at the same ranking position
-     * @param playerName
-     * @param numPlayers
-     * @return
+     * @param playerName name of the player
+     * @param numPlayers type of game (number of players in the game)
+     * @return position or -1 an error occurred
      */
     public int getPlayerPosition(String playerName, int numPlayers) {
         String sql = """
