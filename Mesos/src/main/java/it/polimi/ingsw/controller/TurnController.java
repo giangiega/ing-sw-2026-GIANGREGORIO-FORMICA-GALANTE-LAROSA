@@ -85,6 +85,7 @@ public class TurnController {
     }
 
     /**
+     * @param offerTrack current offerTrack
      * Determines the order in which players will act based on the position
      * of their totems on the OfferTrack.
      * Disconnected players are excluded
@@ -119,7 +120,7 @@ public class TurnController {
      * @author Giuse
      * @param playerName player who skipped his turn
      * This method skips the player currently at idx in the resolve order because
-     * they disconnected while it was their turn.  If the player is not the current
+     * they disconnected while it was their turn. If the player is not the current
      * one this is a no-op, so callers don't need to guard against double-calls.
      */
     public void skipCurrentPlayer(String playerName) {
@@ -159,7 +160,7 @@ public class TurnController {
 
     /**
      * @author Giuse
-     * @param playerName : name of the player who left the game
+     * @param playerName name of the player who left the game
      * This method is called by the GameController when a player crashes
      * If it happens during the placement phase, if all remaining connected
      * players have already placed, it forces the game to advance to the resolve phase
@@ -168,7 +169,7 @@ public class TurnController {
      */
     public void onPlayerDisconnected(String playerName) {
         if (!inResolvingPhase) {
-            // Placement phase: check if all connected players have placed already
+            // Placement phase: check if all connected players have already placed
             int connectedCount = gameController.getConnectedPlayersCount();
             if (connectedCount > 0 && totemPlacedCurrRound.size() >= connectedCount) {
                 startResolvePhase(savedOfferTrack != null ? savedOfferTrack : new ArrayList<>());

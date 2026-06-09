@@ -49,6 +49,9 @@ public class LobbyController {
     }
 
     /**
+     * @param name name of the player
+     * @param color chosen color for the player's totem
+     * @param cm manager for the player
      * Manages the synchronized player's login.
      * Checks that the chosen name and totem color are valid.
      * Sends a LoggedEvent and calls fullLobby at the end, where GameController is created,

@@ -357,7 +357,7 @@ public class GameController {
 
     /**
      * @author Giuse
-     * @param playerName
+     * @param playerName name of the player whose totem's color is needed
      * @return null if the player doesn't exist or the totem's color
      */
     public ColorEnum getPlayerColor(String playerName) {
@@ -386,7 +386,7 @@ public class GameController {
 
         int connectedCount = getConnectedPlayersCount();
 
-        if(connectedCount == 0){//No player il game: game ends instantly
+        if(connectedCount == 0){//No player in game: game ends instantly
             System.out.println("Server: no player left in the game, game ended.");
             cancelSuspensionTimer();
             endGame();
@@ -401,7 +401,7 @@ public class GameController {
 
     /**
      * @author Giuse
-     * @param playerName player the returned
+     * @param playerName player that returned
      * This method remove the player's name from the disconnected list. After that, it updates his entry
      * in the clientManagers and stops the clock, if one had even started. It sends the current board state
      * to the player
@@ -480,7 +480,7 @@ public class GameController {
             cm.sendEvent(new ValidCardsEvent(p.getTribe(), p.getBuildingCards()));
     }
 
-    /**********Timer handling**********/
+    //*********Timer handling**********//
 
     /**
      * @author Giuse
