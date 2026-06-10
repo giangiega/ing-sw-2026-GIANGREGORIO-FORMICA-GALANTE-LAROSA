@@ -60,13 +60,14 @@ public class OfferTile implements Serializable {
     }
 
     /**
-     * this method remove from board the cards chosen by the player on the OfferTile, and add these in the player's tribe or player's buildings
-     * @param player
-     * @param board
+     * @param player player whose tribe or buildingDeck must be  modified
+     * @param board current board
      * @param indexUpperChosenCards: these are indexes of the upperRow's CharacterCards chosen by the player
      * @param indexLowerChosenCards: these are indexes of the lowerRow's CharacterCards chosen by the player
      * @param indexUpperChosenBuildings: these are indexes of the upperRow's BuildingsCards chosen by the player
      * @param indexLowerChosenBuildings: these are indexes of the lowerRow's BuildingsCards chosen by the player
+     * This method remove from board the cards chosen by the player on the OfferTile, and add these
+     * in the player's tribe or player's buildings
      */
     public void playerMove(Player player, Board board, List<Integer> indexUpperChosenCards, List<Integer>
             indexLowerChosenCards, List<Integer> indexUpperChosenBuildings,

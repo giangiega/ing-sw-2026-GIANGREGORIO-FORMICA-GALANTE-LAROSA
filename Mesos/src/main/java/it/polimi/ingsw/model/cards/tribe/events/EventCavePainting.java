@@ -1,7 +1,9 @@
-package it.polimi.ingsw.model.cards.tribe.events;
 /**
  * @author Daniele
  */
+
+package it.polimi.ingsw.model.cards.tribe.events;
+
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.model.boardAndTiles.Board;
@@ -23,10 +25,10 @@ public class EventCavePainting extends EventCard {
     }
 
     /**
-     * this method will scroll through the list of players , check if they have the specific building for this event
+     * @param players list of players
+     * @param board current board
+     * This method will scroll through the list of players, check if they have the specific building for this event
      * and then adds or subtracts the PP based on the artist's number of the player
-     * @param players
-     * @param board
      */
 
     @Override

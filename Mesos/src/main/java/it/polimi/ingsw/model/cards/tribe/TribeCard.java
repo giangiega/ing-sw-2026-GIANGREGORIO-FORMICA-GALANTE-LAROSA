@@ -1,11 +1,13 @@
+/**
+ * @author Daniele
+ */
+
 package it.polimi.ingsw.model.cards.tribe;
 
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.model.cards.Card;
 
-/**
- * @author Daniele
- */
+
 public abstract class TribeCard extends Card {
     public TribeCard(EraEnum era) {
         super(era);

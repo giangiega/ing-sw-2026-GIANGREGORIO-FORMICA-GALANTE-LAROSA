@@ -23,13 +23,13 @@ public class Inventor extends CharacterCard {
     }
 
     /**
-     * @author Giuse, Daniele
-     * when a player draw an Inventor this method will check if it is the first of that specific type and use
-     * updateDistinctInventorsIcon() to update the count , then it will add the card to the tribe and trigger the
+     * @author Daniele
+     * @param player player whose tribe must be updated with new card
+     * @param board
+     * When a player draw an Inventor this method will check if it is the first of that specific type and use
+     * updateDistinctInventorsIcon() to update the count, then it will add the card to the tribe and trigger the
      * possible building effect
      * After that, it will check for new inventors couples
-     * @param player
-     * @param board
      */
     @Override
     public void AddToPlayerTribe(Player player, Board board){

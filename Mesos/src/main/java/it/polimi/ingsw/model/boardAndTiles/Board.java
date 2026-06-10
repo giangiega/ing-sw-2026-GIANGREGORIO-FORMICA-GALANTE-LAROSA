@@ -59,7 +59,7 @@ public class Board {
 
         initializeRows();
     }
-    // NOT IN UML
+
     private void initializeRows() {
         for (int counter = 0; counter < config.getLowerRowSize(); ) {
             TribeCard c = tribeDeck.getFirstCard();
@@ -124,6 +124,7 @@ public class Board {
     }
 
     /**
+     * @param newEra era to transition to
      * called by rowsEndRound, every time I draw a card for the rows.
      * If the card's era attribute is a new era, applyTransition is called.
      * applyTransition() uses the last 3 helper methods defined on Board.

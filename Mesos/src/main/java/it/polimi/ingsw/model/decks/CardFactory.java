@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * this class has all the methods for creating the tribe Deck and BuildingDeck
  * @author Ale
+ * This class has all the methods for creating the tribe Deck and BuildingDeck
  */
 public class CardFactory {
 
@@ -38,9 +38,9 @@ public class CardFactory {
     }
 
     /**
-     * builds the completed tribeDeck
-     * @param config: GameConfig for the numPlayers
-     * @return
+     * @param config : GameConfig for the numPlayers
+     * @return new deck of cards
+     * This method builds the completed tribeDeck
      */
     public Deck buildTribeDeck(GameConfig config) {
         JsonObject data = loadJson("TribeCards.json");
@@ -88,10 +88,9 @@ public class CardFactory {
     }
 
     /**
-     * returns true if a card is valid for the number of players in the game, otherwise false
-     * @param card
-     * @param config
-     * @return
+     * @param card card as JsonObject
+     * @param config gameConfig based on the number of players
+     * @return returns true if a card is valid for the number of players in the game, otherwise false
      */
     private boolean isValidForConfig(JsonObject card, GameConfig config) {
         int numPlayer = card.get("numPlayer").getAsInt();
@@ -99,12 +98,12 @@ public class CardFactory {
     }
 
     /**
-     * adds the card to the respective era tribe deck
-     * @param card
-     * @param era
-     * @param eraI
-     * @param eraII
-     * @param eraIII
+     * @param card card
+     * @param era card Era
+     * @param eraI list of eraI cards
+     * @param eraII list of eraII cards
+     * @param eraIII list of eraIII cards
+     * This method adds the card to the respective era tribe deck
      */
     private void addToEra(TribeCard card, EraEnum era, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII) {
         switch (era) {
@@ -116,9 +115,9 @@ public class CardFactory {
     }
 
     /**
-     * creates the specific CharacterCard based on type
-     * @param data
-     * @return
+     * @param data JsonObject
+     * @return new CharacterCard
+     * This method creates the specific CharacterCard based on type
      */
     private CharacterCard createCharacterCard(JsonObject data) {
         CharacterEnum type = CharacterEnum.valueOf(data.get("type").getAsString());
@@ -137,9 +136,9 @@ public class CardFactory {
     }
 
     /**
-     * creates the specific EventCard based on type
-     * @param data
-     * @return
+     * @param data JsonObject
+     * @return corresponding EventCard
+     * This method creates the specific EventCard based on type
      */
     private EventCard createEventCard(JsonObject data) {
         String type = data.get("type").getAsString();
@@ -175,12 +174,10 @@ public class CardFactory {
     }
 
     /**
-     * creates a BuildingDeck of a specific era.
-     * we should decide where to handle the draw of a specific number of buildingCards
-     * for each buildingDecks based on numPlayers of GameConfig
-     * @param era
-     * @param config
-     * @return
+     * @param era specified Era
+     * @param config gameConfig for numPlayers
+     * @return new buildingDeck for specified Era
+     * This method creates a BuildingDeck of a specific Era
      */
     public BuildingDeck buildBuildingDeck(EraEnum era, GameConfig config) {
         JsonObject data = loadJson("BuildingCards.json");
@@ -191,7 +188,6 @@ public class CardFactory {
         for (JsonElement el : buildings) {
             JsonObject card = el.getAsJsonObject();
             if (EraEnum.valueOf(card.get("era").getAsString()) != era) continue;
-           // cards.add(createBuildingCard(card));
             BuildingCard b = createBuildingCard(card);
             b.setImage(card.get("image").getAsString());
             cards.add(b);
@@ -209,10 +205,10 @@ public class CardFactory {
     }
 
     /**
-     * creates a specific buildingCard using a switch case for
-     * creating the correct BuildingEffect (variable of instance)
-     * @param data
-     * @return
+     * @param data JsonObject
+     * @return corresponding BuildingCard with correct BuildingEffect
+     * This method creates a specific buildingCard using a switch case for
+     * creating the correct BuildingEffect
      */
     private BuildingCard createBuildingCard(JsonObject data) {
         String type = data.get("type").getAsString();

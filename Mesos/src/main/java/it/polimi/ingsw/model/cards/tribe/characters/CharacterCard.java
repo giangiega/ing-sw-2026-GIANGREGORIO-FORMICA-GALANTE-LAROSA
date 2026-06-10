@@ -13,9 +13,9 @@ public abstract class CharacterCard extends TribeCard {
     private final int numPlayers;
 
     /**
-     * constructor
-     * @param era
-     * @param numPlayers: this is the minimum number of players for the card
+     * Constructor of this class
+     * @param era : era of this card
+     * @param numPlayers : this is the minimum number of players for the card
      */
     public CharacterCard(EraEnum era, int numPlayers){
         super(era);

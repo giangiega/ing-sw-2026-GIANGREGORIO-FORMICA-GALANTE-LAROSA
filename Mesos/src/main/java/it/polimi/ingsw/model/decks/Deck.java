@@ -6,7 +6,7 @@ import it.polimi.ingsw.model.cards.tribe.TribeCard;
 import java.util.List;
 
 /**
- * tribe deck, addToBottom and shuffle methods must be implemented in CardFactory because are used to build the complete Deck
+ * tribe deck
  * @author Ale
  */
 public class Deck {
@@ -17,7 +17,6 @@ public class Deck {
     }
 
     /**
-     *
      * @throws EmptyDeckException if deck is empty, handled in the caller
      * @return first TribeCard of the deck
      * */
@@ -29,7 +28,6 @@ public class Deck {
     }
 
     /**
-     *
      * @return true if the deck is Empty, false otherwise
      */
     public boolean isEmpty(){
@@ -37,7 +35,6 @@ public class Deck {
     }
 
     /**
-     *
      * @return deck size
      */
     public int size(){

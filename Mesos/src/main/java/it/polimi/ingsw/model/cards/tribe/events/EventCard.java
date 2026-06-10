@@ -1,7 +1,7 @@
-package it.polimi.ingsw.model.cards.tribe.events;
 /**
  * @author Daniele
  */
+package it.polimi.ingsw.model.cards.tribe.events;
 
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.model.boardAndTiles.Board;

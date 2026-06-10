@@ -17,18 +17,17 @@ public class Shaman extends CharacterCard{
     }
 
     /**
-     * this method will add the card to the tribe , update the total starcount of the specific player and trigger the
-     * possible  building effect
-     * @param player
+     * @param player player whose tribe must be updated
      * @param board
+     * This method will add the card to the tribe, update the total starCount of the
+     * specific player and trigger the possible  building effect
      */
     @Override
     public void AddToPlayerTribe(Player player, Board board){
         player.getCharacterByType(CharacterEnum.SHAMAN).add(this);
         player.updateTotalStarCount(this.StarCount);
-
-
     }
+
     public int getStarCount()
     {
         return  StarCount ;

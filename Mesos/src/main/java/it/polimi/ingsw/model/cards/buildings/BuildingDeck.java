@@ -15,7 +15,7 @@ public class BuildingDeck {
 
     /**
      * constructor
-     * @param era
+     * @param era era of this BuildingDeck
      */
     public BuildingDeck(EraEnum era, List<BuildingCard> cards){
         this.cards = cards;
@@ -24,7 +24,7 @@ public class BuildingDeck {
 
     /**
      * At the start of a new era all deck's cards will be placed face up
-     * @throws EmptyDeckException
+     * @throws EmptyDeckException when deck is empty
      * @return first deck card
      */
     public BuildingCard getFirstCard() throws EmptyDeckException{

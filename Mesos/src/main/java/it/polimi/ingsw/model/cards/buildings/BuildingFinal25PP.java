@@ -13,13 +13,14 @@ public class BuildingFinal25PP extends BuildingEffect{
     /**
      *@param p : player who has this building card
      *@param b : state of the board
-     * this method gives 25 prestige points to the player who owns this building at
+     * This method gives 25 prestige points to the player who owns this building at
      * the end of the game
      */
     @Override
     public void applyEndGame(Player p, Board b){
         p.gainPP(END_GAME_POINTS);
     }
+
     /**
      * This method prints out the building information
      */

@@ -15,15 +15,13 @@ public class Artist extends CharacterCard{
     }
 
     /**
-     * this method will add the card to the tribe and trigger the possible building effect
-     * @param player
-     * @param board
+     * @param player player whose tribe must be updated with new card
+     * @param board board
+     * This method will add the card to the tribe and trigger the possible building effect
      */
     @Override
     public void AddToPlayerTribe(Player player, Board board){
         player.getCharacterByType(CharacterEnum.ARTIST).add(this);
-
-
     }
 
     @Override

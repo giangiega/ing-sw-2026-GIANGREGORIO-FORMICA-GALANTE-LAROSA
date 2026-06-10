@@ -46,6 +46,11 @@ public class Player implements Serializable {
         this.buildings = new ArrayList<>();
     }
 
+    /**
+     * @param card card to add
+     * @param board current board
+     * This method adds a character card to the player's tribe
+     */
     public void addCharacterCard(CharacterCard card, Board board){
         card.AddToPlayerTribe(this, board);
         if(this.checkCompletedSet())
@@ -56,6 +61,7 @@ public class Player implements Serializable {
     }
 
     /**
+     * @param card building card
      * this method will add the building that a player draw from board
      */
     public void addBuildingCard(BuildingCard card){
@@ -96,7 +102,7 @@ public class Player implements Serializable {
 
     /**
      *
-     * @param type: CharacterEnum to get a specific list of character
+     * @param type CharacterEnum to get a specific list of character
      * @return list of a specific type of character
      */
     public List<CharacterCard> getCharacterByType(CharacterEnum type){
@@ -164,15 +170,15 @@ public class Player implements Serializable {
 
     /**
      * @author Giuse
-     * @param extraStars : number of extra stars given to the player
-     * this method gives the player 3 extra stars to the player
+     * @param extraStars number of extra stars given to the player
+     * this method gives the player 3 extra stars
      */
     public void setEffectiveStars(int extraStars){
         effectiveStars = effectiveStars + extraStars;
     }
     /**
      * @author Giuse
-     * @return effectiveStars : number of stars of the player considering the eventual bonuses
+     * @return effectiveStars, the number of stars of the player considering the eventual bonuses
      */
     public int getEffectiveStars(){
         return effectiveStars;

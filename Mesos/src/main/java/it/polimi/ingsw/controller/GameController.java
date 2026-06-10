@@ -546,7 +546,4 @@ public class GameController {
         this.database = DatabaseManager.getDatabase();
     }
 
-    public boolean getRecoveryMode(){
-        return this.isRecoveryMode;
-    }
 }

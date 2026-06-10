@@ -13,24 +13,28 @@ public class BuildingCardUpperRow extends BuildingEffect {
     //At the beginning, we assume that the player doesn't buy any card
     private int chosenIndex = -1;
     private boolean chosenIsBuilding = false;
+
     /**
      * @param index : index of the chosen card
      * @param isBuilding the chosen card is a building
-     * this method is called by Game before applyEndTurn. It registers the player's choice
+     * This method is called by Game before applyEndTurn. It registers the player's choice
      */
     @Override
     public void setChoice(int index, boolean isBuilding) {
         this.chosenIndex = index;
         this.chosenIsBuilding = isBuilding;
     }
+
     @Override
     public int getChosenIndex() {
         return chosenIndex;
     }
+
     @Override
     public boolean getChosenIsBuilding() {
         return chosenIsBuilding;
     }
+
     /**
      * @param p : player who has this building card
      * @param b : state of the board
@@ -60,6 +64,7 @@ public class BuildingCardUpperRow extends BuildingEffect {
             if (chosenIndex < 0 || chosenIndex >= b.getBuildingUpperRow().size()){
                 throw new InvalidPlayerActionException("Building index out of bounds");
             }
+
             BuildingCard chosen = b.getBuildingUpperRow().get(chosenIndex);
             if (p.getFood() < chosen.getCost(p)) {
                 throw new InvalidPlayerActionException("Not enough food");
@@ -71,6 +76,7 @@ public class BuildingCardUpperRow extends BuildingEffect {
             if (chosenIndex < 0 || chosenIndex >= b.getUpperRow().size()){
                 throw new InvalidPlayerActionException("Building index out of bounds");
             }
+
             TribeCard card = b.getUpperRow().get(chosenIndex);
             if (card.isEventCard()){
                 throw new InvalidPlayerActionException("Cannot take an EventCard");

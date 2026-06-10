@@ -66,7 +66,7 @@ public abstract class BuildingEffect implements Serializable {
     /**
      * @param p : player who has this building card
      * @param b : state of the board
-     * This method tells if a BuildingEffect requires a player's interaction.
+     * This method tells if a BuildingEffect requires a player's interaction;
      * It is set on false by default; BuildingUpperRow will override it because it needs the player
      */
     public boolean requiresChoice(Player p, Board b) {
@@ -75,7 +75,7 @@ public abstract class BuildingEffect implements Serializable {
     /**
      * @param chosenIndex : index of the chosen card
      * @param chosenIsBuilding the chosen card is a building
-     * this method is called by Game before applyEndTurn. It registers the player's choice
+     * This method is called by Game before applyEndTurn. It registers the player's choice
      * Used by the server
      */
     public void setChoice(int chosenIndex, boolean chosenIsBuilding) {}

@@ -1,7 +1,9 @@
-package it.polimi.ingsw.model.cards.tribe.events;
 /**
  * @author Daniele
  */
+
+package it.polimi.ingsw.model.cards.tribe.events;
+
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.model.boardAndTiles.Board;
@@ -24,11 +26,10 @@ public class EventSustenance extends EventCard {
     }
 
     /**
-     * this method will scroll through the list of players and calculate , based on the possible building's effect
+     * @param players list of active players
+     * @param board current board
+     * This method will scroll through the list of players and calculate, based on the possible building's effect
      * and the discount of the gatherers, the total amount of food to pay and the eventual loss of PP
-     *
-     * @param players
-     * @param board
      */
     @Override
     public void resolve(List<Player> players, Board board) {
@@ -46,12 +47,9 @@ public class EventSustenance extends EventCard {
                 p.payFood(p.getFood());
                 p.losePP(remainingCharacters * ppPerUnfedCharacter);
             }
-
-
-
         });
-
     }
+
     public int getPpPerUnfedCharacter() {
         return ppPerUnfedCharacter;
     }

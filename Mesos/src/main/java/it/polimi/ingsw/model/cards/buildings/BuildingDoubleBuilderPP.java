@@ -10,10 +10,11 @@ import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
  * @author Giuse
  */
 public class BuildingDoubleBuilderPP extends BuildingEffect{
+
     /**
      *@param p : player who has this building card
      *@param b : state of the board
-     * this method gives the player an amount of prestige points based on the builders' bonuses,
+     * This method gives the player an amount of prestige points based on the builders' bonuses,
      * doubling the actual reward
      */
     @Override
@@ -24,6 +25,7 @@ public class BuildingDoubleBuilderPP extends BuildingEffect{
         }
         p.gainPP(sum);
     }
+
     /**
      * This method prints out the building information
      */

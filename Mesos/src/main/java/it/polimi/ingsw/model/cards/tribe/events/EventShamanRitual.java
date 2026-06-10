@@ -1,7 +1,9 @@
-package it.polimi.ingsw.model.cards.tribe.events;
 /**
  * @author Giuse
  */
+
+package it.polimi.ingsw.model.cards.tribe.events;
+
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.model.boardAndTiles.Board;
 import it.polimi.ingsw.model.Player;
@@ -22,8 +24,8 @@ public class EventShamanRitual extends EventCard {
 
     /**
      * @param players : list of active players
-     * @param board :state of the board
-     * this method find the winners and the losers of the event "Shaman Ritual"
+     * @param board : state of the board
+     * This method find the winners and the losers of the event "Shaman Ritual"
      * then it adds/subtracts the right amount of pp and checks for building effects
      */
     @Override
@@ -74,6 +76,7 @@ public class EventShamanRitual extends EventCard {
                 }
             }
         }
+
     public int getGainedPP() {
         return gainedPP;
     }

@@ -1,7 +1,9 @@
-package it.polimi.ingsw.model.cards.tribe.events;
 /**
  * @author Daniele
  */
+
+package it.polimi.ingsw.model.cards.tribe.events;
+
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.model.boardAndTiles.Board;
@@ -18,10 +20,10 @@ public class EventHunt extends EventCard {
     }
 
     /**
-     * this method will scroll through the list of players and based on the possible building of a player , it will
+     * @param players list of players
+     * @param board current board
+     * This method will scroll through the list of players and based on the possible building of a player, it will
      * change the quantity of food and PP gained by that specific player
-     * @param players
-     * @param board
      */
     @Override
     public void resolve(List<Player> players, Board board) {

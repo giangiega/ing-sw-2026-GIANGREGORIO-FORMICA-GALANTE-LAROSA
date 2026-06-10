@@ -9,6 +9,7 @@ import it.polimi.ingsw.model.Player;
 public class BuildingBonusStarShaman extends BuildingEffect{
     private int firstAdd = -1;
     private static final int BONUS_EXTRA_STARS = 3;
+
     /**
      * @param p : player who has this building card
      * @param b : state of the board
@@ -20,7 +21,9 @@ public class BuildingBonusStarShaman extends BuildingEffect{
             p.setEffectiveStars(BONUS_EXTRA_STARS);
             firstAdd++;
         }
-    }/**
+    }
+
+    /**
      * This method prints out the building information
      */
     @Override

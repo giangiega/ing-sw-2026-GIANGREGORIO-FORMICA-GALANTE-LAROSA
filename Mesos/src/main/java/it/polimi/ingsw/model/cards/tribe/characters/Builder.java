@@ -19,17 +19,15 @@ public class Builder extends CharacterCard {
     }
 
     /**
-     * this method will add the new card to the tribe , update the total food discount of the player and trigger
-     * the possible building effect
-     * @param player
+     * @param player player whose tribe must be updated with new card
      * @param board
+     * This method will add the new card to the tribe, update the total food discount of the player and trigger
+     * the possible building effect
      */
     @Override
     public void AddToPlayerTribe(Player player, Board board){
         player.getCharacterByType(CharacterEnum.BUILDER).add(this);
         player.updateTotalFoodDiscountBuilder(this.wingCount);
-
-
     }
 
     public int getWingCount() {

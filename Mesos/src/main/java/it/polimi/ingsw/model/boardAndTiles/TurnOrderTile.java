@@ -16,9 +16,9 @@ public class TurnOrderTile implements Serializable {
     private final List<Player> slots;
 
     /**
-     * constructor
-     * @param
-     * @param : list of all players
+     * Constructor of this class
+     * @param numPlayers number of players
+     * @param foodBonus: list of bonuses
      */
     public TurnOrderTile(int numPlayers, int[] foodBonus) {
         this.numPlayers = numPlayers;
@@ -27,8 +27,8 @@ public class TurnOrderTile implements Serializable {
     }
 
     /**
-     * add the player to the slots of the TurnOrderTile
-     * @param player
+     * @param player player to move
+     * This method adds the player to the slots of the TurnOrderTile
      */
     public void totemIn(Player player){
         slots.add(player);
@@ -36,7 +36,7 @@ public class TurnOrderTile implements Serializable {
 
     /**
      * when a player moves his totem to the offerTrack, his totem will be removed from slots of TurnOrderTile
-     * @param player
+     * @param player player whose totem must be removed from TurnOrderTile
      */
     public void totemOut(Player player){
         slots.removeIf(p -> p.getName().equals(player.getName()));
@@ -96,6 +96,5 @@ public class TurnOrderTile implements Serializable {
         }
         return sb.toString();
     }
-
 
 }

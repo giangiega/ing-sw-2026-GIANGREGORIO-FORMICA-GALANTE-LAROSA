@@ -15,26 +15,26 @@ public class Hunter extends CharacterCard{
     public Hunter(EraEnum era, int numPlayers, boolean hunt) {
         super(era, numPlayers);
         this.hunt = hunt;
-
     }
 
     /**
-     * this method will add the card to the tribe, check if the hunter has the icon and eventually give the
-     * food to player based on the numHunters and then trigger the possible building effect
-     * @param player
+     * @param player player whose tribe must be updated with new card
      * @param board
+     * This method will add the card to the tribe, check if the hunter has the icon and eventually give the
+     * food to player based on the numHunters and then trigger the possible building effect
      */
     @Override
     public void AddToPlayerTribe(Player player, Board board){
-    player.getCharacterByType(CharacterEnum.HUNTER).add(this);
+        player.getCharacterByType(CharacterEnum.HUNTER).add(this);
 
-    if(this.hunt){
-        int numHunters;
+        if(this.hunt){
+            int numHunters;
 
-        numHunters = player.getCharacterByType(CharacterEnum.HUNTER).size();
-        player.gainFood(numHunters);
+            numHunters = player.getCharacterByType(CharacterEnum.HUNTER).size();
+            player.gainFood(numHunters);
+        }
     }
-    }
+
     public boolean getHunt(){
         return hunt;
     }
@@ -42,7 +42,5 @@ public class Hunter extends CharacterCard{
     @Override
     public String toString(){
         return "Hunter" + (getHunt() ? " [Hunt icon]" : "") + " | Era: " + getEra();
-
     }
-
 }

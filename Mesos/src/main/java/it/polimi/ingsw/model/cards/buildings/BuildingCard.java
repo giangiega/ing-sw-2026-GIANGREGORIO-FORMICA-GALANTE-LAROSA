@@ -14,10 +14,10 @@ public class BuildingCard extends Card {
     private BuildingEffect effect;
 
     /**
-     * constructor of this class
-     * @param era :era of this card
+     * Constructor of this class
+     * @param era : era of this card
      * @param baseFoodCost : food cost of this card
-     * @param basePrestigePoints :prestige points awarded by this card
+     * @param basePrestigePoints : prestige points awarded by this card
      * @param effect : effect of this card
      */
     public BuildingCard(EraEnum era, int baseFoodCost, int basePrestigePoints, BuildingEffect effect) {
@@ -36,17 +36,19 @@ public class BuildingCard extends Card {
     }
 
     /**
-     * @return the base amount of prestiege points awarded by the building at the end of the game
+     * @return the base amount of prestige points awarded by the building at the end of the game
      */
     public int getBasePP() {
         return basePrestigePoints;
     }
+
     /**
      * @return the effect of the building
      */
     public BuildingEffect getEffect(){
         return effect;
     }
+
     /**
      * @param p : player who has this building card
      * @return the real amount of food needed to actually buy the building: each hunter lowers its cost
@@ -62,14 +64,7 @@ public class BuildingCard extends Card {
             return 0;
         }
     }
-    /**
-     *This method applies the building effect when it's just been acquired by the player
-     * @param p : player who has this building card
-     * @param b
-     */
-    public void applyEffect(Player p, Board b){
-        effect.applyOnCardAdded(p, b);
-    }
+
     /**
      * This method prints out the building information
      */
