@@ -13,7 +13,7 @@ import it.polimi.ingsw.model.cards.tribe.TribeCard;
 import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.userInterface.ViewInterface;
 
-import javax.swing.text.View;
+
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -60,7 +60,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     /**
      * @param view : concrete view (GUI or TUI) to notify
      * @throws IOException if the registry lookup or initial remote call fails
-     * @throws RemoteException
+     * @throws RemoteException thrown exception
      */
     public void connect(ViewInterface view) throws IOException {
         this.view = view;
@@ -72,7 +72,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      * (Ri)Connects to the RMI server and wires up the full client stack: by
      * looking up the VirtualServer stub in the registry.
      * It also creates the ClientViewRMI and injects it into the view via
-     * ViewInterface.init()so that the view can send operations.
+     * ViewInterface.init() so that the view can send operations.
      */
     public void doConnect() throws IOException {
         try {
@@ -95,7 +95,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * This method starts a periodic ping loop.  If any ping call throws a
+     * This method starts a periodic ping loop. If any ping call throws a
      * RemoteException the connection is considered lost: the heartbeat
      * is stopped, the view is notified, and a reconnection retry loop begins.
      */
@@ -103,7 +103,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         stopHeartbeat();
         heartbeat = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread t = new Thread(r, "rmi-heartbeat");
-            t.setDaemon(true); // must not prevent JVM shutdown
+            t.setDaemon(true);
             return t;
         });
         heartbeat.scheduleAtFixedRate(() -> {
@@ -164,7 +164,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     /**
      * @param isFirst : for the first player it has to ask how many players will be needed to play a game
-     * @throws RemoteException
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onAck(boolean isFirst) throws RemoteException {
@@ -175,19 +175,13 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         else view.getUIDispatcher().accept(() -> view.askLogin());
     }
 
+
     /**
-     * @param result
-     * @param name
-     * @param color
-     * @param lobbyPlayers
-     * @throws RemoteException
-     */
-    /**
-     * @param result
-     * @param name
-     * @param color
-     * @param lobbyPlayers
-     * @throws RemoteException
+     * @param result logged result
+     * @param name player's name
+     * @param color player totem's color
+     * @param lobbyPlayers all player's in lobby
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onLogged(boolean result, String name, String color,
@@ -208,13 +202,13 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param offerTrack
-     * @param tile
-     * @param upperRow
-     * @param lowerRow
-     * @param buildingUpperRow
-     * @param buildingLowerRow
-     * @throws RemoteException
+     * @param offerTrack current offertrack
+     * @param tile player's tile
+     * @param upperRow upper row
+     * @param lowerRow lower row
+     * @param buildingUpperRow buildingUpperRow
+     * @param buildingLowerRow buildingLowerRow
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onGameStarted(List<OfferTile> offerTrack, TurnOrderTile tile,
@@ -228,15 +222,15 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param upperCount
-     * @param lowerCount
-     * @param cardsUpper
-     * @param cardsLower
-     * @param upperRow
-     * @param lowerRow
-     * @param buildingUpperRow
-     * @param buildingLowerRow
-     * @throws RemoteException
+     * @param upperCount number of selected card from upper rows
+     * @param lowerCount number of selected card from lower rows
+     * @param cardsUpper number of selected building from upper rows
+     * @param cardsLower number of selected building from lower rows
+     * @param upperRow tribe cards from upper row
+     * @param lowerRow tribe cards from lower row
+     * @param buildingUpperRow building cards from upper row
+     * @param buildingLowerRow building card from lower row
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onSelectCard(int upperCount, int lowerCount, int cardsUpper, int cardsLower,
@@ -249,8 +243,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param freeSlots
-     * @throws RemoteException
+     * @param freeSlots lists of free tribe cards
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onMoveTotem(List<Character> freeSlots) throws RemoteException {
@@ -258,11 +252,11 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param upperRow
-     * @param lowerRow
-     * @param buildingUpperRow
-     * @param buildingLowerRow
-     * @throws RemoteException
+     * @param upperRow tribe cards from upper row
+     * @param lowerRow tribe cards from lower row
+     * @param buildingUpperRow building from upper row
+     * @param buildingLowerRow building from lower row
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onUpdateBoard(List<TribeCard> upperRow, List<TribeCard> lowerRow,
@@ -272,10 +266,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param names
-     * @param foods
-     * @param pps
-     * @throws RemoteException
+     * @param names player's names
+     * @param foods player's food
+     * @param pps player's pp
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onUpdateAllPlayers(List<String> names, List<Integer> foods,
@@ -286,9 +280,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param offerTrack
-     * @param turnOrderTile
-     * @throws RemoteException
+     * @param offerTrack offerTrack
+     * @param turnOrderTile turnOrderTile
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onUpdateOfferTrack(List<OfferTile> offerTrack,
@@ -298,8 +292,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param currentRound
-     * @throws RemoteException
+     * @param currentRound current round
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onUpdateRound(int currentRound) throws RemoteException {
@@ -307,11 +301,11 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param upperRow
-     * @param lowerRow
-     * @param buildingUpperRow
-     * @param buildingLowerRow
-     * @throws RemoteException
+     * @param upperRow tribe upperRow
+     * @param lowerRow tribe lowerRow
+     * @param buildingUpperRow building upper row
+     * @param buildingLowerRow building lower row
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onUpdateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
@@ -321,8 +315,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param tribe
-     * @throws RemoteException
+     * @param tribe player's tribe made of lists of character with the same type
+     * @param buildings list of buildings
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onValidCards(Map<CharacterEnum, List<CharacterCard>> tribe,List<BuildingCard> buildings) throws RemoteException {
@@ -330,8 +325,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param message
-     * @throws RemoteException
+     * @param message thrown message
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onInvalidChoice(String message) throws RemoteException {
@@ -339,9 +334,11 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param winners
-     * @param finalScores
-     * @throws RemoteException
+     * @param winners winner's name
+     * @param finalScores final scores for each player
+     * @param ranking leaderboard ranking
+     * @param playersPosition leaderboard player's position
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onEndGame(List<String> winners, Map<String, Integer> finalScores, List<RankingRow> ranking, Map<String, Integer> playersPosition) throws RemoteException {
@@ -350,9 +347,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param names
-     * @param tribes
-     * @throws RemoteException
+     * @param names players' names
+     * @param tribes player's cards, both tribes and buildings
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onUpdateAllTribes(List<String> names,
@@ -362,8 +359,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param playerName
-     * @throws RemoteException
+     * @param playerName disconnecting player's name
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onPlayerDisconnected(String playerName) throws RemoteException {
@@ -371,8 +368,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @param playerName
-     * @throws RemoteException
+     * @param playerName reconnecting player's name
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onPlayerReconnected(String playerName) throws RemoteException {
@@ -381,7 +378,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     /**
      * @param timeoutSeconds seconds before the remaining player is declared winner.
-     * @throws RemoteException
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onGameSuspended(int timeoutSeconds) throws RemoteException {
@@ -389,7 +386,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     /**
-     * @throws RemoteException
+     * @throws RemoteException thrown exception
      */
     @Override
     public void onGameResumed() throws RemoteException {

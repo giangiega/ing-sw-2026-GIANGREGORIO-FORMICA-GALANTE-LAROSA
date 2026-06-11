@@ -37,7 +37,7 @@ public class GsonFactory {
     }
 
     /**
-     * @return :new Gson instance ready to receive events
+     * @return :new Gson instance
      */
     public static Gson serverEventGson(){
         RuntimeTypeAdapterFactory<ServerEvent> serverEventFactory =

@@ -3,7 +3,7 @@
  */
 package it.polimi.ingsw.network.socket;
 
-import it.polimi.ingsw.userInterface.TUIView;
+
 import it.polimi.ingsw.userInterface.ViewInterface;
 
 import java.io.BufferedReader;
@@ -12,8 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 
 
 public class SocketClient {
@@ -86,8 +85,6 @@ public class SocketClient {
                     try {
                         view.resetInputState();
                         doConnect();
-                        // Connection re-established: ask the player to re-enter credentials
-                        // view.getUIDispatcher().accept(view::askLogin); ERROR, it calls AckEvent two times for every client
                         return;
                     } catch (IOException e) {
                         System.err.println("[SocketClient] reconnect failed: " + e.getMessage());

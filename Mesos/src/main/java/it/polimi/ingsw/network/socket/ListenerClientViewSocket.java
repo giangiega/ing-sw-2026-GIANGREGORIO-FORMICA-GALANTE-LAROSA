@@ -26,7 +26,7 @@ public class ListenerClientViewSocket implements Runnable {
      * @param in : reading channel
      * @param view : view
      * @param uiDispatcher : dispatch for UI: Runnable for TUI
-     * @param onServerLost  callback invoked whenever the server connection drops;
+     * @param onServerLost : callback invoked whenever the server connection drops;
      * provided by SocketClient as a reconnection trigger
      */
     public ListenerClientViewSocket(BufferedReader in, ViewInterface view, Consumer<Runnable> uiDispatcher, Runnable onServerLost){
@@ -50,7 +50,7 @@ public class ListenerClientViewSocket implements Runnable {
     }
 
     /**
-     * @param json : JSON string received form server
+     * @param json JSON string received form server
      * This method deserializes il JSON in a ServerEvent, then gives the execution to
      * the UI thread thanks to the dispatcher.
      * The try-catch on JsonSyntaxExecption prevents the killing of the  listener
@@ -78,7 +78,7 @@ public class ListenerClientViewSocket implements Runnable {
     }
 
     /**
-     * @param e : thrown exception
+     * @param e  thrown exception
      * It shows that the connection was lost
      * This method is called when the socket throws an IOException mid-stream.
      * Notifies the view and triggers reconnection.

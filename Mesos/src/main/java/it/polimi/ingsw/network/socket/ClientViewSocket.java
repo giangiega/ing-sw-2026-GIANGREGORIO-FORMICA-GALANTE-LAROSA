@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import it.polimi.ingsw.network.ClientSender;
 import it.polimi.ingsw.network.clientInterface.ClientOperation;
 import java.io.PrintWriter;
+
 public class ClientViewSocket implements ClientSender {
 
     private final PrintWriter out;

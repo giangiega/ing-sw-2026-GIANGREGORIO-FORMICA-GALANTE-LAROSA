@@ -6,26 +6,22 @@ import it.polimi.ingsw.persistence.SavedGameState;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Scanner;
+
 
 public class ServerApp {
     /**
      * @author Ric
      * @param args
-     * this class take the information about numPLayers to create Server, before than players login
-     * UPDATE : it creates both RMI and Socket Servers so players can choose both at the same time
+     * this class take the information about numPLayers to create Server, before than players login;
+     * It creates both RMI and Socket Servers so players can choose both at the same time
      */
     public static void main(String[] args) {
         int socketPort = Integer.parseInt(args[0]);
-        int rmiPort    = Integer.parseInt(args[1]);
-       /* String ip = args[2];
-        System.setProperty("java.rmi.server.hostname", ip);*/
+        int rmiPort = Integer.parseInt(args[1]);
 
         // reset useful for first player at the first run or recovery
         ServerClass.connected = 0;
         ServerClass.pendingSave = null;
-
-        PersistenceManager.clear(); // use this line if you want to cancel previous game (testing)
 
         try {
             SavedGameState save = PersistenceManager.load();

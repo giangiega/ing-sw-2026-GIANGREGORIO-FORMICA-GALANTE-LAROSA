@@ -26,7 +26,7 @@ public class RmiClientManager implements ClientConnection {
      * constructor, starts a separate thread for handling the correct parallel execution of
      * updateViewRmi between clients: as soon as there is an event to be sent for that client,
      * it is queued and sent by the thread dedicated to that client.
-     * @param client
+     * @param client client's view
      * @param onDisconnect : invoked when a RemoteException signals that the client can no longer
      *                       be reached
      */
@@ -37,10 +37,10 @@ public class RmiClientManager implements ClientConnection {
 
         // Thread that sends event
         this.queueThread = new Thread(this::processQueue, "rmi-queue-" + client.hashCode());
-        this.queueThread.setDaemon(true); // non blocca lo shutdown della JVM
+        this.queueThread.setDaemon(true); // doesn't block JVM shutdown
         this.queueThread.start();
 
-        // Heartbeat server→client: rileva crash anche a queue vuota
+        // Heartbeat server→client: also works with empty queue
         this.heartbeat = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread t = new Thread(r, "rmi-heartbeat-" + client.hashCode());
             t.setDaemon(true);
@@ -57,7 +57,7 @@ public class RmiClientManager implements ClientConnection {
      */
     private void pingClient() {
         try {
-            client.onPing(); // metodo leggero aggiunto a VirtualView
+            client.onPing();
         } catch (RemoteException e) {
             triggerDisconnect();
         }
@@ -66,7 +66,7 @@ public class RmiClientManager implements ClientConnection {
      * puts the ServerEvent in queue, the separate thread (processQueue) will resolve it,
      * this is to prevent the block of server (when is using RMI) after the GameController
      * calls broadcastEvent
-     * @param serverEvent
+     * @param serverEvent serverEvent to queue
      */
     @Override
     public void sendEvent(ServerEvent serverEvent){

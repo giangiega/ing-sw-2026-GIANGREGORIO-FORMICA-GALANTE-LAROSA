@@ -23,8 +23,8 @@ public class ClientManagerSocket implements ClientConnection {
     /**
      * constructor with a RuntimeTypeAdapterFactory used for building the correct json message
      * for a specific operation
-     * @param clientSocket
-     * @throws IOException
+     * @param clientSocket client's socket
+     * @throws IOException thrown exception
      */
     // autoFlush = true sends the message immediately after every println
     public ClientManagerSocket(Socket clientSocket) throws IOException {
@@ -33,8 +33,8 @@ public class ClientManagerSocket implements ClientConnection {
     }
 
     /**
-     * serialize a json message and send it to client to execute a specific operation
-     * @param serverEvent
+     * @param serverEvent server event to send
+     * This method serialize a json message and send it to client to execute a specific operation
      */
     public void sendEvent(ServerEvent serverEvent) {
         String jsonMessage = gson.toJson(serverEvent, ServerEvent.class);

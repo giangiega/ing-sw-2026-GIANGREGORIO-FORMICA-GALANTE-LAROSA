@@ -24,7 +24,7 @@ public class ClientViewRMI implements ClientSender {
     }
 
     /**
-     * @param operation : the action the player just performed
+     * @param operation the action the player just performed
      * Forwards the player's action to the server via RMI.
      * Any RemoteException is handled here
      */

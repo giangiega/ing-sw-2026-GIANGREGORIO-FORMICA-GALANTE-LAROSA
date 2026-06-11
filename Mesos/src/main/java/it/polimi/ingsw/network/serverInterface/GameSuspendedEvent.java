@@ -16,7 +16,7 @@ public class GameSuspendedEvent implements ServerEvent {
     private final int timeoutSeconds;
 
     /**
-     * @param timeoutSeconds : amount of seconds to spent waiting
+     * @param timeoutSeconds : amount of seconds to spend waiting
      * Constructor of this class: it assigns the amount of seconds spent waiting
      */
     public GameSuspendedEvent(int timeoutSeconds) {

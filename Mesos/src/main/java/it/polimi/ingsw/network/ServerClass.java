@@ -5,7 +5,6 @@ import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.persistence.SavedGameState;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

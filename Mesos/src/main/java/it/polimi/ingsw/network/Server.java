@@ -12,7 +12,7 @@ import java.net.Socket;
 
 /**
  * @author Ale
- * this class accepts clients' requests of connection to the server after specifying a numPlayers
+ * This class accepts clients' requests of connection to the server after specifying a numPlayers
  * for the game
  */
 
@@ -25,9 +25,9 @@ public class Server extends ServerClass{
     }
 
     /**
-     * accept clients' requests of connection to server, creates a ClientManagerSocket and a
+     * This method accept clients' requests of connection to server, creates a ClientManagerSocket and a
      * ListenerClientManagerSocket for each client, then starts the client's listener
-     * @param port
+     * @param port client's port
      */
     public void startListening(int port) {
         // Recovery: setServer was never called since NumPlayersOperation is skipped
@@ -124,12 +124,12 @@ public class Server extends ServerClass{
             synchronized (ServerClass.clientManagers) {
                 if (!ServerClass.clientManagers.isEmpty()) {
                     if (wasMaster) {
-                        // Troviamo il giocatore rimasto con l'ID più basso e lo promuoviamo
+                        // Finding next player with most low ID, then promote him
                         int nextMasterId = java.util.Collections.min(ServerClass.clientManagers.keySet());
                         ClientConnection nextMaster = ServerClass.clientManagers.get(nextMasterId);
 
                         if (nextMaster != null) {
-                            // Gli mandiamo TRUE per sbloccargli la schermata del numero giocatori
+                            // Sending true to unlock numPlayers window
                             nextMaster.sendEvent(new AckEvent(true));
                         }
                     }

@@ -9,9 +9,9 @@ public interface ServerEvent {
     public void updateView(ViewInterface view);
 
     /**
-     * this method calls the right rmi remote method of RmiClient based on the type of ServerEvent
+     * This method calls the right rmi remote method of RmiClient based on the type of ServerEvent
      * @param client: is a RmiClient
-     * @throws RemoteException
+     * @throws RemoteException Exception thrown by RMI protocol
      */
     public void updateViewRmi(VirtualView client) throws RemoteException;
 }

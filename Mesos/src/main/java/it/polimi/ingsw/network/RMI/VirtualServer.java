@@ -21,7 +21,7 @@ public interface VirtualServer extends Remote {
                     List<Integer> upperBuildings, List<Integer> lowerBuildings) throws RemoteException;
     /**
      * @author Giuse
-     * @param client : the calling client stub, used to identify the sender
+     * @param client  the calling client stub, used to identify the sender
      * This method is ì called periodically by RmiClient.
      * If this throws a RemoteException the connection is considered lost.
      */

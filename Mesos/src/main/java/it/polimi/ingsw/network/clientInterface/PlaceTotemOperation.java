@@ -22,7 +22,7 @@ public class PlaceTotemOperation implements ClientOperation {
      * @author Giuse
      * @param server : RMI server
      * @param client : RMI client
-     * @throws RemoteException
+     * @throws RemoteException thrown exception
      * This method send the "operation" placeTotem thanks to the RMI protocol
      */
     @Override

@@ -30,7 +30,7 @@ public class ChooseCardOperation implements ClientOperation {
      * @author Giuse
      * @param server : RMI server
      * @param client : RMI client
-     * @throws RemoteException
+     * @throws RemoteException thrown exception
      * This method send the "operation" chooseCard thanks to the RMI protocol
      */
     @Override

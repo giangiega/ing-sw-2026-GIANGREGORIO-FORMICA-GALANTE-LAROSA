@@ -11,7 +11,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,9 +59,8 @@ public class RmiServer extends ServerClass implements VirtualServer {
     }
 
     /**
-     *
-     * @param droppedCm
-     * @param id
+     * @param droppedCm Rmi manager for the dropping player
+     * @param id id
      */
     private void handleClientDrop(RmiClientManager droppedCm, int id) {
         String name = droppedCm != null ? droppedCm.getPlayerName() : null;
@@ -109,8 +107,8 @@ public class RmiServer extends ServerClass implements VirtualServer {
     /**
      * RmiClient calls this method to "complete" (add him to server's client list)
      * the connection with server
-     * @param client
-     * @throws RemoteException
+     * @param client client's view
+     * @throws RemoteException thrown exception
      */
     @Override
     public synchronized void connect(VirtualView client) throws RemoteException {
@@ -132,7 +130,6 @@ public class RmiServer extends ServerClass implements VirtualServer {
         RmiClientManager cm = new RmiClientManager(client, () -> {
             RmiClientManager self = cmRef.get();
             handleClientDrop(self, id);
-            //handleDisconnection(self != null ? self.getPlayerName() : null);
         });
 
         synchronized (ServerClass.clientManagers) {

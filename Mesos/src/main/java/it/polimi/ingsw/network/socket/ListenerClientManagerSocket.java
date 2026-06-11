@@ -22,11 +22,11 @@ public class ListenerClientManagerSocket {
     private final Gson gson;
 
     /**
-     * constructor with a RuntimeTypeAdapterFactory used for creating the correct class
+     * Constructor with a RuntimeTypeAdapterFactory used for creating the correct class
      * of a specific operation
-     * @param clientSocket
-     * @param clientManagerSocket
-     * @throws IOException
+     * @param clientSocket client's socket
+     * @param clientManagerSocket client's manager
+     * @throws IOException thrown exception
      */
     public ListenerClientManagerSocket(Server server, Socket clientSocket, ClientManagerSocket clientManagerSocket) throws IOException {
         this.server = server;
@@ -36,8 +36,8 @@ public class ListenerClientManagerSocket {
     }
 
     /**
-     * reads the input buffer and creates the correct operation class based on the json message
-     * @throws IOException
+     * @throws IOException thrown exception
+     * This method reads the input buffer and creates the correct operation class based on the json message
      */
     public void startClientListener() throws IOException {
         try{
