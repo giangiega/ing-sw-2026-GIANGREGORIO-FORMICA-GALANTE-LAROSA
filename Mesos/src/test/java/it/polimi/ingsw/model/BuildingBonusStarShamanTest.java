@@ -1,7 +1,8 @@
-package it.polimi.ingsw.model;
 /**
  * @author Giuse
  */
+package it.polimi.ingsw.model;
+
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.exceptions.InvalidPlayerActionException;
@@ -45,7 +46,7 @@ public class BuildingBonusStarShamanTest {
         assertTrue(player.getEffectiveStars() == starsAfterFirst,
                 "The building should have given no extra stars to the player");
     }
-    @Test//Checking to see if other applymethod modify something
+    @Test//Checking to see if other applyMethod modify something
     void otherApply_noChange (){
         int ppBefore = player.getPP();
         int foodBefore = player.getFood();

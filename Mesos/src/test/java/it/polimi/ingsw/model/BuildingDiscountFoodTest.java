@@ -1,7 +1,8 @@
-package it.polimi.ingsw.model;
 /**
  * @author Giuse
  */
+package it.polimi.ingsw.model;
+
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;

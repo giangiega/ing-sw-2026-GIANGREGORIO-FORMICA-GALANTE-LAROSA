@@ -36,7 +36,7 @@ public class GameTest {
     private List<Integer> indexUpperBuildingsChosen = new ArrayList<>();
     private List<Integer> indexLowerBuildingsChosen = new ArrayList<>();
 
-    //da testare anche con numPlayers 3,4,5
+
     @BeforeEach
     void setUp(){
         config = GameConfig.create(3);

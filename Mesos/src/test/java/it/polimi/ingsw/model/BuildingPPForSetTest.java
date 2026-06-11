@@ -1,7 +1,8 @@
-package it.polimi.ingsw.model;
 /**
  * @author Giuse
  */
+package it.polimi.ingsw.model;
+
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.enums.IconEnum;
@@ -74,7 +75,7 @@ public class BuildingPPForSetTest {
     }
     @Test//Checking to see if the building gives the player any prestige points if he has just one incomplete set
     void incompleteSet() {
-        // Solo 5 tipi su 6
+        // Only 5 out of 6
         new Hunter(EraEnum.I, 0, false).AddToPlayerTribe(player, board);
         new Artist(EraEnum.I, 0).AddToPlayerTribe(player, board);
         new Builder(EraEnum.I, 0, 0, 0).AddToPlayerTribe(player, board);

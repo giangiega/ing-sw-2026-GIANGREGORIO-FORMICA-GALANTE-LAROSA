@@ -1,7 +1,8 @@
-package it.polimi.ingsw.model;
 /**
  * @author Giuse
  */
+package it.polimi.ingsw.model;
+
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
@@ -131,7 +132,7 @@ public class BuildingCardUpperRowTest {
         List<BuildingCard> upper = board.getBuildingUpperRow();
         if (upper.isEmpty()) return;
         BuildingCard target = upper.get(0);
-        if (target.getCost(player) == 0) return; // skip se gratis
+        if (target.getCost(player) == 0) return; // skip if free
 
         while (player.getFood() > 0) player.payFood(1);
 
@@ -183,7 +184,7 @@ public class BuildingCardUpperRowTest {
     void applyEndTurn_eventCardChosen_throwsException() {
         List<TribeCard> upper = board.getUpperRow();
         int eventIndex = findFirstEventIndex(upper);
-        if (eventIndex == -1) return; // nessun evento in fila: skip
+        if (eventIndex == -1) return; // nno events in queue: skip
 
         effect.setChoice(eventIndex, false);
         assertThrows(InvalidPlayerActionException.class,

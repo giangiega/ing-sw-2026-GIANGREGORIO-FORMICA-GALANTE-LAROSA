@@ -120,7 +120,7 @@ public class TurnControllerTest {
         TurnOrderTile turnOrderTile = gc.getGame().getBoard().getTurnOrderTile();
         List<OfferTile> track = gc.getGame().getBoard().getOfferTrack();
 
-        // Salviamo la lista in una variabile per evitare che le chiamate dinamiche causino IndexOutOfBounds
+        // Saving list in a local variable to avoid dynamic calls which can cause IndexOutOfBounds
         List<Player> slots = turnOrderTile.getSlots();
         List<OfferTile> freeTiles = getFreeTiles(track);
 

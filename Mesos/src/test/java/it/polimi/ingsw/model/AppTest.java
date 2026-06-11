@@ -29,7 +29,7 @@ public class AppTest
     }
 
     /**
-     * Rigourous Test :-)
+     * Great testing
      */
     public void testApp()
     {

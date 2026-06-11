@@ -1,7 +1,8 @@
-package it.polimi.ingsw.model;
 /**
  * @author Giuse
  */
+package it.polimi.ingsw.model;
+
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.enums.IconEnum;
@@ -32,7 +33,7 @@ public class BuildingCardTest {
                 cf.buildBuildingDeck(EraEnum.III, config));
         player = new Player("TestPlayer", ColorEnum.BLUE);
     }
-    @Test//Checking to see if the getter  getBaseFC is okay
+    @Test//Checking to see if the getter getBaseFC is okay
     void getBaseFC_returnsBaseFoodCost() {
         assertEquals(4, new BuildingCard(EraEnum.I, 4, 3, new BuildingFinal25PP()).getBaseFC());
     }
@@ -72,10 +73,10 @@ public class BuildingCardTest {
         BuildingFoodSet effect = new BuildingFoodSet();
         BuildingCard card = new BuildingCard(EraEnum.I, 0, 0, effect);
 
-        // Passo 1: addBuildingCard chiama applyEffect → acquisizione (baseline = 0)
+        // 1: addBuildingCard calls applyEffect --> acquisition (baseline = 0)
         player.addBuildingCard(card);
 
-        // Passo 2: aggiungiamo i primi 5 tipi senza completare il set
+        // 2: adding first 5 type without completing the set
         player.addCharacterCard(new Hunter(EraEnum.I, 2, false), board);
         player.addCharacterCard(new Artist(EraEnum.I, 2), board);
         player.addCharacterCard(new Builder(EraEnum.I, 2, 3, 2), board);
@@ -84,9 +85,9 @@ public class BuildingCardTest {
 
         int foodBefore = player.getFood();
 
-        // Passo 3: il Gatherer completa il set → addCharacterCard notifica il building
-        // → BuildingFoodSet.applyOnCardAdded rileva completedSetsCount passato da 0 a 1
-        // → il building dà 5 cibo
+        // 3: Gatherer completes the set --> addCharacterCard notify the building
+        // --> BuildingFoodSet.applyOnCardAdded catches completedSetsCount: from 0 to 1
+        // --> building gives 5 food
         player.addCharacterCard(new Gatherer(EraEnum.I, 2), board);
 
         assertEquals(foodBefore + 5, player.getFood(),

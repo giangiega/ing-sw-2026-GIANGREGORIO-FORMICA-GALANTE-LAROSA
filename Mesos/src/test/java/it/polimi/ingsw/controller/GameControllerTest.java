@@ -1,15 +1,11 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.database.DatabaseManager;
+
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
 import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.network.ClientConnection;
-import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.network.serverInterface.GameStartedEvent;
-import it.polimi.ingsw.network.serverInterface.UpdateOfferTrackEvent;
-import it.polimi.ingsw.network.serverInterface.UpdateRoundEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.*;
@@ -74,16 +70,16 @@ public class GameControllerTest {
         assertFalse(gc.getGame().getBoard().getOfferTrack().isEmpty());
 
         assertTrue(cmP1.received("GameStartedEvent"),
-                "player 1 deve riceve GameStartedEvent");
+                "player 1 should receive GameStartedEvent");
         assertTrue(cmP2.received("GameStartedEvent"),
-                "player 2 deve ricevere GameStartedEvent");
+                "player 2 should receive GameStartedEvent");
         assertTrue(cmP3.received("GameStartedEvent"),
-                "player 3 deve ricevere GameStartedEvent");
+                "player 3 should receive GameStartedEvent");
         boolean p1GotMove = cmP1.received("MoveTotemEvent");
         boolean p2GotMove = cmP2.received("MoveTotemEvent");
         boolean p3GotMove = cmP2.received("MoveTotemEvent");
         assertTrue(p1GotMove || p2GotMove || p3GotMove,
-                "Almeno un giocatore deve ricevere MoveTotemEvent all'inizio");
+                "One player should receive MoveTotemEvent at the start of the game");
     }
 
    @Test
@@ -118,13 +114,13 @@ public class GameControllerTest {
         assertEquals(2, gc.getConnectedPlayersCount());
 
         assertTrue(cmP2.received("PlayerDisconnectedEvent"),
-                "Ric deve ricevere PlayerDisconnectedEvent");
+                "Ric should receive PlayerDisconnectedEvent");
         assertTrue(cmP3.received("PlayerDisconnectedEvent"),
-                "Dan deve ricevere PlayerDisconnectedEvent");
+                "Dan should receive PlayerDisconnectedEvent");
 
         assertTrue(eventBeforeAleDisconnection == cmP1.eventCount());
         assertTrue(cmP1.countOf("PlayerDisconnectedEvent") == 0,
-                "Alice non deve ricevere il proprio PlayerDisconnectedEvent");
+                "Alice shouldn't receive PlayerDisconnectedEvent");
 
         //disconnectedBefore-1 because Ale disconnected
         assertEquals(disconnectedBefore+1, gc.getDisconnectedPlayers().size());
@@ -136,7 +132,7 @@ public class GameControllerTest {
         cmP3.clearEvents();
         gc.handleDisconnection("Ric"); //only Dan is in game
         assertTrue(cmP3.received("GameSuspendedEvent"),
-                "Dan deve ricevere GameSuspendedEvent quando rimane solo");
+                "Dan should receive GameSuspendedEvent when it becomes the only player left");
     }
 
     @Test
@@ -148,11 +144,11 @@ public class GameControllerTest {
         assertFalse(gc.getDisconnectedPlayers().contains("Ale"));
         assertTrue(newCm.received("UpdateRoundEvent") ||
                         newCm.received("UpdateOfferTrackEvent"),
-                "La nuova connessione deve ricevere lo stato aggiornato del gioco");
+                "New connection should receive updated state of the game");
 
         newCm.clearEvents();
         assertTrue(newCm.eventCount() == 0,
-                "Una connessione non disconnessa non deve ricevere eventi da handleReconnection");
+                "An ok connection shouldn't receive events from handleReconnection");
 
         gc.handleDisconnection("Ale");
         assertEquals(2, gc.getConnectedPlayersCount());
@@ -166,7 +162,7 @@ public class GameControllerTest {
         newCm.clearEvents();
         gc.handleReconnection("Ale", newCm);
         assertTrue(cmP2.received("PlayerReconnectedEvent"),
-                "Ric deve ricevere PlayerReconnectedEvent quando Ale torna");
+                "Ric should receive PlayerReconnectedEvent when Ale reconnect");
     }
 
     @Test

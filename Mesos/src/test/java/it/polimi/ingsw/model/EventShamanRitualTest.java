@@ -1,7 +1,8 @@
-package it.polimi.ingsw.model;
 /**
  * @author Giuse
  */
+package it.polimi.ingsw.model;
+
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.model.boardAndTiles.Board;
@@ -33,14 +34,14 @@ class EventShamanRitualTest {
 
     /**
      * @param p : player
-     * @param stars : shaman's stars
+     * @param stars shaman's stars
      * This method adds a shaman with 'stars' stars. It basically sets the player's starCount
      */
     private void addStars(Player p, int stars) {
         new Shaman(EraEnum.I, 2, stars).AddToPlayerTribe(p, board);
     }
     /**
-     * @param p : player
+     * @param p  player
      * This method adds BuildingBonusDoubleShamanPP to the player's deck
      */
     private void addDoubleShamanBuilding(Player p) {

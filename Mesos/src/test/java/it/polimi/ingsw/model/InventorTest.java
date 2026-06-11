@@ -1,7 +1,8 @@
-package it.polimi.ingsw.model;
 /**
  * @author Giuse
  */
+package it.polimi.ingsw.model;
+
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
@@ -133,7 +134,7 @@ public class InventorTest {
     }
 
     @Test
-//Adding two inventora with a new IconType increments the counter twice
+//Adding two inventors with a new IconType increments the counter twice
     void testAddToPlayer_multipleNewInventors_twoIncrement() {
         int distinctAfterFirst = player.getDistinctInventorsIcon();
 
@@ -146,7 +147,7 @@ public class InventorTest {
 
 
     @Test
-//Adding mixed inventora with a mixed IconType
+//Adding mixed inventors with a mixed IconType
     void testAddToPlayer_mixedInventors() {
         new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);
         new Inventor(EraEnum.I, 2, IconEnum.POINTER).AddToPlayerTribe(player, board);

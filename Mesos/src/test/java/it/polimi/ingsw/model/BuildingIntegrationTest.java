@@ -1,7 +1,8 @@
-package it.polimi.ingsw.model;
 /**
  * @author Giuse
  */
+package it.polimi.ingsw.model;
+
 import it.polimi.ingsw.enums.CharacterEnum;
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
@@ -50,7 +51,7 @@ public class BuildingIntegrationTest {
         player = new Player("P1",  ColorEnum.BLUE);
         player2 = new Player("P2", ColorEnum.BLUE);
     }
-    // ── BuildingFoodSet: interazione con addBuildingCard e addCharacterCard ──
+    // BuildingFoodSet: interaction between addBuildingCard and addCharacterCard
     @Test//Checking to see if BuildingFoodSet gives any food on acquisition
     void buildingFoodSet_acquisitionViaAddBuildingCard_noImmediateFood() {
         BuildingCard card = new BuildingCard(EraEnum.I, 0, 0, new BuildingFoodSet());
@@ -79,7 +80,7 @@ public class BuildingIntegrationTest {
                 "BuildingFoodSet should give the player 5 food after the second set is completed");
     }
 
-    // ── BuildingBonusSameInventors: interazione con addCharacterCard ──────────
+    // BuildingBonusSameInventors: interaction with addCharacterCard
     @Test//Checking to see if BuildingBonusSameInventors gives any food on acquisition
     void buildingBonusSameInventors_acquisitionNoFood() {
         BuildingCard card = new BuildingCard(EraEnum.I, 0, 0, new BuildingBonusSameInventors());
@@ -249,7 +250,7 @@ public class BuildingIntegrationTest {
         assertEquals(3, target.getCost(player),
                 "The player should have lost only 3 food since he has a two food discount");
     }
-    @Test//BuildingCard.getCost  multiple discount works
+    @Test//BuildingCard.getCost multiple discount works
     void buildingCard_getCost_multipleBuilders() {
         new Builder(EraEnum.I, 2, 2, 0).AddToPlayerTribe(player, board);
         new Builder(EraEnum.I, 2, 1, 0).AddToPlayerTribe(player, board);

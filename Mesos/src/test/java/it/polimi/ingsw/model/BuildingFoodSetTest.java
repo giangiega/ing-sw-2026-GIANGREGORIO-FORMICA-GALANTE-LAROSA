@@ -1,7 +1,8 @@
-package it.polimi.ingsw.model;
 /**
  * @author Giuse
  */
+package it.polimi.ingsw.model;
+
 import it.polimi.ingsw.enums.ColorEnum;
 import it.polimi.ingsw.enums.EraEnum;
 import it.polimi.ingsw.enums.IconEnum;
@@ -100,7 +101,7 @@ public class BuildingFoodSetTest {
         assertEquals(foodBefore, player.getFood(),
                 "The player shouldn't have received any food since he hasn't completed any new set");
     }
-    @Test//Checking to see if other applymethods modify something
+    @Test//Checking to see if other applyMethod modify something
     void otherApply_noChange (){
         int ppBefore = player.getPP();
         int foodBefore = player.getFood();

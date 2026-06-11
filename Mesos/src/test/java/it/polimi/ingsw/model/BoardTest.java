@@ -25,7 +25,7 @@ class BoardTest{
     private BuildingDeck buildingDeckEra2;
     private BuildingDeck buildingDeckEra3;
 
-    //da testare anche con numPlayers 3,4,5
+
     @BeforeEach
     void setUp(){
         config = GameConfig.create(2);
@@ -43,14 +43,14 @@ class BoardTest{
             if(board.getLowerRow().get(i) instanceof CharacterCard) numCharacterLowerRow++;
         }
         assertEquals(config.getLowerRowSize(), numCharacterLowerRow,
-                "la riga sotto della board dovrebbe avere la size prevista dal config, e le carte devono essere tutte personaggio");
+                "Lower row should have the correct size based on the config, and should be made of character cards");
         assertEquals(config.getUpperRowSize(), board.getUpperRow().size(),
-                "la riga sopra della board deve avere la size prevista dal config");
+                "Upper row board should have the correct size based on the config");
         assertFalse(board.getBuildingUpperRow().isEmpty());
         assertTrue(board.getBuildingDeckEra1().isEmpty());
     }
 
-    //da testare anche per passaggio da era II a III
+
     @Test
     void testCheckEraSwitch(){
         List<BuildingCard> upperBefore = new ArrayList<>(board.getBuildingUpperRow());
