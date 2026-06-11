@@ -9,9 +9,9 @@ import java.nio.file.*;
 /**
  * Handles atomic persistence of SavedGameState.
  * Usage:
- *   PersistenceManager.save(state)   — called by GameController after endRound()
- *   PersistenceManager.load()        — called by ServerApp on startup
- *   PersistenceManager.clear()       — called by GameController in endGame()
+ *   PersistenceManager.save(state) gets called by GameController after endRound()
+ *   PersistenceManager.load() gets called by ServerApp on startup
+ *   PersistenceManager.clear() gets called by GameController in endGame()
  */
 public class PersistenceManager {
 
@@ -21,12 +21,11 @@ public class PersistenceManager {
     private PersistenceManager() {}
 
     /**
-     * Serializes SavedGameState using a .tmp file.
-     * Then it does an atomic move to the .json file.
-     * In this way I'm sure that the copy of the Game is complete and not corrupted.
-     *
      * @param state the current game state to persist
      * @throws IOException if the file cannot be written
+     * This method serializes SavedGameState using a .tmp file.
+     * Then it does an atomic move to the .json file.
+     * In this way I'm sure that the copy of the Game is complete and not corrupted.
      */
     public static void save(SavedGameState state) throws IOException {
         Gson gson = GsonFactory.persistenceGson();
@@ -44,11 +43,11 @@ public class PersistenceManager {
     }
 
     /**
-     * Loads and deserializes the saved game state from disk.
+     * @throws IOException if the file exists but cannot be read or parsed
+     * @return the deserialized SavedGameState, or null if no save file is found
+     * This method loads and deserializes the saved game state from disk.
      * Returns null if no save file exists (normal first-run scenario).
      *
-     * @return the deserialized SavedGameState, or null if no save file is found
-     * @throws IOException if the file exists but cannot be read or parsed
      */
     public static SavedGameState load() throws IOException {
         Path savePath = Paths.get(SAVE_FILE);
@@ -63,7 +62,7 @@ public class PersistenceManager {
     }
 
     /**
-     * Deletes the save file from disk.
+     * This method deletes the save file from disk.
      * Must be called in endGame()
      */
     public static void clear() {

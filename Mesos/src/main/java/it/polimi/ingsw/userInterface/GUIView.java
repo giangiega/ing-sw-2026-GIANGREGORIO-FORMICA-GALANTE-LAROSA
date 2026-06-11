@@ -252,7 +252,7 @@ public class GUIView implements ViewInterface {
         String name = nameField.getText().trim();
         Toggle selectedColor = colorGroup.getSelectedToggle();
 
-        // Validazione
+        // Validation
         if (name.isEmpty()) {
             showToast("Please insert your name");
             return;
@@ -278,7 +278,7 @@ public class GUIView implements ViewInterface {
         this.myName = name;
         ColorEnum color = (ColorEnum) selectedColor.getUserData();
         sender.sendOperation(new LoginOperation(name, color));
-        // Dopo l'invio, il server risponderà con LoggedEvent → showLobby()
+        //After sendOperation, server will answer with a LoggedEvent → showLobby()
     }
 
     @Override
@@ -330,14 +330,14 @@ public class GUIView implements ViewInterface {
     }
 
     private void buildGameScene(){
-        // ── BACKGROUND ──────────────────────────────────────────────
+        //**********BACKGROUND**********//
         var bgUrl = getClass().getResource("/images/screen/background.png");
         ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
         background.setPreserveRatio(false);
         background.fitWidthProperty().bind(primaryStage.widthProperty());
         background.fitHeightProperty().bind(primaryStage.heightProperty());
 
-        // ── RIGHE CARTE ─────────────────────────────────────────────
+        //**********CARD ROWS**********//
         upperRowPane = new HBox(12);
         upperRowPane.setAlignment(Pos.CENTER_LEFT);
 
@@ -357,12 +357,12 @@ public class GUIView implements ViewInterface {
         HBox lowerRow = new HBox(20,lowerRowPane, buildingLowerPane);
         lowerRow.setAlignment(Pos.BOTTOM_CENTER);
 
-        // ── OFFER TRACK ─────────────────────────────────────────────
+        //**********OFFER TRACK**********//
         offerTrackPane = new HBox(14);
         offerTrackPane.setAlignment(Pos.CENTER);
         offerTrackPane.setPadding(new Insets(10));
 
-        // ── TURN ORDER ──────────────────────────────────────────────
+        //**********TURN ORDER**********//
         turnOrderPane = new VBox(8);
         turnOrderPane.setAlignment(Pos.CENTER);
         turnOrderPane.setPadding(new Insets(10, 16, 10, 16));
@@ -378,12 +378,12 @@ public class GUIView implements ViewInterface {
         VBox turnOrderSection = new VBox(6, turnOrderTitle, turnOrderPane);
         turnOrderSection.setAlignment(Pos.CENTER);
 
-        // ── RIGA CENTRALE: turn order + offer track ──────────────────
+        //**********MIDDLE ROW: turn order + offer track**********//
         HBox middleRow = new HBox(30, turnOrderSection, offerTrackPane);
         middleRow.setAlignment(Pos.CENTER);
         middleRow.setPadding(new Insets(8, 0, 8, 0));
 
-        // ── SEZIONE PROPRIA TRIBÙ ────────────────────────────────────
+        //**********PLAYER'S TRIBE SECTION**********//
         ownTribePane = new HBox(16);
         ownTribePane.setAlignment(Pos.CENTER_LEFT);
         ownTribePane.setPadding(new Insets(8));
@@ -408,14 +408,14 @@ public class GUIView implements ViewInterface {
                 "-fx-background-color: rgba(0,0,0,0.35); -fx-background-radius: 8;"
         );
 
-        // ── ACCORDION TRIBÙ ALTRI GIOCATORI ──────────────────────────
+        //**********ACCORDION OTHER'S PLAYER TRIBE**********//
         otherTribesAccordion = new Accordion();
         otherTribesAccordion.setStyle("-fx-background-color: transparent;");
 
         VBox tribeArea = new VBox(8, ownTribeSection, otherTribesAccordion);
         tribeArea.setPadding(new Insets(8, 0, 0, 0));
 
-        // ── CARD AREA COMPLETA ───────────────────────────────────────
+        //**********COMPLETED CARD AREA**********//
         VBox cardArea = new VBox(16, topRow, middleRow, lowerRow, tribeArea);
         cardArea.setAlignment(Pos.CENTER);
         cardArea.setPadding(new Insets(20));
@@ -428,7 +428,7 @@ public class GUIView implements ViewInterface {
         );
         HBox.setHgrow(cardScroll, Priority.ALWAYS);
 
-        // ── PANNELLO DESTRO ──────────────────────────────────────────
+        //**********RIGHT PANEL**********//
         roundLabel = new Label("Round 1");
         roundLabel.setStyle(
                 "-fx-text-fill: #f5e6c8; -fx-font-size: 15; -fx-font-weight: bold;"
@@ -466,7 +466,7 @@ public class GUIView implements ViewInterface {
         rightPanel.setMaxWidth(180);
         rightPanel.setStyle("-fx-background-color: rgba(20,10,5,0.80);");
 
-        // ── ACTION BAR ───────────────────────────────────────────────
+        //**********ACTION BAR**********//
         actionBar = new HBox(10);
         actionBar.setPadding(new Insets(8, 16, 8, 16));
         actionBar.setAlignment(Pos.CENTER);
@@ -507,14 +507,13 @@ public class GUIView implements ViewInterface {
     }
 
 
-
     /**
      * @author Daniele
-     * @param upperRow
-     * @param lowerRow
-     * @param buildingUpperRow
-     * @param buildingLowerRow
-     * this method will update the cardrows every time the board change
+     * @param upperRow upperRow (tribe)
+     * @param lowerRow lowerRow
+     * @param buildingUpperRow buildingUpperRow
+     * @param buildingLowerRow buildingLowerRow
+     * This method will update the cardRows every time the board change
      */
     @Override
     public void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
@@ -693,12 +692,12 @@ public class GUIView implements ViewInterface {
         if (playersStatus == null) return;
 
         for (var node : playersStatus.getChildren()) {
-            // Controlla il tipo del nodo usando getClass()
+            // Checking node's type using getClass()
             if (node != null && node.getClass().equals(VBox.class)) {
                 VBox playerBox = (VBox) node;
                 Object userData = playerBox.getUserData();
 
-                // Controlla il tipo dello UserData usando getClass()
+                // Checking UserData's type using getClass()
                 if (userData != null && userData.getClass().equals(String.class)) {
                     String name = (String) userData;
 
@@ -931,7 +930,7 @@ public class GUIView implements ViewInterface {
 
             if(actualUpper == 0 && actualLower == 0) {
                 showToast(" No cards available. Skipping turn.");
-                sender.sendOperation(new ChooseCardOperation( // cosi mandando un operazione con liste vuote mi salta il turno
+                sender.sendOperation(new ChooseCardOperation( // sending operation with null lists--> skip turn
                         new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
                 return;
             }
@@ -986,7 +985,7 @@ public class GUIView implements ViewInterface {
                 if (!selectedIndices.contains(index)) iv.setOpacity(1.0);
             });
             iv.setOnMouseClicked(e -> {
-                // 1. Eventi: cliccabili ma bloccati con toast
+                // 1 Events: clickable but locked with toast
                 if (!card.isPickable()) {
                     if(errorCountE<5){
                         showToast(" Events cannot be selected.");
@@ -997,13 +996,13 @@ public class GUIView implements ViewInterface {
                     return;
                 }
 
-                // 2. Riga che non richiede carte: visibile ma non ci faccio niente
+                // 2 Rows with no card: just visible
                 if (maxSelectable == 0) {
                     showToast(" No cards required from this row.");
                     return;
                 }
 
-                // 3. Requisito già soddisfatto
+                //Requirement for this row is already met
                 if (selectedIndices.contains(index) || selectedIndices.size()< maxSelectable) {
                     handleCardSelection(iv, index, selectedIndices, maxSelectable);
                     tryConfirmSelection();
@@ -1307,7 +1306,7 @@ public class GUIView implements ViewInterface {
             rowBox.setAlignment(Pos.CENTER_LEFT);
             rowBox.setPadding(new Insets(8, 16, 8, 16));
 
-            // Evidenzia la riga se è il giocatore corrente
+            // Highlight row for current player
             boolean isMe = row.getNickname().equals(myName);
             rowBox.setStyle(isMe
                     ? "-fx-background-color: rgba(200,150,0,0.3); -fx-background-radius: 6;"
@@ -1367,7 +1366,7 @@ public class GUIView implements ViewInterface {
     }
     @Override
     public void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe, List<BuildingCard> buildings) {
-        // la race condition potrebbe dare problemi quindi uso questa copia per evitare sovrascrizioni
+        // Using copy to avoid race condition
         Map<CharacterEnum, List<CharacterCard>> tribeSnapshot = new HashMap<>();
         if (tribe != null) {
             for (Map.Entry<CharacterEnum, List<CharacterCard>> entry : tribe.entrySet()) {
@@ -1446,8 +1445,8 @@ public class GUIView implements ViewInterface {
     /**
      * @author daniele
      * The following 3 methods are used to render the card face
-     * @param image
-     * @return
+     * @param image image to render
+     * @return iv
      */
     private ImageView cardImage(String image){
         String path = "/images/cards/"+image+"_front.png";
@@ -1492,9 +1491,9 @@ public class GUIView implements ViewInterface {
     public void showPlayerDisconnected(String playerName) {
         Platform.runLater(() -> {
             if("server".equals(playerName)){
-                showReconnectingOverlay(); // se io crasho
+                showReconnectingOverlay(); // if player crashes
             }else {
-                showToast(playerName + " has disconnected.");// se un altro player crasha
+                showToast(playerName + " has disconnected.");// if other player crashes
             }
         });
     }
@@ -1554,7 +1553,7 @@ public class GUIView implements ViewInterface {
                 sceneRoot.getChildren().remove(suspendedOverlay);
             }
 
-            // --- overlay popUp sospensione ---
+            //*****overlay suspension popUp*****//
             Label title = new Label("⚠️ Game Suspended");
             title.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 18; -fx-font-weight: bold;");
 
@@ -1575,9 +1574,9 @@ public class GUIView implements ViewInterface {
                             "-fx-background-radius: 8;" +
                             "-fx-border-color: #e74c3c; -fx-border-width: 2; -fx-border-radius: 8;"
             );
-            // Puoi cambiare Pos.BOTTOM_RIGHT in Pos.TOP_LEFT o Pos.TOP_RIGHT a tuo piacimento
+            // You can change Pos.BOTTOM_RIGHT in Pos.TOP_LEFT o Pos.TOP_RIGHT to your likings
             StackPane.setAlignment(suspendedOverlay, Pos.BOTTOM_RIGHT);
-            StackPane.setMargin(suspendedOverlay, new Insets(20)); // Distanza dai bordi
+            StackPane.setMargin(suspendedOverlay, new Insets(20)); // Distance from borders
             sceneRoot.getChildren().add(suspendedOverlay);
             final int[] timeRemaining = {timeoutSeconds};
 
@@ -1629,7 +1628,7 @@ public class GUIView implements ViewInterface {
             dim.setStyle("-fx-background-color: rgba(0,0,0,0.65);");
 
             Label title = new Label("🔄 Totem Restored");
-            title.setStyle("-fx-text-fill: #f1c40f; -fx-font-size: 18; -fx-font-weight: bold;"); // Giallo
+            title.setStyle("-fx-text-fill: #f1c40f; -fx-font-size: 18; -fx-font-weight: bold;"); // Yellow
 
             Label desc = new Label("Your original totem color has been reassigned.");
             desc.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");

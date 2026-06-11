@@ -18,8 +18,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 
-
-
 public class TUIView implements ViewInterface {
     private ClientSender sender;
     private String nickname;
@@ -49,7 +47,7 @@ public class TUIView implements ViewInterface {
 
     /**
      * @author Giuse
-     * This method  re-print its prompt so it remains visible after a display event
+     * This method re-print its prompt so it remains visible after a display event
      * has written over it. but only if an input method is currently waiting for the user.
      * Must be called while holding OUT_LOCK.
      */
@@ -162,7 +160,7 @@ public class TUIView implements ViewInterface {
 
     /**
      * Asks numPlayers during the first login
-     *  Delegates blocking input to inputExecutor so uiExecutor stays responsive.
+     * Delegates blocking input to inputExecutor so uiExecutor stays responsive.
      */
     @Override
     public void askNumPlayers(){

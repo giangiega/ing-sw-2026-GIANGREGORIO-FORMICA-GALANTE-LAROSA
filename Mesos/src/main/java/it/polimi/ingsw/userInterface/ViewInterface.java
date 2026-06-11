@@ -14,11 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-/**
- * last 2 methods are defined as default because TUI doesn't need them.
- * Those methods used to manage the update of every player's tribe, now is managed in updateAllPLayers().
- * GUI needs those 2 methods, so it must override them.
- */
 
 public interface ViewInterface {
     Consumer<Runnable> getUIDispatcher();
@@ -46,7 +41,6 @@ public interface ViewInterface {
      * This two methods are defined as default because TUI doesn't need them.
      * Those methods used to manage the update of every player's tribe, now is managed in updateAllPlayers()
      * GUI needs those 2 methods, so it must override them
-     *
      */
     default void showValidCards(Map<CharacterEnum, List<CharacterCard>> tribe, List<BuildingCard> buildings){}
     default void updateAllTribes(List<String> names, List<Map<CharacterEnum, List<CharacterCard>>> tribes, List<List<BuildingCard>> buildings){}
