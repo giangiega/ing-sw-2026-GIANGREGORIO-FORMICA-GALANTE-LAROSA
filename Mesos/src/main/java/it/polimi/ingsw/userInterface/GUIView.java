@@ -165,7 +165,7 @@ public class GUIView implements ViewInterface {
     private void showLoginScene(boolean isFirst) {
         this.upperRowPane = null;
         this.isFirstPlayer = isFirst;
-        var bgUrl = getClass().getResource("/images/screen/login_screen.png");
+        var bgUrl = GUIView.class.getResource("/images/screen/login_screen.png");
         ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
         background.setFitWidth(1280);
         background.setFitHeight(720);
@@ -285,7 +285,7 @@ public class GUIView implements ViewInterface {
     public void showLobby(List<String> lobby) {
         Platform.runLater(() -> {
             this.upperRowPane = null;
-            var bgUrl = getClass().getResource("/images/screen/login_screen.png");
+            var bgUrl = GUIView.class.getResource("/images/screen/login_screen.png");
             ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
             background.setPreserveRatio(false);
             background.fitWidthProperty().bind(primaryStage.widthProperty());
@@ -331,7 +331,7 @@ public class GUIView implements ViewInterface {
 
     private void buildGameScene(){
         //**********BACKGROUND**********//
-        var bgUrl = getClass().getResource("/images/screen/background.png");
+        var bgUrl = GUIView.class.getResource("/images/screen/background.png");
         ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
         background.setPreserveRatio(false);
         background.fitWidthProperty().bind(primaryStage.widthProperty());
@@ -564,7 +564,7 @@ public class GUIView implements ViewInterface {
      */
     private VBox buildOfferTileView(OfferTile tile) {
         String tilePath = "/images/tiles/" + tile.getLetter() + "_front.png";
-        var tileUrl = getClass().getResource(tilePath);
+        var tileUrl = GUIView.class.getResource(tilePath);
 
         ImageView tileImg;
         if (tileUrl != null) {
@@ -582,7 +582,7 @@ public class GUIView implements ViewInterface {
 
         if (!tile.getFreeOfferTile() && tile.getOccupant() != null) {
             String totemPath = "/images/icon/" + tile.getOccupant().getTotemColor().name().toLowerCase() + ".png";
-            var totemUrl = getClass().getResource(totemPath);
+            var totemUrl = GUIView.class.getResource(totemPath);
             if (totemUrl != null) {
                 ImageView totem = new ImageView(new Image(totemUrl.toExternalForm()));
 
@@ -625,7 +625,7 @@ public class GUIView implements ViewInterface {
 
     private ImageView icon(String name) {
         String path = "/images/icon/" + name + ".png";
-        var url = getClass().getResource(path);
+        var url = GUIView.class.getResource(path);
 
         if (url == null) {
             System.err.println("Icon not found: " + path);
@@ -692,35 +692,28 @@ public class GUIView implements ViewInterface {
         if (playersStatus == null) return;
 
         for (var node : playersStatus.getChildren()) {
-            // Checking node's type using getClass()
-            if (node != null && node.getClass().equals(VBox.class)) {
                 VBox playerBox = (VBox) node;
-                Object userData = playerBox.getUserData();
+                String name = (String) playerBox.getUserData();
+                if(name == null) continue ;
 
-                // Checking UserData's type using getClass()
-                if (userData != null && userData.getClass().equals(String.class)) {
-                    String name = (String) userData;
+                if (playerBox.getChildren().size() > 2) continue;
 
-                    if (playerBox.getChildren().size() > 2) continue;
-
-                    if (!name.equals(myName) && allTribesData.containsKey(name)) {
-                        Button viewBtn = new Button("👁 View tribe");
-                        viewBtn.setStyle(
+                if (!name.equals(myName) && allTribesData.containsKey(name)) {
+                    Button viewBtn = new Button("👁 View tribe");
+                    viewBtn.setStyle(
                                 "-fx-background-color: rgba(200,150,0,0.5); -fx-text-fill: #f5e6c8;" +
                                         "-fx-font-size: 10; -fx-padding: 3 8; -fx-background-radius: 4; -fx-cursor: hand;"
-                        );
+                    );
 
-                        String captureName = name;
-                        viewBtn.setOnAction(e -> showTribePopup(
+                    String captureName = name;
+                    viewBtn.setOnAction(e -> showTribePopup(
                                 captureName,
                                 allTribesData.get(captureName),
                                 allBuildingsData.get(captureName)
-                        ));
+                    ));
 
-                        playerBox.getChildren().add(viewBtn);
-                    }
+                    playerBox.getChildren().add(viewBtn);
                 }
-            }
         }
     }
 
@@ -852,7 +845,7 @@ public class GUIView implements ViewInterface {
             double tileH = 180;
 
             String tilePath = "/images/tiles/turnOrderTile_" + tileGraphicSize + ".png";
-            var tileUrl = getClass().getResource(tilePath);
+            var tileUrl = GUIView.class.getResource(tilePath);
             if (tileUrl == null) {
                 System.err.println("TurnOrder tile non trovata: " + tilePath);
                 return;
@@ -885,7 +878,7 @@ public class GUIView implements ViewInterface {
 
                 if (p != null) {
                     String totemPath = "/images/icon/" + p.getTotemColor().name().toLowerCase() + ".png";
-                    var totemUrl = getClass().getResource(totemPath);
+                    var totemUrl = GUIView.class.getResource(totemPath);
                     if (totemUrl != null) {
                         ImageView totem = new ImageView(new Image(totemUrl.toExternalForm()));
                         double totemSize = 30;
@@ -1136,14 +1129,9 @@ public class GUIView implements ViewInterface {
             actionBar.setManaged(true);
 
             for (var node : offerTrackPane.getChildren()) {
-                if (node != null && node.getClass().equals(VBox.class)) {
                     VBox tileBox = (VBox) node;
-
-                    Object userData = tileBox.getUserData();
-
-                    if (userData != null && userData.getClass().equals(OfferTile.class)) {
-                        OfferTile tile = (OfferTile) userData;
-                        char letter = tile.getLetter();
+                    OfferTile tile = (OfferTile) tileBox.getUserData();
+                    char letter = tile.getLetter();
 
                         if (freeSlots.contains(letter)) {
                             tileBox.setStyle(
@@ -1158,8 +1146,8 @@ public class GUIView implements ViewInterface {
                                 clearOfferTrackHandlers();
                             });
                         }
-                    }
-                }
+
+
             }
         });
     }
@@ -1193,7 +1181,7 @@ public class GUIView implements ViewInterface {
     @Override
     public void showFinalScore(List<String> winners, Map< String , Integer> finalScores) {
         Platform.runLater(() -> {
-            var bgUrl = getClass().getResource("/images/screen/background.png");
+            var bgUrl = GUIView.class.getResource("/images/screen/background.png");
             ImageView background = new ImageView(new Image(bgUrl.toExternalForm()));
             background.setPreserveRatio(false);
             background.fitWidthProperty().bind(primaryStage.widthProperty());
@@ -1450,7 +1438,7 @@ public class GUIView implements ViewInterface {
      */
     private ImageView cardImage(String image){
         String path = "/images/cards/"+image+"_front.png";
-        var url = getClass().getResource(path);
+        var url = GUIView.class.getResource(path);
         if (url == null) {
             System.err.println("Image not found: " + path);
             return new ImageView();
