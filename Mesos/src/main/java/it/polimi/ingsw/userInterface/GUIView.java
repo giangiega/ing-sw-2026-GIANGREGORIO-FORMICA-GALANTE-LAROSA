@@ -85,6 +85,8 @@ public class GUIView implements ViewInterface {
     private Timeline countdownTimeline;
     private StackPane reconnectingOverlay;
     private VBox suspendedOverlay;
+    private String persistentMessage = null;
+    private long persistentMessageTime = 0;
 
     private VBox loginNumBox;
     private TextField loginNumField;
@@ -244,6 +246,7 @@ public class GUIView implements ViewInterface {
 
         Scene scene = new Scene(sceneRoot, 1280, 720);
         primaryStage.setScene(scene);
+        reapplyPersistentMessageIfNeeded();
 
     }
 
@@ -321,6 +324,8 @@ public class GUIView implements ViewInterface {
 
             StackPane root = new StackPane(background, content);
             primaryStage.setScene(new Scene(root, primaryStage.getWidth(), primaryStage.getHeight()));
+            sceneRoot = root;
+            reapplyPersistentMessageIfNeeded();
         });
     }
 
@@ -481,6 +486,7 @@ public class GUIView implements ViewInterface {
         sceneRoot = new StackPane(background, rootLayout);
 
         primaryStage.setScene(new Scene(sceneRoot, 1280, 720));
+
     }
 
     private void showToast(String message) {
@@ -501,20 +507,57 @@ public class GUIView implements ViewInterface {
         sceneRoot.getChildren().add(toast);
 
         new Thread(() -> {
-            try { Thread.sleep(3500); } catch (InterruptedException ignored) {}
+            try { Thread.sleep(4000); } catch (InterruptedException ignored) {}
             Platform.runLater(() -> sceneRoot.getChildren().remove(toast));
         }).start();
     }
 
+    private void showPersistentToast(String message, int seconds) {
+        persistentMessage = message;
+        persistentMessageTime = System.currentTimeMillis() + seconds * 1000L;
+        reapplyPersistentMessageIfNeeded();
+    }
 
-    /**
-     * @author Daniele
-     * @param upperRow upperRow (tribe)
-     * @param lowerRow lowerRow
-     * @param buildingUpperRow buildingUpperRow
-     * @param buildingLowerRow buildingLowerRow
-     * This method will update the cardRows every time the board change
-     */
+    private void reapplyPersistentMessageIfNeeded() {
+        if (persistentMessage == null || sceneRoot == null) return;
+
+        long remaining = persistentMessageTime - System.currentTimeMillis();
+        if (remaining <= 0) {
+            persistentMessage = null;
+            return;
+        }
+
+        Label toast = new Label("⚠  " + persistentMessage);
+        toast.setStyle(
+                "-fx-background-color: rgba(170,20,20,0.93);" +
+                        "-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" +
+                        "-fx-padding: 12 24; -fx-background-radius: 8;"
+        );
+        StackPane.setAlignment(toast, Pos.TOP_CENTER);
+        StackPane.setMargin(toast, new Insets(20, 0, 0, 0));
+        sceneRoot.getChildren().add(toast);
+
+        new Thread(() -> {
+            try { Thread.sleep(remaining); } catch (InterruptedException ignored) {}
+            Platform.runLater(() -> {
+                sceneRoot.getChildren().remove(toast);
+                if (System.currentTimeMillis() >= persistentMessageTime) {
+                    persistentMessage = null;
+                }
+            });
+        }).start();
+    }
+
+
+
+        /**
+         * @author Daniele
+         * @param upperRow upperRow (tribe)
+         * @param lowerRow lowerRow
+         * @param buildingUpperRow buildingUpperRow
+         * @param buildingLowerRow buildingLowerRow
+         * This method will update the cardRows every time the board change
+         */
     @Override
     public void updateRows(List<TribeCard> upperRow, List<TribeCard> lowerRow,
                            List<BuildingCard> buildingUpperRow, List<BuildingCard> buildingLowerRow) {
@@ -1174,7 +1217,11 @@ public class GUIView implements ViewInterface {
     @Override
     public void invalidChoice(String message) {
         Platform.runLater(() -> {
-            showToast(message);
+            if (message.startsWith("Recovery aborted")) {
+                showPersistentToast(message, 30);
+            } else {
+                showToast(message);
+            }
         });
     }
 

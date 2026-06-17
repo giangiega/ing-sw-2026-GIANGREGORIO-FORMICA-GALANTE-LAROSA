@@ -95,4 +95,8 @@ abstract public class ServerClass {
     public static void setPendingSave() {
         pendingSave = null;
     }
+
+    public static java.util.Collection<ClientConnection> getAllConnections() {
+        return clientManagers.values();
+    }
 }

@@ -20,6 +20,7 @@ public class LobbyController {
     private boolean gameStarted = false;
     private final Map<String, ColorEnum> ghostPlayers = new HashMap<>();
 
+
     public LobbyController(int numPlayers) {
         this.numPlayers = numPlayers;
     }
@@ -99,19 +100,29 @@ public class LobbyController {
 
         // if namePlayer was not in the previous game, a new game starts
         if (ServerClass.isRecoveryPending() && !ServerClass.isOriginalPlayer(name)) {
-            clientManagers.put(name, cm); // in this way players can have the abort message
 
-            for (ClientConnection cms : clientManagers.values()) {
-                cms.sendEvent(new InvalidChoiceEvent(
-                        "Recovery aborted: '" + name + "' was not in the previous game. " +
-                                "Disconnect and reconnect to start a new game."));
+            String abortMsg = "Recovery aborted: '" + name + "' was not in the previous game. " +
+                    "Disconnect and reconnect to start a new game.";
+
+            for (ClientConnection cms : ServerClass.getAllConnections()) { // getAllConnections handle the clients that need to receive the abort message
+                if (cms != null) {
+                    cms.sendEvent(new InvalidChoiceEvent(abortMsg));
+                }
             }
 
             lobbyPlayers.clear();
             clientManagers.clear();
 
             ServerClass.setPendingSave();
-            server.resetServer(); // connected=0, lobbyController=null, gameController=null
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000); // new thread so that there is time to send the message to the clients before resetServer
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                server.resetServer(); // connected=0, lobbyController=null, gameController=null
+            }).start();
+            return;
         }
 
         if (ghostPlayers.containsKey(name)) {
