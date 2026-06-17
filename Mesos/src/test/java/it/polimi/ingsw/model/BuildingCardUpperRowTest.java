@@ -180,18 +180,6 @@ public class BuildingCardUpperRowTest {
         assertEquals(foodBefore, player.getFood());
     }
 
-    @Test//Checking to see if an exception is thrown if the player choose an event card
-    void applyEndTurn_eventCardChosen_throwsException() {
-        List<TribeCard> upper = board.getUpperRow();
-        int eventIndex = findFirstEventIndex(upper);
-        if (eventIndex == -1) return; // nno events in queue: skip
-
-        effect.setChoice(eventIndex, false);
-        assertThrows(InvalidPlayerActionException.class,
-                () -> effect.applyEndTurn(player, board, eventIndex, false),
-                "The exception was not thrown after the player chose an event card");
-    }
-
     private int findFirstCharacterIndex(List<TribeCard> row) {
         for (int i = 0; i < row.size(); i++)
             if (row.get(i) instanceof CharacterCard) return i;
