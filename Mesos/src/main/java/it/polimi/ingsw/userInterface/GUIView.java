@@ -75,8 +75,6 @@ public class GUIView implements ViewInterface {
     private String myName;
     private Map<CharacterEnum, List<CharacterCard>> myTribe = new HashMap<>();
     private int myFood = 0;
-    private int errorCountE = 0;
-    private int errorCountB = 0;
     private List<RankingRow> globalRanking;
     private Map<String, Integer> globalPlayersPosition;
 
@@ -872,8 +870,7 @@ public class GUIView implements ViewInterface {
     public void updateTurnOrder(TurnOrderTile turnOrder) {
         Platform.runLater(() -> {
             if (turnOrderPane == null) return;
-            errorCountE = 0;
-            errorCountB = 0;
+
             turnOrderPane.getChildren().clear();
 
             List<Player> slots = turnOrder.getSlots();
@@ -979,8 +976,8 @@ public class GUIView implements ViewInterface {
             renderTribeRowSelectable(upperRowPane, upperRow, selectedUpperIndices, actualUpper);
             renderTribeRowSelectable(lowerRowPane, lowerRow, selectedLowerIndices, actualLower);
 
-            renderBuildingRowSelectable(buildingUpperPane, renderedBuildingUpper, selectedBuildingUpperIndices);
-            renderBuildingRowSelectable(buildingLowerPane, renderedBuildingLower, selectedBuildingLowerIndices);
+            renderBuildingRowSelectable(buildingUpperPane, renderedBuildingUpper, selectedBuildingUpperIndices,actualUpper);
+            renderBuildingRowSelectable(buildingLowerPane, renderedBuildingLower, selectedBuildingLowerIndices,actualLower);
             actionBar.getChildren().clear();
             Label msg = new Label(
                     "Select " + actualUpper + " from upper row  |  " + actualLower + " from lower row"
@@ -1023,13 +1020,8 @@ public class GUIView implements ViewInterface {
             iv.setOnMouseClicked(e -> {
                 // 1 Events: clickable but locked with toast
                 if (!card.isPickable()) {
-                    if(errorCountE<5){
                         showToast(" Events cannot be selected.");
-                    }else{
-                        showToast(" Are you dumb ??? You cannot pick an event card!!!");
-                    }
-                    errorCountE ++;
-                    return;
+                   return;
                 }
 
                 // 2 Rows with no card: just visible
@@ -1053,7 +1045,7 @@ public class GUIView implements ViewInterface {
 
 
     private void renderBuildingRowSelectable(HBox pane, List<BuildingCard> cards,
-                                             List<Integer> selectedIndices) {
+                                             List<Integer> selectedIndices,int maxSelectable) {
         pane.getChildren().clear();
         int builderDiscount = calculateBuilderDiscount();
 
@@ -1074,11 +1066,11 @@ public class GUIView implements ViewInterface {
                 if (!selectedIndices.contains(index)) iv.setOpacity(1.0);
             });
             iv.setOnMouseClicked(e -> {
-                errorCountB++;
-                if(errorCountB >= 5){
-                    showToast("Are you dumb ??? You are poor !!!");
+                if (maxSelectable == 0) {
+                    showToast(" No cards required from this row.");
                     return;
                 }
+
                 if (!canAfford) {
                     String msg = builderDiscount > 0
                             ? "Need " + effectiveCost + " food (base " + card.getBaseFC()
