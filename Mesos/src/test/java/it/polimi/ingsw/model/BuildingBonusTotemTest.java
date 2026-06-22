@@ -33,35 +33,46 @@ class BuildingBonusTotemTest {
         effect = new BuildingBonusTotem();
     }
 
-    @Test//Checking to see if the building gives 1 food
-    void applyEndTurn_gives1ExtraFood() throws Exception {
+    @Test//Checking to see if the building gives 1 food when the totem bonus triggers
+    void applyTotemFoodBonus_gives1ExtraFood() {
         int foodBefore = player.getFood();
-        effect.applyEndTurn(player, board, -1, false);
+        effect.applyTotemFoodBonus(player, board);
         assertEquals(foodBefore + 1, player.getFood(),
                 "The player should have received 1 food");
     }
 
-    @Test//Checking to see if chosenIndex is relevant
-    void applyEndTurn_chosenIndexIgnored() throws Exception {
-        int foodBefore = player.getFood();
-        effect.applyEndTurn(player, board, 5, false);
-        assertEquals(foodBefore + 1, player.getFood(),
-                "The player should have received 1 food");
-    }
-    @Test//Checking to see if chosenIsBuilding is relevant
-    void applyEndTurn_chosenIsBuildingIgnored() throws Exception {
-        int foodBefore = player.getFood();
-        effect.applyEndTurn(player, board, 0, true);
-        assertEquals(foodBefore + 1, player.getFood(),
-                "The player should have received 1 food");
-    }
-    @Test//Checking to see if the player gets prestige points
-    void applyEndTurn_doesNotChangePP() throws Exception {
+    @Test//Checking to see if the building does NOT change PP when the totem bonus triggers
+    void applyTotemFoodBonus_doesNotChangePP() {
         int ppBefore = player.getPP();
-        effect.applyEndTurn(player, board, -1, false);
+        effect.applyTotemFoodBonus(player, board);
         assertEquals(ppBefore, player.getPP(),
                 "The player should have not received any prestige points");
     }
+
+    @Test//Checking that applyEndTurn (called at endRound) does NOT give food anymore
+    void applyEndTurn_doesNothing() throws Exception {
+        int foodBefore = player.getFood();
+        effect.applyEndTurn(player, board, -1, false);
+        assertEquals(foodBefore, player.getFood(),
+                "applyEndTurn should no longer award food; the bonus is now given only via applyTotemFoodBonus");
+    }
+
+    @Test//Checking that applyEndTurn ignores chosenIndex and still does nothing
+    void applyEndTurn_withChosenIndex_doesNothing() throws Exception {
+        int foodBefore = player.getFood();
+        effect.applyEndTurn(player, board, 5, false);
+        assertEquals(foodBefore, player.getFood(),
+                "applyEndTurn should be a no-op for this building regardless of chosenIndex");
+    }
+
+    @Test//Checking that applyEndTurn ignores chosenIsBuilding and still does nothing
+    void applyEndTurn_withChosenIsBuilding_doesNothing() throws Exception {
+        int foodBefore = player.getFood();
+        effect.applyEndTurn(player, board, 0, true);
+        assertEquals(foodBefore, player.getFood(),
+                "applyEndTurn should be a no-op for this building regardless of chosenIsBuilding");
+    }
+
     @Test
     void toStringTestValues(){
         BuildingCard c = new BuildingCard(EraEnum.I, 3, 2, new BuildingBonusTotem());
