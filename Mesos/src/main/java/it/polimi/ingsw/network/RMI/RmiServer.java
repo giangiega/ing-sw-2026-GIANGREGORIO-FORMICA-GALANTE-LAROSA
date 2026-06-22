@@ -192,4 +192,20 @@ public class RmiServer extends ServerClass implements VirtualServer {
     @Override
     public void ping(VirtualView client) throws RemoteException {
     }
+
+    /**
+     * @author Giuse
+     * @param client client
+     * @param chosenIndex client's chosen index
+     * @param chosenIsBuilding client's chosen card is a building
+     * @throws RemoteException thrown exception
+     * It propagates the chosen index
+     */
+    @Override
+    public void buildingUpperRowChoice(VirtualView client, int chosenIndex, boolean chosenIsBuilding)
+            throws RemoteException {
+        RmiClientManager cm = clientManagerMap.get(client);
+        if (cm != null && gameController != null)
+            gameController.submitBuildingUpperRowChoice(cm.getPlayerName(), chosenIndex, chosenIsBuilding);
+    }
 }

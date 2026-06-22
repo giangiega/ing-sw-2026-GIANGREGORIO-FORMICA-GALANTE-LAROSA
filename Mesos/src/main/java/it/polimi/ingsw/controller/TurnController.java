@@ -18,6 +18,8 @@ public class TurnController {
     private int idx;
     private String currentPlacementPlayer = null;//Player that has to place
 
+    private List<String> buildingChoicePending = new ArrayList<>();
+
     //Disconnection e Reconnection handling
     private boolean inResolvingPhase = false;
     private TurnOrderTile savedTurnOrderTile;
@@ -85,6 +87,45 @@ public class TurnController {
     }
 
     /**
+     * @author Giuse
+     * This method gets the list of player requiring interaction from GameController
+     */
+    private void startBuildingChoiceOrEndRound() {
+        List<String> needsChoice = gameController.collectPlayersNeedingBuildingChoice();
+        if (needsChoice.isEmpty())
+            gameController.endRound();
+        else
+            startBuildingChoicePhase(needsChoice);
+    }
+
+    /**
+     * @author Giuse
+     * @param playersWithChoice list of players with choice
+     */
+    public void startBuildingChoicePhase(List<String> playersWithChoice) {
+        buildingChoicePending = new ArrayList<>(playersWithChoice);
+        buildingChoicePending.removeIf(gameController::isDisconnectedPlayer);//extra safe
+        if (buildingChoicePending.isEmpty())
+            gameController.endRound();
+        else
+            gameController.sendAskBuildingUpperRow(buildingChoicePending.get(0));
+    }
+
+    /**
+     * @author Giuse
+     * @param playerName player's name
+     */
+    public void onBuildingChoiceReceived(String playerName) {
+        buildingChoicePending.remove(playerName);
+        buildingChoicePending.removeIf(gameController::isDisconnectedPlayer);
+        if (buildingChoicePending.isEmpty())
+            gameController.endRound();
+        else
+            gameController.sendAskBuildingUpperRow(buildingChoicePending.get(0));
+    }
+
+
+    /**
      * @param offerTrack current offerTrack
      * Determines the order in which players will act based on the position
      * of their totems on the OfferTrack.
@@ -103,7 +144,7 @@ public class TurnController {
             }
         }
         if (resolveOrder.isEmpty()) {
-            gameController.endRound();
+            startBuildingChoiceOrEndRound();
         } else {
             askNextAction();
         }

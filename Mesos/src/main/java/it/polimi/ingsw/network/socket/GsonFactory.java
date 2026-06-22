@@ -31,7 +31,8 @@ public class GsonFactory {
                         .registerSubtype(NumPlayersOperation.class)
                         .registerSubtype(ChooseCardOperation.class)
                         .registerSubtype(LoginOperation.class)
-                        .registerSubtype(PlaceTotemOperation.class);
+                        .registerSubtype(PlaceTotemOperation.class)
+                        .registerSubtype(BuildingUpperRowChoiceOperation.class);
 
         return new GsonBuilder().registerTypeAdapterFactory(factory).create();
     }
@@ -62,7 +63,8 @@ public class GsonFactory {
                         .registerSubtype(GameSuspendedEvent.class)
                         .registerSubtype(GameResumedEvent.class)
                         .registerSubtype(ReconnectedTotemEvent.class)
-                        .registerSubtype(WaitingRecoveryEvent.class);
+                        .registerSubtype(WaitingRecoveryEvent.class)
+                        .registerSubtype(AskBuildingUpperRowEvent.class);
 
         RuntimeTypeAdapterFactory<TribeCard> tribeFactory =
                 RuntimeTypeAdapterFactory

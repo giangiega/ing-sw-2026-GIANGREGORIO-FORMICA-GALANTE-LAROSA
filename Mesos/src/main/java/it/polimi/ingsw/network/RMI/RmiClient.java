@@ -413,4 +413,16 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         view.showWaitingForRecovery(playersStillNeeded);
     }
 
+    /**
+     * @author Giuse
+     * @param upperRow UpperRow from which a player can choose a card
+     * @param buildingUpperRow Building's UpperRow form which a player can choose a building
+     * @throws RemoteException thrown exception
+     */
+    @Override
+    public void onAskBuildingUpperRow(List<TribeCard> upperRow,
+                                      List<BuildingCard> buildingUpperRow) throws RemoteException {
+        view.getUIDispatcher().accept(() -> view.askBuildingUpperRowChoice(upperRow, buildingUpperRow));
+    }
+
 }

@@ -26,4 +26,14 @@ public interface VirtualServer extends Remote {
      * If this throws a RemoteException the connection is considered lost.
      */
     public void ping(VirtualView client) throws RemoteException;
+
+    /**
+     * @author Giuse
+     * @param client client
+     * @param chosenIndex chosen index
+     * @param chosenIsBuilding chosen is building
+     * @throws RemoteException thrown exception
+     */
+    void buildingUpperRowChoice(VirtualView client, int chosenIndex, boolean chosenIsBuilding)
+            throws RemoteException;
 }

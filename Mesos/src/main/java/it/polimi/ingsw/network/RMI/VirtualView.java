@@ -97,4 +97,7 @@ public interface VirtualView extends Remote {
     void onPing() throws RemoteException;
 
     void onWaitingForRecovery(int playersStillNeeded) throws RemoteException;
+
+    void onAskBuildingUpperRow(List<TribeCard> upperRow,
+                               List<BuildingCard> buildingUpperRow) throws RemoteException;
 }

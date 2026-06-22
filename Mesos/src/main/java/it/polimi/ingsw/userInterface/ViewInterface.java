@@ -79,4 +79,11 @@ public interface ViewInterface {
      * This method tells the reconnected player what the color of is totem before disconnecting
      */
     void showReconnectedTotem(ColorEnum totemColor);
+
+    /**
+     * @author giuse
+     * @param upperRow upperRow to show player
+     * @param buildingUpperRow buildingUpperRow to show player
+     */
+    default void askBuildingUpperRowChoice(List<TribeCard> upperRow, List<BuildingCard> buildingUpperRow){};
 }

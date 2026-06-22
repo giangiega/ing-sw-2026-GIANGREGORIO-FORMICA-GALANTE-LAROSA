@@ -8,6 +8,7 @@ import it.polimi.ingsw.exceptions.InvalidPlayerActionException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.boardAndTiles.Board;
 import it.polimi.ingsw.model.boardAndTiles.OfferTile;
+import it.polimi.ingsw.model.cards.buildings.BuildingCard;
 import it.polimi.ingsw.model.cards.buildings.BuildingDeck;
 import it.polimi.ingsw.model.decks.CardFactory;
 import it.polimi.ingsw.model.decks.Deck;
@@ -136,6 +137,53 @@ public class GameController {
 
         turnController.onTotemPlaced(playerName, game.getBoard().getTurnOrderTile(),
                 game.getBoard().getOfferTrack());
+    }
+
+    /**
+     * @author Giuse
+     * @param playerName player to ask for index
+     */
+    void sendAskBuildingUpperRow(String playerName) {
+        ClientConnection cm = clientManagers.get(playerName);
+        if (cm != null)
+            cm.sendEvent(new AskBuildingUpperRowEvent(game.getBoard().getUpperRow(), game.getBoard().getBuildingUpperRow()));
+    }
+
+    /**
+     * @author Giuse
+     * @return list of player's to ask for building's power
+     */
+    List<String> collectPlayersNeedingBuildingChoice() {
+        List<String> result = new ArrayList<>();
+        for (Player p : game.getPlayers()) {
+            if (disconnectedPlayers.contains(p.getName())) continue;
+            for (BuildingCard c : p.getBuildingCards()) {
+                if (c.getEffect().requiresChoice(p, game.getBoard())) {
+                    result.add(p.getName());
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @author Giuse
+     * @param playerName player
+     * @param chosenIndex chosen index
+     * @param chosenIsBuilding the chosen card is a building
+     */
+    public synchronized void submitBuildingUpperRowChoice(String playerName, int chosenIndex, boolean chosenIsBuilding) {
+        if (isSuspended) return;
+        Player p = getPlayerByName(playerName);
+        if (p == null) return;
+        for (BuildingCard c : p.getBuildingCards()) {
+            if (c.getEffect().requiresChoice(p, game.getBoard())) {
+                c.getEffect().setChoice(chosenIndex, chosenIsBuilding);
+                break;
+            }
+        }
+        turnController.onBuildingChoiceReceived(playerName);
     }
 
     /**

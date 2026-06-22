@@ -498,6 +498,60 @@ public class TUIView implements ViewInterface {
         }
 
     }
+    @Override
+    public void askBuildingUpperRowChoice(List<TribeCard> upperRow,
+                                          List<BuildingCard> buildingUpperRow) {
+        inputExecutor.submit(() -> doAskBuildingUpperRowChoice(upperRow, buildingUpperRow));
+    }
+
+    public void doAskBuildingUpperRowChoice(List<TribeCard> upperRow,
+                                            List<BuildingCard> buildingUpperRow) {
+        synchronized (OUT_LOCK) {
+            System.out.println(CYAN + BOLD + "\n--- BuildingCardUpperRow: pick a card ---" + RESET);
+            System.out.println(GREEN + "Upper row tribe cards:" + RESET);
+            for (int i = 0; i < upperRow.size(); i++) {
+                if (!upperRow.get(i).isEventCard())
+                    System.out.println("  [" + i + "] " + upperRow.get(i));
+            }
+            if (!buildingUpperRow.isEmpty()) {
+                System.out.println(GREEN + "Upper row buildings:" + RESET);
+                for (int i = 0; i < buildingUpperRow.size(); i++)
+                    System.out.println("  [" + (upperRow.size() + i) + "] " + buildingUpperRow.get(i));
+            }
+            String prompt = GREEN + BOLD + "Enter index to pick, or -1 to skip: " + RESET;
+            System.out.print(prompt);
+            currentPrompt = prompt;
+        }
+
+        int totalSize = upperRow.size() + buildingUpperRow.size();
+        try {
+            while (true) {
+                int input = takeInt();
+                if (input == Integer.MIN_VALUE) return;
+                if (input == -1) {
+                    sender.sendOperation(new BuildingUpperRowChoiceOperation(-1, false));
+                    return;
+                }
+                if (input >= 0 && input < upperRow.size()) {
+                    if (upperRow.get(input).isEventCard()) {
+                        System.out.println(RED + BOLD + "err: Cannot pick an event card." + RESET);
+                        System.out.print(GREEN + BOLD + "Enter index to pick, or -1 to skip: " + RESET);
+                        continue;
+                    }
+                    sender.sendOperation(new BuildingUpperRowChoiceOperation(input, false));
+                    return;
+                }
+                if (input >= upperRow.size() && input < totalSize) {
+                    sender.sendOperation(new BuildingUpperRowChoiceOperation(input - upperRow.size(), true));
+                    return;
+                }
+                System.out.println(RED + BOLD + "err: Invalid index, try again." + RESET);
+                System.out.print(GREEN + BOLD + "Enter index to pick, or -1 to skip: " + RESET);
+            }
+        } finally {
+            currentPrompt = null;
+        }
+    }
 
     @Override
     public void invalidChoice(String message) {
