@@ -221,6 +221,8 @@ public class GameController {
         broadcastEvent(new UpdateAllTribesEvent(players));
         broadcastEvent(new UpdateRowsEvent(game.getBoard().getUpperRow(), game.getBoard().getLowerRow(),
                 game.getBoard().getBuildingUpperRow(), game.getBoard().getBuildingLowerRow()));
+        broadcastEvent(new UpdateOfferTrackEvent(game.getBoard().getOfferTrack(),
+                game.getBoard().getTurnOrderTile()));
 
         turnController.onActionResolved();
     }

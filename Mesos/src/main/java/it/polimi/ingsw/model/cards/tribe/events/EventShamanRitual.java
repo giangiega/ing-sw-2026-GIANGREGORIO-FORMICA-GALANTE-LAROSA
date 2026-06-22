@@ -63,19 +63,21 @@ public class EventShamanRitual extends EventCard {
             }
         }
         //removing pp from losers and giving pp to winners
-        for(Player p : losers){
-            p.losePP(lostPP);
-            for(BuildingCard c : p.getBuildingCards()){
-                    c.getEffect().applyEventShamanWinner(p, board, lostPP, false);
-                }
-        }
+
         for(Player p : winners){
             p.gainPP(gainedPP);
             for(BuildingCard c : p.getBuildingCards()){
                     c.getEffect().applyEventShamanWinner(p, board, gainedPP, true);
                 }
             }
+
+        for(Player p : losers) {
+            p.losePP(lostPP);
+            for (BuildingCard c : p.getBuildingCards()) {
+                c.getEffect().applyEventShamanWinner(p, board, lostPP, false);
+            }
         }
+    }
 
     public int getGainedPP() {
         return gainedPP;

@@ -41,8 +41,9 @@ public class Game {
         Collections.shuffle(players); // player's casual order
 
         for (int i = 0; i < players.size(); i++) {
+            int  numPlayer = players.size();
             Player p = players.get(i);
-            p.gainFood(config.getInitialFood(i+1)); // i = 0 match pos = 1 in getInitialFood()
+            p.gainFood(config.getInitialFood(i+1) ); // i = 0 match pos = 1 in getInitialFood()
             board.getTurnOrderTile().totemIn(p);
         }
     }

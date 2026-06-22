@@ -181,7 +181,7 @@ public class TurnController {
             idx++;
         }
         if (idx >= resolveOrder.size()) {
-            gameController.endRound();
+            startBuildingChoiceOrEndRound();
         } else {
             askNextAction();
         }

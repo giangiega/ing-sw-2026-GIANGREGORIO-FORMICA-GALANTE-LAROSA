@@ -12,6 +12,7 @@ import it.polimi.ingsw.model.cards.tribe.characters.CharacterCard;
 import it.polimi.ingsw.network.clientInterface.ChooseCardOperation;
 import it.polimi.ingsw.network.clientInterface.LoginOperation;
 import it.polimi.ingsw.network.clientInterface.NumPlayersOperation;
+import it.polimi.ingsw.network.clientInterface.BuildingUpperRowChoiceOperation;
 import it.polimi.ingsw.network.ClientSender;
 import it.polimi.ingsw.network.clientInterface.PlaceTotemOperation;
 import javafx.animation.KeyFrame;
@@ -1189,20 +1190,17 @@ public class GUIView implements ViewInterface {
 
     private void clearOfferTrackHandlers() {
         for (var node : offerTrackPane.getChildren()) {
-            if (node instanceof VBox tileBox) {
+            VBox tileBox = (VBox) node;
                 tileBox.setOnMouseClicked(null);
                 tileBox.setOnMouseEntered(null);
                 tileBox.setOnMouseExited(null);
                 tileBox.setOpacity(1.0);
 
-                if (tileBox.getUserData() instanceof OfferTile tile) {
-                    tileBox.setStyle(
-                            tile.getFreeOfferTile()
-                                    ? "-fx-background-color: rgba(20,10,5,0.30); -fx-background-radius: 8;"
-                                    : "-fx-background-color: rgba(90,45,12,0.70); -fx-background-radius: 8;"
-                    );
-                }
-            }
+            OfferTile tile = (OfferTile) tileBox.getUserData();
+            tileBox.setStyle(tile.getFreeOfferTile()
+                             ? "-fx-background-color: rgba(20,10,5,0.30); -fx-background-radius: 8;"
+                             : "-fx-background-color: rgba(90,45,12,0.70); -fx-background-radius: 8;"
+            );
         }
     }
 
@@ -1601,9 +1599,8 @@ public class GUIView implements ViewInterface {
                             "-fx-background-radius: 8;" +
                             "-fx-border-color: #e74c3c; -fx-border-width: 2; -fx-border-radius: 8;"
             );
-            // You can change Pos.BOTTOM_RIGHT in Pos.TOP_LEFT o Pos.TOP_RIGHT to your likings
             StackPane.setAlignment(suspendedOverlay, Pos.BOTTOM_RIGHT);
-            StackPane.setMargin(suspendedOverlay, new Insets(20)); // Distance from borders
+            StackPane.setMargin(suspendedOverlay, new Insets(20));
             sceneRoot.getChildren().add(suspendedOverlay);
             final int[] timeRemaining = {timeoutSeconds};
 
@@ -1759,6 +1756,81 @@ public class GUIView implements ViewInterface {
             closeSuspendedDialogIfOpen();
         });
     }
+
+    @Override
+    public void askBuildingUpperRowChoice(List<TribeCard> upperRow, List<BuildingCard> buildingUpperRow) {
+        Platform.runLater(() -> {
+            if (upperRowPane == null) return;
+
+            actionBar.getChildren().clear();
+            Label msg = new Label("Bonus: Pick 1 card from the upper row, or Skip ");
+            msg.setStyle("-fx-text-fill: #f5e6c8; -fx-font-size: 14;");
+
+            Button skipBtn = new Button("Skip");
+            skipBtn.setStyle(
+                    "-fx-background-color: #c0392b; -fx-text-fill: white;" +
+                            "-fx-font-size: 14; -fx-cursor: hand; -fx-background-radius: 6; -fx-padding: 4 12;"
+            );
+            skipBtn.setOnAction(e -> {
+                sender.sendOperation(new BuildingUpperRowChoiceOperation(-1, false));
+                resetInputState();
+            });
+
+            actionBar.getChildren().addAll(msg, skipBtn);
+            actionBar.setVisible(true);
+            actionBar.setManaged(true);
+
+            renderTribeRow(upperRowPane, upperRow, false);
+
+            for (int i = 0; i < upperRow.size(); i++) {
+                final int index = i;
+                TribeCard card = upperRow.get(i);
+                ImageView iv = (ImageView) upperRowPane.getChildren().get(i);
+
+                iv.setStyle("-fx-cursor: hand;");
+                iv.setOnMouseEntered(e -> iv.setOpacity(0.85));
+                iv.setOnMouseExited(e -> iv.setOpacity(1.0));
+                iv.setOnMouseClicked(e -> {
+                    if (card.isEventCard()) {
+                        showToast(" Cannot pick an event card.");
+                    } else {
+                        sender.sendOperation(new BuildingUpperRowChoiceOperation(index, false));
+                        resetInputState();
+                    }
+                });
+            }
+
+            renderBuildingRow(buildingUpperPane, buildingUpperRow, false);
+
+            int builderDiscount = calculateBuilderDiscount();
+
+            for (int i = 0; i < buildingUpperRow.size(); i++) {
+                final int index = i;
+                BuildingCard card = buildingUpperRow.get(i);
+                ImageView iv = (ImageView) buildingUpperPane.getChildren().get(i);
+
+                int effectiveCost = Math.max(0, card.getBaseFC() - builderDiscount);
+
+                iv.setStyle("-fx-cursor: hand;");
+                iv.setOnMouseEntered(e -> iv.setOpacity(0.85));
+                iv.setOnMouseExited(e -> iv.setOpacity(1.0));
+                iv.setOnMouseClicked(e -> {
+                    boolean canAfford = myFood >= effectiveCost;
+                    if (!canAfford) {
+                        String errMsg = builderDiscount > 0
+                                ? "Need " + effectiveCost + " food (base " + card.getBaseFC()
+                                + " - discount " + builderDiscount + ") — you have " + myFood
+                                : "Need " + effectiveCost + " food — you have " + myFood;
+                        showToast(errMsg);
+                    } else {
+                        sender.sendOperation(new BuildingUpperRowChoiceOperation(index, true));
+                        resetInputState();
+                    }
+                });
+            }
+        });
+    }
+
 
 }
 

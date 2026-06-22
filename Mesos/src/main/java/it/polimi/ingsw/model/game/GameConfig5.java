@@ -31,7 +31,7 @@ public class GameConfig5 extends GameConfig {
                 new OfferTile('D' , 0 , 2),
                 new OfferTile('E' , 1 , 1),
                 new OfferTile('F' , 2 , 0),
-                new OfferTile('G' , 1 , 2)
+                new OfferTile('G' , 2 , 1)
         );
     }
 
