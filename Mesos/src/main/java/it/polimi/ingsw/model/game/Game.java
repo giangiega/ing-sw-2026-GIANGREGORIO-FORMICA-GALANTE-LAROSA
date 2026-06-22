@@ -104,7 +104,7 @@ public class Game {
         if (bonus > 0) {
             player.gainFood(bonus);
             for (BuildingCard c : player.getBuildingCards()) {
-                    c.getEffect().applyEndTurn(player, board, -1, false);
+                    c.getEffect().applyTotemFoodBonus(player, board);
                     //-1 makes applyEndTurn return
             }
         } else if (board.getTurnOrderTile().isLastSlot(nextSlot)) {

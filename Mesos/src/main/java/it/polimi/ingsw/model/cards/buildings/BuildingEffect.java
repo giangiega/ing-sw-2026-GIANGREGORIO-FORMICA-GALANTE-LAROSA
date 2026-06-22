@@ -59,6 +59,14 @@ public abstract class BuildingEffect implements Serializable {
     public void applyEndTurn(Player p, Board b, int chosenIndex, boolean chosenIsBuilding ) throws InvalidPlayerActionException {} //turn means round
     /**
      * @param p : player who has this building card
+     * @param b  state of the board
+     * This method is called only when the player's totem lands on a TurnOrderTile
+     * slot that has a food bonus (never on the last slot). It is called once,
+     * right when the totem is placed back, not at endRound.
+     */
+    public void applyTotemFoodBonus(Player p, Board b){}
+    /**
+     * @param p : player who has this building card
      * @param b : state of the board
      * This method is called at the end of the game
      */
