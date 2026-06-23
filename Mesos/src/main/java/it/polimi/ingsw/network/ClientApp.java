@@ -24,6 +24,8 @@ public class ClientApp {
         String host = args[0];
         int socketPort = Integer.parseInt(args[1]);
         int rmiPort = Integer.parseInt(args[2]);
+        String clientIp = args[3];
+        System.setProperty("java.rmi.server.hostname", clientIp);
 
 
         System.out.println(GREEN + BOLD + "Choose a network protocol:" + RESET);

@@ -46,6 +46,7 @@ java -jar deliverables/final/jar/Mesos-Client.jar
 - `<ip_server>` — indirizzo IP del server 
 - `<porta_socket>` — porta Socket del server (deve coincidere con quella usata per avviare il server)
 - `<porta_rmi>` — porta RMI del server (deve coincidere con quella usata per avviare il server)
+- `<ip_client>` — indirizzo IP del client
 Dopo l'avvio, il client chiederà a runtime:
 1. **Protocollo di rete**: `[1] Socket` oppure `[2] RMI`
 2. **Interfaccia**: `[1] TUI` (testuale) oppure `[2] GUI` (grafica)
