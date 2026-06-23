@@ -171,7 +171,7 @@ public class BuildingIntegrationTest {
         // calls Game.unplaceTotem on bonus slot
         for (BuildingCard b : player.getBuildingCards())
             if (b.getEffect() instanceof BuildingBonusTotem)
-                b.getEffect().applyEndTurn(player, board, -1, false);
+                b.getEffect().applyTotemFoodBonus(player, board);
 
         assertEquals(foodBefore + 1, player.getFood(),
                 "The player should have received 1 food because the player chose the food tale");
