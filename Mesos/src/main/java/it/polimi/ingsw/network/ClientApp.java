@@ -26,7 +26,6 @@ public class ClientApp {
         int socketPort = Integer.parseInt(args[1]);
         int rmiPort = Integer.parseInt(args[2]);
         String clientIp = args[3];
-        //int callBackPort = rmiPort + 2;
         System.setProperty("java.rmi.server.hostname", clientIp);
 
 
