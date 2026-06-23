@@ -1,19 +1,24 @@
 # ing-sw-2026-GIANGREGORIO-FORMICA-GALANTE-LAROSA
 Sviluppo del gioco da tavolo MESOS (progetto ingegneria del software POLIMI 2026)
 
-RICCARDO FORMICA - 10901857 ,
-GIUSEPPE MICHELE LA ROSA - 10919952 ,
-ALESSANDRO GALANTE - 10928390 ,
-DANIELE GIANGREGORIO - 10937103 ,
+- RICCARDO FORMICA - 10901857 
+
+- GIUSEPPE MICHELE LA ROSA - 10919952 
+
+- ALESSANDRO GALANTE - 10928390 
+
+- DANIELE GIANGREGORIO - 10937103
 
 Regole Complete + TUI + GUI + RMI + Socket + 3 FA 
 
-FA 1 : Database
-FA 2 : Resilienza alle disconnessioni
-FA 3 : Persistenza
+- FA 1 : Database
+
+- FA 2 : Resilienza alle disconnessioni
+
+- FA 3 : Persistenza
 
 
-ISTRUZIONI SU COME ESEGUIRE I FILE JAR :
+### ISTRUZIONI SU COME ESEGUIRE I FILE JAR :
 
 
 ### Avvio Server
@@ -25,6 +30,7 @@ java -jar deliverables/final/jar/Mesos-Server.jar
 **Parametri:**
 - `<porta_socket>` — porta su cui il server ascolta le connessioni Socket
 - `<porta_rmi>` — porta su cui il server ascolta le connessioni RMI
+- `<ip_server>` — indirizzo IP del server
 
 Il server avvia **entrambi i protocolli contemporaneamente** su thread separati, così i client possono scegliere liberamente quale usare.
 
