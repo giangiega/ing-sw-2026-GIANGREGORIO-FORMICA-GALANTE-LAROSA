@@ -17,6 +17,7 @@ public class ClientApp {
     private static final String BOLD = "\033[1m";
 
     public static void main(String[] args) {
+        System.setProperty("java.net.preferIPv4Stack", "true");
         Scanner scanner = new Scanner(System.in);
         int protocol;
         int ui;

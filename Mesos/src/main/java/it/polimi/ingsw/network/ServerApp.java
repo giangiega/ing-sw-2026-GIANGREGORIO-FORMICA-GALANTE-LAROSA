@@ -16,6 +16,7 @@ public class ServerApp {
      * It creates both RMI and Socket Servers so players can choose both at the same time
      */
     public static void main(String[] args) {
+        System.setProperty("java.net.preferIPv4Stack", "true");
         int socketPort = Integer.parseInt(args[0]);
         int rmiPort = Integer.parseInt(args[1]);
         String ip = args[2];
