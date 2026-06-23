@@ -28,11 +28,6 @@ java -jar deliverables/final/jar/Mesos-Server.jar
 
 Il server avvia **entrambi i protocolli contemporaneamente** su thread separati, così i client possono scegliere liberamente quale usare.
 
-**Esempio:**
-```bash
-java -jar deliverables/final/jar/Mesos-Server.jar 11111 10099
-```
-
 ---
 
 ### Avvio Client
@@ -42,14 +37,9 @@ java -jar deliverables/final/jar/Mesos-Client.jar
 ```
 
 **Parametri:**
-- `<ip_server>` — indirizzo IP del server (es. `localhost` se sul tuo stesso PC, oppure l'IP della macchina del server se in rete)
+- `<ip_server>` — indirizzo IP del server 
 - `<porta_socket>` — porta Socket del server (deve coincidere con quella usata per avviare il server)
 - `<porta_rmi>` — porta RMI del server (deve coincidere con quella usata per avviare il server)
-
-**Esempio:**
-```bash
-java -jar deliverables/final/jar/Mesos-Client.jar localhost 11111 10099
-```
 Dopo l'avvio, il client chiederà a runtime:
 1. **Protocollo di rete**: `[1] Socket` oppure `[2] RMI`
 2. **Interfaccia**: `[1] TUI` (testuale) oppure `[2] GUI` (grafica)
