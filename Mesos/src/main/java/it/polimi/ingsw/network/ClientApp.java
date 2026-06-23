@@ -25,6 +25,7 @@ public class ClientApp {
         int socketPort = Integer.parseInt(args[1]);
         int rmiPort = Integer.parseInt(args[2]);
         String clientIp = args[3];
+        int callBackPort = rmiPort + 2;
         System.setProperty("java.rmi.server.hostname", clientIp);
 
 
@@ -63,7 +64,7 @@ public class ClientApp {
                 System.err.println(RED + BOLD + "Connection failed: " + e.getMessage() + RESET);
             }
         } else try {
-            new RmiClient(host, rmiPort).connect(view);
+            new RmiClient(host, rmiPort, callBackPort).connect(view);
         } catch (IOException e) {
             System.err.println(RED + BOLD + "Connection failed: " + e.getMessage() + RESET);
         }
