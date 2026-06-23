@@ -51,8 +51,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
      * @throws RemoteException required by UnicastRemoteObject
      * Constructor of this class
      */
-    public RmiClient(String host, int port, int callBackPort) throws RemoteException {
-        super(callBackPort);
+    public RmiClient(String host, int port) throws RemoteException {
+        super(0);
         this.host = host;
         this.port = port;
     }
